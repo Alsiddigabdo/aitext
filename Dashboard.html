@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s;
+        }
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #1e2a44;
+                color: #f5f7fa;
+            }
+            .glass-card {
+                background: rgba(26, 36, 61, 0.8);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+            }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .text-gradient {
+            background: linear-gradient(to right, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50 text-gray-900">
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 py-4 bg-white shadow-sm">
+        <div class="container mx-auto px-4 md:px-6 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-2">
+                <img src="/logo.svg" alt="Logo" class="h-8 w-8">
+                <span class="text-xl font-semibold">محلل النصوص الذكي</span>
+            </a>
+            <div class="hidden md:flex space-x-6">
+                <a href="#home" class="text-sm font-medium hover:text-blue-500 transition">الرئيسية</a>
+                <a href="#features" class="text-sm font-medium hover:text-blue-500 transition">الميزات</a>
+                <a href="#pricing" class="text-sm font-medium hover:text-blue-500 transition">التسعير</a>
+                <a href="#api" class="text-sm font-medium hover:text-blue-500 transition">API</a>
+            </div>
+            <button id="menu-toggle" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-sm mt-2 mx-4 rounded-lg">
+            <div class="flex flex-col py-2 space-y-1">
+                <a href="#home" class="px-4 py-3 hover:bg-gray-100">الرئيسية</a>
+                <a href="#features" class="px-4 py-3 hover:bg-gray-100">الميزات</a>
+                <a href="#pricing" class="px-4 py-3 hover:bg-gray-100">التسعير</a>
+                <a href="#api" class="px-4 py-3 hover:bg-gray-100">API</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 mt-20 py-8">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gradient">لوحة التحكم</h1>
+                    <p class="text-gray-600">مرحباً بك في لوحة تحكم محلل النصوص الذكي</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <button class="px-3 py-1.5 rounded-md text-sm bg-blue-500 text-white flex items-center gap-1.5 hover:bg-blue-600 transition-colors">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span>نص جديد</span>
+                    </button>
+                    <button class="px-3 py-1.5 rounded-md text-sm border border-gray-300 flex items-center gap-1.5 hover:bg-gray-100 transition-colors">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <span>الإعدادات</span>
+                    </button>
+                    <button class="p-1.5 rounded-md border border-gray-300 flex items-center hover:bg-gray-100 transition-colors">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 mb-8">
+                <div class="glass-card p-4">
+                    <div class="text-sm text-gray-600 mb-2">النصوص المحللة</div>
+                    <div class="flex justify-between items-end">
+                        <div class="text-2xl font-bold">142</div>
+                        <div class="text-xs flex items-center text-green-500">
+                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                            <span>12%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card p-4">
+                    <div class="text-sm text-gray-600 mb-2">متوسط الدرجة</div>
+                    <div class="flex justify-between items-end">
+                        <div class="text-2xl font-bold">85.3</div>
+                        <div class="text-xs flex items-center text-green-500">
+                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                            <span>4.2%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card p-4">
+                    <div class="text-sm text-gray-600 mb-2">الأخطاء المصححة</div>
+                    <div class="flex justify-between items-end">
+                        <div class="text-2xl font-bold">318</div>
+                        <div class="text-xs flex items-center text-red-500">
+                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <span>3%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card p-4">
+                    <div class="text-sm text-gray-600 mb-2">اللغة الأكثر استخدامًا</div>
+                    <div class="flex justify-between items-end">
+                        <div class="text-lg font-bold flex items-center">
+                            <svg class="h-4 w-4 mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m3-2v2M3 9h12M9 11v2m3-2v2M3 13h12M9 15v2m3-2v2M3 17h12"></path></svg>
+                            العربية
+                        </div>
+                        <div class="text-xs text-gray-600">65%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex border-b border-gray-200 mb-6 overflow-x-auto">
+                <button id="stats-tab" class="px-4 py-2 text-sm border-b-2 border-blue-500 font-medium text-gray-900">إحصائيات</button>
+                <button id="history-tab" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">النصوص السابقة</button>
+                <button id="settings-tab" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">الإعدادات</button>
+            </div>
+
+            <!-- Stats Tab -->
+            <div id="stats-content" class="animate-fade-in">
+                <div class="mb-8">
+                    <h2 class="text-lg font-medium mb-4 flex items-center gap-2">
+                        <svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        مؤشرات الأداء
+                    </h2>
+                    <div class="glass-card p-4 h-72">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h2 class="text-lg font-medium mb-4 flex items-center gap-2">
+                            <svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                            توزيع اللغات
+                        </h2>
+                        <div class="glass-card p-4 h-[300px]">
+                            <canvas id="languageChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-medium mb-4 flex items-center gap-2">
+                            <svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                            أنواع الأخطاء
+                        </h2>
+                        <div class="glass-card p-4 h-[300px]">
+                            <canvas id="errorTypeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history-content" class="animate-fade-in hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-medium flex items-center gap-2">
+                        <svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        النصوص السابقة
+                    </h2>
+                    <div class="flex gap-2">
+                        <button class="p-1.5 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h13M3 12h13m-9 8l-4-4 4-4m8 8h-5m5-4h-9"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="glass-card overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200 bg-gray-100">
+                                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                        <button id="sort-title" class="flex items-center gap-1 focus:outline-none">
+                                            العنوان
+                                            <svg id="sort-title-icon" class="h-4 w-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                        </button>
+                                    </th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                        <button id="sort-date" class="flex items-center gap-1 focus:outline-none">
+                                            التاريخ
+                                            <svg id="sort-date-icon" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                        </button>
+                                    </th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                        <button id="sort-wordCount" class="flex items-center gap-1 focus:outline-none">
+                                            عدد الكلمات
+                                            <svg id="sort-wordCount-icon" class="h-4 w-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                        </button>
+                                    </th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                        <button id="sort-score" class="flex items-center gap-1 focus:outline-none">
+                                            الدرجة
+                                            <svg id="sort-score-icon" class="h-4 w-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                        </button>
+                                    </th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                        <button id="sort-language" class="flex items-center gap-1 focus:outline-none">
+                                            اللغة
+                                            <svg id="sort-language-icon" class="h-4 w-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                        </button>
+                                    </th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-4 flex items-center justify-between border-t border-gray-200">
+                        <div class="text-sm text-gray-600">إجمالي النصوص: 4</div>
+                        <div class="flex gap-1">
+                            <button class="p-1.5 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                            <button class="p-1.5 rounded-md border border-blue-500 bg-blue-500 text-white">1</button>
+                            <button class="p-1.5 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-content" class="animate-fade-in hidden">
+                <h2 class="text-lg font-medium mb-4 flex items-center gap-2">
+                    <svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    إعدادات المستخدم
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-md font-medium mb-4">إعدادات عامة</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm">الوضع الليلي</label>
+                                <button class="p-1.5 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm">اللغة المفضلة</label>
+                                <select class="text-sm px-2 py-1 border border-gray-300 rounded-md bg-white">
+                                    <option value="ar">العربية</option>
+                                    <option value="en">الإنجليزية</option>
+                                    <option value="fr">الفرنسية</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm">حفظ النصوص تلقائيًا</label>
+                                <button class="p-1.5 rounded-md border border-blue-500 bg-blue-500 text-white">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-card p-6">
+                        <h3 class="text-md font-medium mb-4">الخطة الحالية</h3>
+                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-medium">الخطة المجانية</span>
+                                <span class="text-sm bg-blue-100 text-blue-800 px-2 py-0.5 rounded">نشط</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-2">500 كلمة يوميًا / 5 نصوص</p>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: 40%"></div>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-1">
+                                <span class="font-medium">200</span> / 500 كلمة (40%)
+                            </p>
+                        </div>
+                        <button class="w-full px-4 py-2 rounded-lg font-medium bg-blue-500 text-white hover:bg-blue-600 transition-all flex items-center justify-center gap-2">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 9.143l-5.714 2.857L13 21l-2.286-6.857L5 11.286l5.714-2.857L13 3z"></path></svg>
+                            ترقية للخطة الاحترافية
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-gray-100">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-5">
+                        <img src="/logo.svg" alt="Logo" class="h-8 w-8">
+                        <span class="text-xl font-semibold">محلل النصوص الذكي</span>
+                    </div>
+                    <p class="text-gray-600">أداة ذكية لتحليل وتحسين النصوص.</p>
+                </div>
+                <div>
+                    <h4 class="font-medium text-lg mb-4">روابط</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#home" class="text-gray-600 hover:text-gray-900">الرئيسية</a></li>
+                        <li><a href="#features" class="text-gray-600 hover:text-gray-900">الميزات</a></li>
+                        <li><a href="#pricing" class="text-gray-600 hover:text-gray-900">التسعير</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-medium text-lg mb-4">مصادر</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-600 hover:text-gray-900">المدونة</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-gray-900">التوثيق</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-medium text-lg mb-4">تواصل معنا</h4>
+                    <div class="flex">
+                        <input type="email" placeholder="بريدك الإلكتروني" class="flex-1 px-4 py-2 rounded-r-lg border bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        <button class="px-4 py-2 bg-blue-500 text-white rounded-l-lg hover:bg-blue-600">اشتراك</button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 mt-12 pt-6 text-center">
+                <p class="text-sm text-gray-600">© 2025 محلل النصوص الذكي. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const analysisData = [
+            { date: '01/06', count: 12, errors: 32, score: 72 },
+            { date: '02/06', count: 19, errors: 28, score: 75 },
+            { date: '03/06', count: 15, errors: 20, score: 80 },
+            { date: '04/06', count: 27, errors: 24, score: 78 },
+            { date: '05/06', count: 24, errors: 18, score: 82 },
+            { date: '06/06', count: 32, errors: 22, score: 79 },
+            { date: '07/06', count: 29, errors: 16, score: 85 },
+        ];
+
+        const languageData = [
+            { name: 'العربية', value: 65 },
+            { name: 'الإنجليزية', value: 25 },
+            { name: 'الفرنسية', value: 10 },
+        ];
+
+        const errorTypeData = [
+            { name: 'نحوية', value: 45 },
+            { name: 'إملائية', value: 30 },
+            { name: 'ترقيم', value: 15 },
+            { name: 'أسلوبية', value: 10 },
+        ];
+
+        const previousTexts = [
+            { id: 1, title: 'مقال عن أهمية الذكاء الاصطناعي', date: '2023-06-07', wordCount: 520, score: 87, language: 'العربية' },
+            { id: 2, title: 'رسالة طلب وظيفة', date: '2023-06-05', wordCount: 325, score: 92, language: 'العربية' },
+            { id: 3, title: 'تقرير مبيعات شهري', date: '2023-06-03', wordCount: 890, score: 79, language: 'العربية' },
+            { id: 4, title: 'Email to Business Partner', date: '2023-06-01', wordCount: 210, score: 84, language: 'الإنجليزية' },
+        ];
+
+        let sortField = 'date';
+        let sortDirection = 'desc';
+
+        // Charts
+        const performanceChart = new Chart(document.getElementById('performanceChart'), {
+            type: 'bar',
+            data: {
+                labels: analysisData.map(d => d.date),
+                datasets: [
+                    { label: 'النصوص المحللة', data: analysisData.map(d => d.count), backgroundColor: '#3b82f6', yAxisID: 'y' },
+                    { label: 'الأخطاء', data: analysisData.map(d => d.errors), backgroundColor: '#ef4444', yAxisID: 'y' },
+                    { label: 'متوسط الدرجة', type: 'line', data: analysisData.map(d => d.score), borderColor: '#10b981', yAxisID: 'y1', fill: false }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { position: 'left', title: { display: true, text: 'العدد' } },
+                    y1: { position: 'right', max: 100, title: { display: true, text: 'الدرجة' }, grid: { drawOnChartArea: false } }
+                }
+            }
+        });
+
+        const languageChart = new Chart(document.getElementById('languageChart'), {
+            type: 'bar',
+            data: {
+                labels: languageData.map(d => d.name),
+                datasets: [{ label: 'النسبة', data: languageData.map(d => d.value), backgroundColor: '#3b82f6' }]
+            },
+            options: { indexAxis: 'y', responsive: true }
+        });
+
+        const errorTypeChart = new Chart(document.getElementById('errorTypeChart'), {
+            type: 'bar',
+            data: {
+                labels: errorTypeData.map(d => d.name),
+                datasets: [{ label: 'النسبة', data: errorTypeData.map(d => d.value), backgroundColor: '#ef4444' }]
+            },
+            options: { indexAxis: 'y', responsive: true }
+        });
+
+        // Tab Switching
+        const tabs = ['stats', 'history', 'settings'];
+        tabs.forEach(tab => {
+            document.getElementById(`${tab}-tab`).addEventListener('click', () => {
+                tabs.forEach(t => {
+                    document.getElementById(`${t}-tab`).classList.remove('border-b-2', 'border-blue-500', 'font-medium', 'text-gray-900');
+                    document.getElementById(`${t}-tab`).classList.add('text-gray-600', 'hover:text-gray-900');
+                    document.getElementById(`${t}-content`).classList.add('hidden');
+                });
+                document.getElementById(`${tab}-tab`).classList.add('border-b-2', 'border-blue-500', 'font-medium', 'text-gray-900');
+                document.getElementById(`${tab}-tab`).classList.remove('text-gray-600', 'hover:text-gray-900');
+                document.getElementById(`${tab}-content`).classList.remove('hidden');
+            });
+        });
+
+        // Sorting History Table
+        function renderHistoryTable() {
+            const sortedTexts = [...previousTexts].sort((a, b) => {
+                if (sortDirection === 'asc') return a[sortField] > b[sortField] ? 1 : -1;
+                return a[sortField] < b[sortField] ? 1 : -1;
+            });
+            const tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = '';
+            sortedTexts.forEach(text => {
+                const scoreColor = text.score >= 90 ? 'bg-green-100 text-green-800' : text.score >= 80 ? 'bg-blue-100 text-blue-800' : text.score >= 70 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800';
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <td class="px-4 py-3 font-medium">${text.title}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${text.date}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${text.wordCount}</td>
+                        <td class="px-4 py-3"><div class="px-2 py-1 rounded-full text-xs inline-flex items-center ${scoreColor}">${text.score}</div></td>
+                        <td class="px-4 py-3 text-sm"><div class="flex items-center"><svg class="h-4 w-4 mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m3-2v2M3 9h12M9 11v2m3-2v2M3 13h12M9 15v2m3-2v2M3 17h12"></path></svg>${text.language}</div></td>
+                        <td class="px-4 py-3 text-sm">
+                            <div class="flex items-center gap-2">
+                                <button class="p-1 rounded-md hover:bg-gray-100"><svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></button>
+                                <button class="p-1 rounded-md hover:bg-gray-100"><svg class="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
+                                <button class="p-1 rounded-md hover:bg-gray-100"><svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        ['title', 'date', 'wordCount', 'score', 'language'].forEach(field => {
+            document.getElementById(`sort-${field}`).addEventListener('click', () => {
+                if (sortField === field) {
+                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortField = field;
+                    sortDirection = 'desc';
+                }
+                document.querySelectorAll('[id^="sort-"][id$="-icon"]').forEach(icon => icon.classList.add('hidden'));
+                document.getElementById(`sort-${field}-icon`).classList.remove('hidden');
+                document.getElementById(`sort-${field}-icon`).innerHTML = sortDirection === 'asc' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>' : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>';
+                renderHistoryTable();
+            });
+        });
+
+        renderHistoryTable();
+
+        // Mobile Menu Toggle
+        document.getElementById('menu-toggle').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

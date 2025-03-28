@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مقارنة النصوص | أداة مقارنة متقدمة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5CF6",
+                        secondary: "#6366F1",
+                    },
+                    borderRadius: {
+                        none: "0px",
+                        sm: "4px",
+                        DEFAULT: "8px",
+                        md: "12px",
+                        lg: "16px",
+                        xl: "20px",
+                        "2xl": "24px",
+                        "3xl": "32px",
+                        full: "9999px",
+                        button: "8px",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+        .glass-card {
+            background: rgba(26, 36, 61, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        textarea {
+            min-height: 200px;
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .diff-added {
+            background: rgba(34, 197, 94, 0.2);
+            color: #bbf7d0;
+        }
+        .diff-removed {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fecaca;
+            text-decoration: line-through;
+        }
+        .diff-unchanged {
+            color: #d1d5db;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <%- include('partials/navbar') %>
+
+    <!-- Main Content -->
+    <main class="mt-20 flex-grow">
+        <section class="py-12 md:py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">مقارنة ذكية</span>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-4">مقارنة النصوص الذكية</h1>
+                    <p class="text-lg text-gray-400 max-w-2xl mx-auto">قارن بين نصين بسهولة مع تحليل دقيق للفروقات</p>
+                </div>
+
+                <div class="glass-card p-6 rounded-lg mb-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Original Text -->
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="font-medium">النص الأصلي</h2>
+                            </div>
+                            <textarea id="original-text" class="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="أدخل النص الأصلي هنا..."></textarea>
+                            <div class="flex items-center justify-between mt-2">
+                                <div class="text-sm text-gray-400">عدد الكلمات: <span id="original-count" class="text-white">0</span></div>
+                                <button onclick="clearText('original-text')" class="text-sm text-gray-400 hover:text-primary transition flex items-center">
+                                    <i class="ri-eraser-line ml-1"></i> مسح
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- New Text -->
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="font-medium">النص المعدل</h2>
+                            </div>
+                            <textarea id="new-text" class="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="أدخل النص المعدل هنا..."></textarea>
+                            <div class="flex items-center justify-between mt-2">
+                                <div class="text-sm text-gray-400">عدد الكلمات: <span id="new-count" class="text-white">0</span></div>
+                                <button onclick="clearText('new-text')" class="text-sm text-gray-400 hover:text-primary transition flex items-center">
+                                    <i class="ri-eraser-line ml-1"></i> مسح
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+                        <button id="compare-btn" class="px-6 py-3 rounded-button bg-primary text-white hover:bg-secondary transition flex items-center justify-center" disabled>
+                            <i class="ri-compare-line ml-2"></i> مقارنة النصوص
+                        </button>
+                        <button id="swap-btn" class="px-6 py-3 rounded-button bg-gray-700 text-white hover:bg-gray-600 transition flex items-center justify-center">
+                            <i class="ri-swap-line ml-2"></i> تبديل النصوص
+                        </button>
+                        <button id="reset-btn" class="px-6 py-3 rounded-button bg-gray-700 text-white hover:bg-gray-600 transition flex items-center justify-center hidden">
+                            <i class="ri-eraser-line ml-2"></i> إعادة تعيين
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Comparison Results -->
+                <div id="comparison-results" class="glass-card p-6 rounded-lg hidden">
+                    <h2 class="text-xl font-bold mb-6 flex items-center">
+                        <i class="ri-bar-chart-line ml-2"></i> نتائج المقارنة
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+                        <div class="p-4 rounded-lg bg-gray-800">
+                            <div class="text-sm text-gray-400 mb-1">نسبة التشابه</div>
+                            <div class="text-lg font-medium text-primary" id="similarity">--%</div>
+                        </div>
+                        <div class="p-4 rounded-lg bg-gray-800">
+                            <div class="text-sm text-gray-400 mb-1">الإضافات</div>
+                            <div class="text-lg font-medium text-green-400" id="added">0</div>
+                        </div>
+                        <div class="p-4 rounded-lg bg-gray-800">
+                            <div class="text-sm text-gray-400 mb-1">الحذف</div>
+                            <div class="text-lg font-medium text-red-400" id="removed">0</div>
+                        </div>
+                        <div class="p-4 rounded-lg bg-gray-800">
+                            <div class="text-sm text-gray-400 mb-1">التغييرات</div>
+                            <div class="text-lg font-medium text-yellow-400" id="changed">0</div>
+                        </div>
+                        <div class="p-4 rounded-lg bg-gray-800">
+                            <div class="text-sm text-gray-400 mb-1">غير متغير</div>
+                            <div class="text-lg font-medium text-blue-400" id="unchanged">0</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Improvement Analysis -->
+                        <div class="p-4 rounded-lg bg-gray-800">
+                            <h3 class="font-medium mb-2">تحليل التحسينات</h3>
+                            <div id="improvement-text" class="text-sm text-gray-400">سيتم عرض تحليل التحسينات هنا بعد المقارنة.</div>
+                        </div>
+                        
+                        <!-- Visual Diff -->
+                        <div class="p-4 rounded-lg bg-gray-800">
+                            <h3 class="font-medium mb-2">الفروقات البصرية</h3>
+                            <div id="visual-diff" class="text-sm"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <%- include('partials/footer') %>
+
+    <script>
+        // DOM Elements
+        const originalText = document.getElementById('original-text');
+        const newText = document.getElementById('new-text');
+        const resetBtn = document.getElementById('reset-btn');
+        const compareBtn = document.getElementById('compare-btn');
+        const swapBtn = document.getElementById('swap-btn');
+        const comparisonResults = document.getElementById('comparison-results');
+        const similarityEl = document.getElementById('similarity');
+        const addedEl = document.getElementById('added');
+        const removedEl = document.getElementById('removed');
+        const changedEl = document.getElementById('changed');
+        const unchangedEl = document.getElementById('unchanged');
+        const improvementText = document.getElementById('improvement-text');
+        const visualDiff = document.getElementById('visual-diff');
+        const originalCount = document.getElementById('original-count');
+        const newCount = document.getElementById('new-count');
+
+        // Update button states and word counts
+        function updateButtonStates() {
+            const originalWords = originalText.value.trim() ? originalText.value.split(/\s+/).length : 0;
+            const newWords = newText.value.trim() ? newText.value.split(/\s+/).length : 0;
+            originalCount.textContent = originalWords;
+            newCount.textContent = newWords;
+
+            const hasText = originalText.value || newText.value;
+            resetBtn.classList.toggle('hidden', !hasText);
+            compareBtn.disabled = !originalText.value.trim() || !newText.value.trim();
+        }
+
+        // Clear text function
+        function clearText(textAreaId) {
+            document.getElementById(textAreaId).value = '';
+            updateButtonStates();
+        }
+
+        // Swap texts function
+        function swapTexts() {
+            const temp = originalText.value;
+            originalText.value = newText.value;
+            newText.value = temp;
+            updateButtonStates();
+        }
+
+        // Compare texts function with error handling
+        async function compareTexts() {
+            if (!originalText.value.trim() || !newText.value.trim()) {
+                alert('حقول فارغة: يرجى إدخال النص الأصلي والنص الجديد للمقارنة');
+                return;
+            }
+
+            compareBtn.disabled = true;
+            compareBtn.innerHTML = '<span class="inline-block h-4 w-4 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2"></span>جاري المقارنة...';
+
+            try {
+                const response = await fetch('/compare-texts/compare', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        originalText: originalText.value,
+                        newText: newText.value
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `فشل في المقارنة: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('API Response:', data); // لتتبع الاستجابة
+
+                // Update UI with API data
+                similarityEl.textContent = `${data.similarity}%`;
+                addedEl.textContent = data.added;
+                removedEl.textContent = data.removed;
+                changedEl.textContent = data.changed;
+                unchangedEl.textContent = data.unchanged;
+                improvementText.textContent = data.improvementText || 'لا توجد تحسينات محددة';
+                visualDiff.innerHTML = generateSimpleVisualDiff(originalText.value, newText.value);
+
+                comparisonResults.classList.remove('hidden');
+            } catch (error) {
+                console.error('Error in compareTexts:', error);
+                alert(`خطأ: ${error.message}`);
+            } finally {
+                compareBtn.disabled = false;
+                compareBtn.innerHTML = '<i class="ri-compare-line ml-2"></i> مقارنة النصوص';
+            }
+        }
+
+        // Simple visual diff function (client-side)
+        function generateSimpleVisualDiff(original, newText) {
+            const originalLines = original.split('\n');
+            const newLines = newText.split('\n');
+            let diffHTML = '';
+            const maxLines = Math.max(originalLines.length, newLines.length);
+
+            for (let i = 0; i < maxLines; i++) {
+                const origLine = originalLines[i] || '';
+                const newLine = newLines[i] || '';
+                if (origLine === newLine) {
+                    diffHTML += `<div class="diff-unchanged mb-2">${origLine || ' '}</div>`;
+                } else if (origLine && !newLine) {
+                    diffHTML += `<div class="diff-removed mb-2">${origLine}</div>`;
+                } else if (!origLine && newLine) {
+                    diffHTML += `<div class="diff-added mb-2">${newLine}</div>`;
+                } else {
+                    diffHTML += `<div class="flex flex-col gap-1 mb-2">
+                        <div class="diff-removed">${origLine}</div>
+                        <div class="diff-added">${newLine}</div>
+                    </div>`;
+                }
+            }
+            return diffHTML || '<p class="text-gray-400 text-center py-4">لا توجد فروقات واضحة بين النصين</p>';
+        }
+
+        // Event listeners
+        originalText.addEventListener('input', updateButtonStates);
+        newText.addEventListener('input', updateButtonStates);
+        resetBtn.addEventListener('click', () => {
+            originalText.value = '';
+            newText.value = '';
+            updateButtonStates();
+            comparisonResults.classList.add('hidden');
+        });
+        swapBtn.addEventListener('click', swapTexts);
+        compareBtn.addEventListener('click', compareTexts);
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateButtonStates();
+        });
+
+        // Mobile menu toggle (if navbar includes it)
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu) {
+                mobileMenu.classList.toggle('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

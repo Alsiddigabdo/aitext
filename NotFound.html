@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - الصفحة غير موجودة | محلل النصوص الذكي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5CF6",
+                        secondary: "#6366F1",
+                    },
+                    borderRadius: {
+                        button: "8px",
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .btn-primary {
+            background-color: #8B5CF6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background-color: #6366F1;
+        }
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-sm fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-['Pacifico']">logo</h1>
+                </div>
+                <nav class="hidden md:flex space-x-8 space-x-reverse">
+                    <a href="#" class="text-gray-300 hover:text-primary">تحليل النصوص</a>
+                    <a href="#" class="text-gray-300 hover:text-primary">المميزات</a>
+                    <a href="#" class="text-gray-300 hover:text-primary">الباقات والأسعار</a>
+                    <a href="#" class="text-gray-300 hover:text-primary">API</a>
+                    <a href="#" class="text-gray-300 hover:text-primary">حلول الشركات</a>
+                    <a href="#" class="text-gray-300 hover:text-primary">تواصل معنا</a>
+                </nav>
+                <div class="hidden md:flex items-center space-x-4 space-x-reverse">
+                    <button class="bg-white text-primary border border-primary px-4 py-2 rounded-button hover:bg-primary hover:text-white transition-colors whitespace-nowrap">
+                        تجربة مجانية
+                    </button>
+                    <button class="bg-primary text-white px-4 py-2 rounded-button hover:bg-secondary transition-colors whitespace-nowrap">
+                        تسجيل الدخول
+                    </button>
+                    <select class="bg-transparent border-none pr-8 text-gray-300">
+                        <option value="ar">العربية</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <button class="md:hidden flex items-center justify-center w-10 h-10" onclick="toggleMobileMenu()">
+                    <i class="ri-menu-line text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-800 shadow-lg">
+            <div class="px-4 py-2 space-y-2">
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">تحليل النصوص</a>
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">المميزات</a>
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">الباقات والأسعار</a>
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">API</a>
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">حلول الشركات</a>
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">تواصل معنا</a>
+                <div class="pt-4 border-t border-gray-700">
+                    <button class="w-full bg-white text-primary border border-primary px-4 py-2 rounded-button hover:bg-primary hover:text-white transition-colors mb-2 whitespace-nowrap">
+                        تجربة مجانية
+                    </button>
+                    <button class="w-full bg-primary text-white px-4 py-2 rounded-button hover:bg-secondary transition-colors mb-2 whitespace-nowrap">
+                        تسجيل الدخول
+                    </button>
+                    <select class="w-full bg-transparent border-none pr-8 text-gray-300">
+                        <option value="ar">العربية</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex items-center justify-center pt-20">
+        <div class="glass-card p-8 rounded-lg max-w-md w-full text-center">
+            <i class="ri-error-warning-line text-primary text-6xl mb-6"></i>
+            <h1 class="text-4xl font-bold mb-4">404 - الصفحة غير موجودة</h1>
+            <p class="text-gray-400 mb-8">عذرًا، يبدو أن الصفحة التي تبحث عنها غير موجودة أو تم نقلها.</p>
+            <a href="index.html" class="btn-primary inline-flex items-center justify-center gap-2">
+                <i class="ri-home-line"></i>
+                العودة إلى الصفحة الرئيسية
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center">
+                <p class="text-gray-400">© 2025 جميع الحقوق محفوظة</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>

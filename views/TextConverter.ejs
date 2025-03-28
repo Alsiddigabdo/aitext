@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحويل النصوص | محلل النصوص الذكي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5CF6",
+                        secondary: "#6366F1",
+                    },
+                    borderRadius: {
+                        none: "0px",
+                        sm: "4px",
+                        DEFAULT: "8px",
+                        md: "12px",
+                        lg: "16px",
+                        xl: "20px",
+                        "2xl": "24px",
+                        "3xl": "32px",
+                        full: "9999px",
+                        button: "8px",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #111827; color: #f3f4f6; }
+        .glass-card { background: rgba(26, 36, 61, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15); }
+        .animate-pulse-slow { animation: pulse 3s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+        textarea { min-height: 200px; }
+        .animate-spin { animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 py-4 bg-gray-800 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-2 space-x-reverse">
+                    <span class="text-2xl font-['Pacifico'] text-primary">محلل النصوص</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-4 space-x-reverse">
+                    <a href="/" class="px-4 py-2 rounded-button bg-primary text-white hover:bg-secondary transition">العودة للرئيسية</a>
+                </div>
+                <button class="md:hidden flex items-center justify-center w-10 h-10">
+                    <i class="ri-menu-line text-2xl text-gray-300"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="mt-20 flex-grow">
+        <section class="py-12 md:py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">أداة التحويل</span>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-4">محول النصوص الذكي</h1>
+                    <p class="text-lg text-gray-400 max-w-2xl mx-auto">حوّل نصوصك بين الأنماط المختلفة بضغطة زر</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Conversion Options -->
+                    <div class="lg:col-span-3">
+                        <div class="glass-card p-6 rounded-lg sticky top-24">
+                            <h2 class="text-xl font-bold mb-6 flex items-center">
+                                <i class="ri-settings-3-line ml-2"></i> خيارات التحويل
+                            </h2>
+                            
+                            <div class="space-y-6">
+                                <!-- Conversion Type -->
+                                <div>
+                                    <h3 class="font-medium mb-3">نوع التحويل</h3>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="radio" name="conversionType" class="text-primary" value="plain_to_academic" checked>
+                                            <span>نص عادي → نص أكاديمي</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="radio" name="conversionType" class="text-primary" value="marketing_to_formal">
+                                            <span>نص تسويقي → صيغة رسمية</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="radio" name="conversionType" class="text-primary" value="colloquial_to_standard">
+                                            <span>لغة عامية → لغة فصحى</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="radio" name="conversionType" class="text-primary" value="summary">
+                                            <span>تلخيص النص</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Text Formatting -->
+                                <div>
+                                    <h3 class="font-medium mb-3">تنسيق النص</h3>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="checkbox" name="addBreaks" class="text-primary" checked>
+                                            <span>إضافة فواصل تلقائية</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="checkbox" name="fixSpelling" class="text-primary">
+                                            <span>تصحيح الأخطاء الإملائية</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="checkbox" name="improveSentences" class="text-primary" checked>
+                                            <span>تحسين تراكيب الجمل</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Action Buttons -->
+                                <button id="convert-btn" class="w-full py-3 rounded-button bg-primary text-white hover:bg-secondary transition flex items-center justify-center disabled:bg-gray-600">
+                                    <i class="ri-play-line ml-2"></i> بدء التحويل
+                                </button>
+                                <button id="reset-btn" class="w-full py-3 rounded-button bg-gray-700 text-white hover:bg-gray-600 transition flex items-center justify-center hidden">
+                                    <i class="ri-delete-bin-line ml-2"></i> مسح النص
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Text Areas -->
+                    <div class="lg:col-span-9">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Input Text -->
+                            <div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <h3 class="font-medium flex items-center">
+                                        <i class="ri-keyboard-line ml-2"></i> النص الأصلي
+                                    </h3>
+                                    <div id="char-count" class="text-sm text-gray-400">0/5000 حرف</div>
+                                </div>
+                                <textarea id="input-text" class="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="أدخل النص الذي تريد تحويله هنا..."></textarea>
+                                <div class="mt-2 flex justify-end">
+                                    <button class="text-sm text-gray-400 hover:text-primary flex items-center">
+                                        <i class="ri-upload-line ml-1"></i> استيراد ملف
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Output Text -->
+                            <div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <h3 class="font-medium flex items-center">
+                                        <i class="ri-file-text-line ml-2"></i> الناتج بعد التحويل
+                                    </h3>
+                                    <div class="flex space-x-2 space-x-reverse">
+                                        <button id="copy-btn" class="text-gray-400 hover:text-primary p-1">
+                                            <i class="ri-file-copy-line"></i>
+                                        </button>
+                                        <button id="download-btn" class="text-gray-400 hover:text-primary p-1">
+                                            <i class="ri-download-line"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="output-text" class="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 min-h-[200px]">
+                                    <p class="text-gray-400 animate-pulse-slow">سيظهر النص المحوّل هنا بعد الضغط على زر التحويل...</p>
+                                </div>
+                                <div class="mt-2 flex justify-between">
+                                    <div id="word-count" class="text-sm text-gray-400">عدد الكلمات: 0</div>
+                                    <div id="conversion-time" class="text-sm text-gray-400">وقت التحويل: 0 ثانية</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Examples Section -->
+                        <div class="glass-card mt-8 p-6 rounded-lg">
+                            <h2 class="text-xl font-bold mb-4 flex items-center">
+                                <i class="ri-lightbulb-flash-line ml-2"></i> أمثلة جاهزة
+                            </h2>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <button class="example-btn text-right p-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition" data-example="colloquial">
+                                    <h4 class="font-medium">نص عامي إلى فصيح</h4>
+                                    <p class="text-sm text-gray-400 mt-1 truncate">"هذا الشيء حلو كتير" → "هذا الأمر جيد جداً"</p>
+                                </button>
+                                <button class="example-btn text-right p-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition" data-example="academic">
+                                    <h4 class="font-medium">تحويل إلى أكاديمي</h4>
+                                    <p class="text-sm text-gray-400 mt-1 truncate">"النتائج كانت كويسة" → "أظهرت النتائج مؤشرات إيجابية"</p>
+                                </button>
+                                <button class="example-btn text-right p-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition" data-example="formatting">
+                                    <h4 class="font-medium">تنسيق فقرات</h4>
+                                    <p class="text-sm text-gray-400 mt-1 truncate">نص طويل بدون فواصل → فقرات منظمة</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Features Section -->
+        <section class="py-12 md:py-16 bg-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">كيف يمكن لمحول النصوص مساعدتك؟</h2>
+                    <p class="text-lg text-gray-400 max-w-2xl mx-auto">تحويل نصوصك باحترافية ودقة عالية</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glass-card p-6">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                            <i class="ri-graduation-cap-line text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-medium mb-2">للأبحاث الأكاديمية</h3>
+                        <p class="text-gray-400">حول نصوصك إلى لغة أكاديمية مناسبة للبحوث والرسائل العلمية مع الحفاظ على المعنى الدقيق.</p>
+                    </div>
+                    <div class="glass-card p-6">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                            <i class="ri-briefcase-line text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-medium mb-2">للأعمال الاحترافية</h3>
+                        <p class="text-gray-400">أنشئ مستندات رسمية بلمسة احترافية تناسب التقارير الرسمية ومراسلات العمل.</p>
+                    </div>
+                    <div class="glass-card p-6">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                            <i class="ri-global-line text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-medium mb-2">للمحتوى المتنوع</h3>
+                        <p class="text-gray-400">حوّل اللهجات العامية إلى لغة عربية فصحى صحيحة لمحتوى متوافق مع جميع القراء.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 bg-gray-800 border-t border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm text-gray-400 mb-4 md:mb-0">© 2025 محلل النصوص الذكي. جميع الحقوق محفوظة.</p>
+                <div class="flex space-x-4 space-x-reverse">
+                    <a href="#terms" class="text-sm text-gray-400 hover:text-primary">الشروط والأحكام</a>
+                    <a href="#privacy" class="text-sm text-gray-400 hover:text-primary">سياسة الخصوصية</a>
+                    <a href="#contact" class="text-sm text-gray-400 hover:text-primary">اتصل بنا</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const inputText = document.getElementById('input-text');
+        const outputText = document.getElementById('output-text');
+        const convertBtn = document.getElementById('convert-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const wordCount = document.getElementById('word-count');
+        const conversionTime = document.getElementById('conversion-time');
+        const charCount = document.getElementById('char-count');
+        const exampleBtns = document.querySelectorAll('.example-btn');
+
+        // Examples data
+        const examples = {
+            colloquial: {
+                input: "هذا الشيء حلو كتير، والله ما شاء الله عليه، بصراحة روعة",
+                output: "هذا الأمر جيد جدًا، وهو مثير للإعجاب حقًا، وبكل صراحة فإنه رائع"
+            },
+            academic: {
+                input: "النتائج كانت كويسة وتدل على إنه في تقدم في الأداء",
+                output: "أظهرت النتائج مؤشرات إيجابية تشير إلى تحسن ملحوظ في الأداء"
+            },
+            formatting: {
+                input: "هذا النص طويل جدًا ويحتاج إلى تقسيم إلى فقرات ليسهل قراءته وفهمه من قبل الجميع لأنه بهذه الطريقة يصعب متابعته واستيعاب محتواه",
+                output: "هذا النص طويل جدًا ويحتاج إلى تقسيم إلى فقرات ليسهل قراءته وفهمه من قبل الجميع.\n\nوذلك لأنه بهذه الطريقة يصعب متابعته واستيعاب محتواه."
+            }
+        };
+
+        // Event Listeners
+        inputText.addEventListener('input', updateUI);
+        convertBtn.addEventListener('click', convertText);
+        resetBtn.addEventListener('click', resetForm);
+        copyBtn.addEventListener('click', copyOutput);
+        downloadBtn.addEventListener('click', downloadOutput);
+        exampleBtns.forEach(btn => btn.addEventListener('click', loadExample));
+
+        // Functions
+        function updateUI() {
+            const text = inputText.value;
+            const charLength = text.length;
+            const wordLength = text.trim() ? text.trim().split(/\s+/).length : 0;
+            charCount.textContent = `${charLength.toLocaleString()}/5000 حرف`;
+            convertBtn.disabled = !text.trim();
+            resetBtn.classList.toggle('hidden', !text.trim());
+        }
+
+        async function convertText() {
+            const text = inputText.value.trim();
+            if (!text) {
+                alert('يرجى إدخال نص لتحويله');
+                return;
+            }
+
+            convertBtn.disabled = true;
+            convertBtn.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 border-white rounded-full border-t-transparent mr-2"></span> جاري التحويل...';
+
+            const conversionType = document.querySelector('input[name="conversionType"]:checked').value;
+            const addBreaks = document.querySelector('input[name="addBreaks"]').checked;
+            const fixSpelling = document.querySelector('input[name="fixSpelling"]').checked;
+            const improveSentences = document.querySelector('input[name="improveSentences"]').checked;
+
+            try {
+                const startTime = performance.now();
+                const response = await fetch('/text-converter/convert', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text,
+                        conversionType,
+                        addBreaks,
+                        fixSpelling,
+                        improveSentences
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `فشل في تحويل النص: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const endTime = performance.now();
+                const timeTaken = ((endTime - startTime) / 1000).toFixed(2);
+
+                outputText.innerHTML = `<p class="text-gray-300">${data.convertedText}</p>`;
+                const words = data.convertedText.trim().split(/\s+/).length;
+                wordCount.textContent = `عدد الكلمات: ${words.toLocaleString()}`;
+                conversionTime.textContent = `وقت التحويل: ${timeTaken} ثانية`;
+            } catch (error) {
+                console.error('Error in convertText:', error);
+                alert(`خطأ: ${error.message}`);
+            } finally {
+                convertBtn.disabled = false;
+                convertBtn.innerHTML = '<i class="ri-play-line ml-2"></i> بدء التحويل';
+            }
+        }
+
+        function resetForm() {
+            inputText.value = '';
+            outputText.innerHTML = '<p class="text-gray-400 animate-pulse-slow">سيظهر النص المحوّل هنا بعد الضغط على زر التحويل...</p>';
+            wordCount.textContent = 'عدد الكلمات: 0';
+            conversionTime.textContent = 'وقت التحويل: 0 ثانية';
+            charCount.textContent = '0/5000 حرف';
+            convertBtn.disabled = true;
+            resetBtn.classList.add('hidden');
+        }
+
+        function copyOutput() {
+            const text = outputText.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                copyBtn.innerHTML = '<i class="ri-check-line"></i>';
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<i class="ri-file-copy-line"></i>';
+                }, 2000);
+            });
+        }
+
+        function downloadOutput() {
+            const text = outputText.textContent;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'النص-المحول.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function loadExample(e) {
+            const exampleType = e.currentTarget.dataset.example;
+            const example = examples[exampleType];
+            
+            inputText.value = example.input;
+            outputText.innerHTML = `<p class="text-gray-300">${example.output}</p>`;
+            
+            const words = example.output.split(/\s+/).length;
+            wordCount.textContent = `عدد الكلمات: ${words}`;
+            conversionTime.textContent = `وقت التحويل: 0.5 ثانية`;
+            charCount.textContent = `${example.input.length.toLocaleString()}/5000 حرف`;
+            
+            convertBtn.disabled = false;
+            resetBtn.classList.remove('hidden');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUI();
+        });
+    </script>
+</body>
+</html>

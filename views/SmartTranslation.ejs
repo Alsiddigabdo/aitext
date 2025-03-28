@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الترجمة الذكية | محرك الترجمة المتقدم</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5CF6",
+                        secondary: "#6366F1",
+                    },
+                    borderRadius: {
+                        none: "0px",
+                        sm: "4px",
+                        DEFAULT: "8px",
+                        md: "12px",
+                        lg: "16px",
+                        xl: "20px",
+                        "2xl": "24px",
+                        "3xl": "32px",
+                        full: "9999px",
+                        button: "8px",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+        .glass-card {
+            background: rgba(26, 36, 61, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        textarea {
+            min-height: 200px;
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .translation-item {
+            transition: all 0.3s ease;
+        }
+        .translation-item:hover {
+            transform: translateX(-5px);
+            background: rgba(139, 92, 246, 0.1);
+        }
+        .language-flag {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .translated-text {
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <%- include('partials/navbar') %>
+
+    <!-- Main Content -->
+    <main class="mt-20 flex-grow">
+        <section class="py-12 md:py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">ترجمة ذكية</span>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-4">الترجمة الذكية للنصوص</h1>
+                    <p class="text-lg text-gray-400 max-w-2xl mx-auto">ترجمة متقدمة تحافظ على الأسلوب والسياق</p>
+                </div>
+
+                <div class="glass-card p-6 rounded-lg mb-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Source Text -->
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center space-x-2 space-x-reverse">
+                                    <img src="https://flagcdn.com/24x18/sa.png" class="language-flag" alt="العربية">
+                                    <h2 class="font-medium">النص الأصلي</h2>
+                                </div>
+                                <div class="relative">
+                                    <select id="source-lang" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary">
+                                        <option value="ar">العربية</option>
+                                        <option value="en">الإنجليزية</option>
+                                        <option value="fr">الفرنسية</option>
+                                        <option value="de">الألمانية</option>
+                                        <option value="es">الإسبانية</option>
+                                        <option value="zh">الصينية</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <textarea id="source-text" class="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="أدخل النص الذي تريد ترجمته هنا..."></textarea>
+                            <div class="flex items-center justify-between mt-2">
+                                <div class="text-sm text-gray-400">عدد الكلمات: <span id="word-count" class="text-white">0</span></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Translated Text -->
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center space-x-2 space-x-reverse">
+                                    <img src="https://flagcdn.com/24x18/gb.png" class="language-flag" alt="الإنجليزية">
+                                    <h2 class="font-medium">النص المترجم</h2>
+                                </div>
+                                <div class="relative">
+                                    <select id="target-lang" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary">
+                                        <option value="en">الإنجليزية</option>
+                                        <option value="ar">العربية</option>
+                                        <option value="fr">الفرنسية</option>
+                                        <option value="de">الألمانية</option>
+                                        <option value="es">الإسبانية</option>
+                                        <option value="zh">الصينية</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="translated-container" class="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 min-h-[200px]">
+                                <div id="translated-text" class="translated-text text-gray-400 whitespace-pre-wrap">سيظهر النص المترجم هنا</div>
+                            </div>
+                            <div class="flex items-center justify-between mt-2">
+                                <div class="text-sm text-gray-400">جودة الترجمة: <span id="quality-score" class="text-white">--</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Translation Options -->
+                    <div class="mt-6">
+                        <h3 class="font-medium mb-3">خيارات الترجمة المتقدمة</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="flex items-center space-x-2 space-x-reverse">
+                                <input type="checkbox" id="preserveStyle" class="text-primary" checked>
+                                <label for="preserveStyle" class="text-sm">الحفاظ على الأسلوب</label>
+                            </div>
+                            <div class="flex items-center space-x-2 space-x-reverse">
+                                <input type="checkbox" id="formalTone" class="text-primary">
+                                <label for="formalTone" class="text-sm">النبرة الرسمية</label>
+                            </div>
+                            <div class="flex items-center space-x-2 space-x-reverse">
+                                <input type="checkbox" id="academicMode" class="text-primary">
+                                <label for="academicMode" class="text-sm">الوضع الأكاديمي</label>
+                            </div>
+                            <div class="flex items-center space-x-2 space-x-reverse">
+                                <input type="checkbox" id="marketingMode" class="text-primary">
+                                <label for="marketingMode" class="text-sm">الوضع التسويقي</label>
+                            </div>
+                            <div class="flex items-center space-x-2 space-x-reverse">
+                                <input type="checkbox" id="culturalAdapt" class="text-primary" checked>
+                                <label for="culturalAdapt" class="text-sm">التكيف الثقافي</label>
+                            </div>
+                            <div class="flex items-center space-x-2 space-x-reverse">
+                                <input type="checkbox" id="idiomsDetection" class="text-primary" checked>
+                                <label for="idiomsDetection" class="text-sm">اكتشاف التعابير</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+                        <button id="translate-btn" class="px-6 py-3 rounded-button bg-primary text-white hover:bg-secondary transition flex items-center justify-center">
+                            <i class="ri-translate-2 ml-2"></i> ترجمة النص
+                        </button>
+                        <button id="clear-btn" class="px-6 py-3 rounded-button bg-gray-700 text-white hover:bg-gray-600 transition flex items-center justify-center">
+                            <i class="ri-eraser-line ml-2"></i> مسح النص
+                        </button>
+                        <button id="improve-btn" class="px-6 py-3 rounded-button bg-gray-700 text-white hover:bg-gray-600 transition flex items-center justify-center">
+                            <i class="ri-ai-generate ml-2"></i> تحسين الترجمة
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Quality Analysis -->
+                <div class="glass-card p-6 rounded-lg mb-8">
+                    <h2 class="text-xl font-bold mb-6 flex items-center">
+                        <i class="ri-bar-chart-line ml-2"></i> تحليل جودة الترجمة
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="p-4 rounded-lg bg-gray-800">
+                            <div class="text-sm text-gray-400 mb-1">الدقة اللغوية</div>
+                            <div class="flex items-center">
+                                <div class="w-full bg-gray-700 rounded-full h-2.5 mr-2">
+                                    <div id="accuracy-bar" class="bg-yellow-400 h-2.5 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <span id="accuracy-score" class="text-sm font-medium">--%</span>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-lg bg-gray-800">
+                            <div class="text-sm text-gray-400 mb-1">الحفاظ على الأسلوب</div>
+                            <div class="flex items-center">
+                                <div class="w-full bg-gray-700 rounded-full h-2.5 mr-2">
+                                    <div id="style-bar" class="bg-blue-400 h-2.5 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <span id="style-score" class="text-sm font-medium">--%</span>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-lg bg-gray-800">
+                            <div class="text-sm text-gray-400 mb-1">التكيف الثقافي</div>
+                            <div class="flex items-center">
+                                <div class="w-full bg-gray-700 rounded-full h-2.5 mr-2">
+                                    <div id="cultural-bar" class="bg-green-400 h-2.5 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <span id="cultural-score" class="text-sm font-medium">--%</span>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-lg bg-gray-800">
+                            <div class="text-sm text-gray-400 mb-1">الطلاقة اللغوية</div>
+                            <div class="flex items-center">
+                                <div class="w-full bg-gray-700 rounded-full h-2.5 mr-2">
+                                    <div id="fluency-bar" class="bg-purple-400 h-2.5 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <span id="fluency-score" class="text-sm font-medium">--%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 p-4 rounded-lg bg-gray-800 hidden" id="quality-feedback">
+                        <h3 class="font-medium mb-2">ملاحظات على الترجمة:</h3>
+                        <div id="feedback-text" class="text-sm text-gray-400">سيتم عرض الملاحظات حول جودة الترجمة هنا بعد تحليل النص.</div>
+                    </div>
+                </div>
+                
+                <!-- Translation History -->
+                <div class="glass-card p-6 rounded-lg">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                        <h2 class="text-xl font-bold flex items-center">
+                            <i class="ri-history-line ml-2"></i> سجل الترجمات
+                        </h2>
+                        <div class="flex items-center space-x-3 space-x-reverse mt-3 md:mt-0">
+                            <button id="export-all-btn" class="px-4 py-2 rounded-button bg-gray-700 text-white hover:bg-gray-600 transition flex items-center">
+                                <i class="ri-download-line ml-2"></i> تصدير الكل
+                            </button>
+                            <button id="delete-all-btn" class="px-4 py-2 rounded-button bg-gray-700 text-white hover:bg-gray-600 transition flex items-center">
+                                <i class="ri-delete-bin-line ml-2"></i> حذف الكل
+                            </button>
+                        </div>
+                    </div>
+                    <div id="history-container" class="space-y-4">
+                        <!-- History items will be added dynamically here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <%- include('partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const sourceText = document.getElementById('source-text');
+            const translatedText = document.getElementById('translated-text');
+            const translateBtn = document.getElementById('translate-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const improveBtn = document.getElementById('improve-btn');
+            const wordCount = document.getElementById('word-count');
+            const sourceLang = document.getElementById('source-lang');
+            const targetLang = document.getElementById('target-lang');
+            const qualityFeedback = document.getElementById('quality-feedback');
+            const feedbackText = document.getElementById('feedback-text');
+            const qualityScore = document.getElementById('quality-score');
+            const accuracyBar = document.getElementById('accuracy-bar');
+            const styleBar = document.getElementById('style-bar');
+            const culturalBar = document.getElementById('cultural-bar');
+            const fluencyBar = document.getElementById('fluency-bar');
+            const accuracyScore = document.getElementById('accuracy-score');
+            const styleScore = document.getElementById('style-score');
+            const culturalScore = document.getElementById('cultural-score');
+            const fluencyScore = document.getElementById('fluency-score');
+            const historyContainer = document.getElementById('history-container');
+            const exportAllBtn = document.getElementById('export-all-btn');
+            const deleteAllBtn = document.getElementById('delete-all-btn');
+            const options = {
+                preserveStyle: document.getElementById('preserveStyle'),
+                formalTone: document.getElementById('formalTone'),
+                academicMode: document.getElementById('academicMode'),
+                marketingMode: document.getElementById('marketingMode'),
+                culturalAdapt: document.getElementById('culturalAdapt'),
+                idiomsDetection: document.getElementById('idiomsDetection')
+            };
+
+            // Translation history array
+            let translationHistory = [];
+
+            // Update word count
+            sourceText.addEventListener('input', () => {
+                const text = sourceText.value.trim();
+                const count = text ? text.split(/\s+/).length : 0;
+                wordCount.textContent = count;
+            });
+
+            // Translate function
+            async function translateText() {
+                const text = sourceText.value.trim();
+                if (!text) {
+                    alert('يرجى إدخال نص للترجمة');
+                    return;
+                }
+
+                translateBtn.disabled = true;
+                translateBtn.innerHTML = '<i class="ri-loader-4-line animate-spin ml-2"></i> جاري الترجمة...';
+                translatedText.style.opacity = '0.5';
+
+                try {
+                    const response = await fetch('/smart-translation/translate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            text,
+                            sourceLang: sourceLang.value,
+                            targetLang: targetLang.value,
+                            options: {
+                                preserveStyle: options.preserveStyle.checked,
+                                formalTone: options.formalTone.checked,
+                                academicMode: options.academicMode.checked,
+                                marketingMode: options.marketingMode.checked,
+                                culturalAdapt: options.culturalAdapt.checked,
+                                idiomsDetection: options.idiomsDetection.checked
+                            }
+                        })
+                    });
+
+                    if (!response.ok) throw new Error('فشل في الترجمة');
+
+                    const data = await response.json();
+                    translatedText.textContent = data.translatedText;
+                    translatedText.style.opacity = '1';
+                    translatedText.style.color = '#f3f4f6';
+                    updateQualityAnalysis(data.quality);
+                    qualityFeedback.classList.remove('hidden');
+                    feedbackText.textContent = data.feedback || 'ترجمة ناجحة';
+                    qualityScore.textContent = `${Math.round((data.quality.accuracy + data.quality.style + data.quality.cultural + data.quality.fluency) / 4)}%`;
+
+                    // Add to history
+                    addToHistory(text, data.translatedText, sourceLang.value, targetLang.value, data.quality);
+                } catch (error) {
+                    translatedText.textContent = `خطأ: ${error.message}`;
+                    translatedText.style.color = '#f87171';
+                    translatedText.style.opacity = '1';
+                } finally {
+                    translateBtn.disabled = false;
+                    translateBtn.innerHTML = '<i class="ri-translate-2 ml-2"></i> ترجمة النص';
+                }
+            }
+
+            // Update quality analysis
+            function updateQualityAnalysis(quality) {
+                accuracyBar.style.width = `${quality.accuracy}%`;
+                styleBar.style.width = `${quality.style}%`;
+                culturalBar.style.width = `${quality.cultural}%`;
+                fluencyBar.style.width = `${quality.fluency}%`;
+                accuracyScore.textContent = `${quality.accuracy}%`;
+                styleScore.textContent = `${quality.style}%`;
+                culturalScore.textContent = `${quality.cultural}%`;
+                fluencyScore.textContent = `${quality.fluency}%`;
+            }
+
+            // Clear function
+            function clearText() {
+                sourceText.value = '';
+                translatedText.textContent = 'سيظهر النص المترجم هنا';
+                translatedText.style.color = '#9ca3af';
+                translatedText.style.opacity = '1';
+                wordCount.textContent = '0';
+                qualityFeedback.classList.add('hidden');
+                qualityScore.textContent = '--';
+                accuracyBar.style.width = '0%';
+                styleBar.style.width = '0%';
+                culturalBar.style.width = '0%';
+                fluencyBar.style.width = '0%';
+                accuracyScore.textContent = '--%';
+                styleScore.textContent = '--%';
+                culturalScore.textContent = '--%';
+                fluencyScore.textContent = '--%';
+            }
+
+            // Improve function
+            async function improveTranslation() {
+                const currentText = translatedText.textContent.trim();
+                if (!currentText || currentText === 'سيظهر النص المترجم هنا') {
+                    alert('لا يوجد نص مترجم لتحسينه');
+                    return;
+                }
+
+                improveBtn.disabled = true;
+                improveBtn.innerHTML = '<i class="ri-loader-4-line animate-spin ml-2"></i> جاري التحسين...';
+                translatedText.style.opacity = '0.5';
+
+                try {
+                    const response = await fetch('/smart-translation/improve', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            text: sourceText.value,
+                            translatedText: currentText,
+                            targetLang: targetLang.value,
+                            options: {
+                                preserveStyle: options.preserveStyle.checked,
+                                formalTone: options.formalTone.checked,
+                                academicMode: options.academicMode.checked,
+                                marketingMode: options.marketingMode.checked,
+                                culturalAdapt: options.culturalAdapt.checked,
+                                idiomsDetection: options.idiomsDetection.checked
+                            }
+                        })
+                    });
+
+                    if (!response.ok) throw new Error('فشل في تحسين الترجمة');
+
+                    const data = await response.json();
+                    translatedText.textContent = data.translatedText;
+                    translatedText.style.opacity = '1';
+                    translatedText.style.color = '#f3f4f6';
+                    updateQualityAnalysis(data.quality);
+                    feedbackText.textContent = data.feedback || 'تم تحسين الترجمة بنجاح';
+                    qualityScore.textContent = `${Math.round((data.quality.accuracy + data.quality.style + data.quality.cultural + data.quality.fluency) / 4)}%`;
+
+                    // Update history with improved translation
+                    addToHistory(sourceText.value, data.translatedText, sourceLang.value, targetLang.value, data.quality);
+                } catch (error) {
+                    translatedText.textContent = `خطأ: ${error.message}`;
+                    translatedText.style.color = '#f87171';
+                    translatedText.style.opacity = '1';
+                } finally {
+                    improveBtn.disabled = false;
+                    improveBtn.innerHTML = '<i class="ri-ai-generate ml-2"></i> تحسين الترجمة';
+                }
+            }
+
+            // Add to history function
+            function addToHistory(source, translated, sourceLang, targetLang, quality) {
+                const timestamp = new Date().toLocaleString('ar', { dateStyle: 'medium', timeStyle: 'short' });
+                const historyItem = {
+                    id: Date.now(),
+                    source,
+                    translated,
+                    sourceLang,
+                    targetLang,
+                    quality,
+                    timestamp
+                };
+                translationHistory.unshift(historyItem);
+                renderHistory();
+            }
+
+            // Render history
+            function renderHistory() {
+                historyContainer.innerHTML = translationHistory.map(item => `
+                    <div class="translation-item p-5 rounded-lg bg-gray-800" data-id="${item.id}">
+                        <div class="flex flex-col md:flex-row md:items-start md:justify-between">
+                            <div class="md:w-3/4">
+                                <div class="flex items-center space-x-2 space-x-reverse mb-2">
+                                    <span class="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">${getLangName(item.sourceLang)} ← ${getLangName(item.targetLang)}</span>
+                                    <span class="text-xs text-gray-400">${item.timestamp}</span>
+                                </div>
+                                <h3 class="font-medium mb-1">ترجمة نص</h3>
+                                <p class="text-sm text-gray-400 line-clamp-2 mb-3">${item.source}</p>
+                                <div class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="text-xs px-2 py-1 rounded-full bg-green-400/10 text-green-400">الدقة: ${item.quality.accuracy}%</span>
+                                    <span class="text-xs px-2 py-1 rounded-full bg-blue-400/10 text-blue-400">الأسلوب: ${item.quality.style}%</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 space-x-reverse md:space-x-0 md:space-x-reverse-2 mt-3 md:mt-0">
+                                <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition retranslate-btn" title="إعادة الترجمة">
+                                    <i class="ri-repeat-line text-primary"></i>
+                                </button>
+                                <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition download-btn" title="تنزيل">
+                                    <i class="ri-download-line text-gray-300"></i>
+                                </button>
+                                <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition delete-btn" title="حذف">
+                                    <i class="ri-delete-bin-line text-red-400"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Add event listeners to buttons
+                document.querySelectorAll('.retranslate-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.target.closest('.translation-item').dataset.id;
+                        const item = translationHistory.find(h => h.id == id);
+                        sourceText.value = item.source;
+                        sourceLang.value = item.sourceLang;
+                        targetLang.value = item.targetLang;
+                        translateText();
+                    });
+                });
+
+                document.querySelectorAll('.download-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.target.closest('.translation-item').dataset.id;
+                        const item = translationHistory.find(h => h.id == id);
+                        downloadTranslation(item);
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.target.closest('.translation-item').dataset.id;
+                        if (confirm('هل أنت متأكد من حذف هذه الترجمة؟')) {
+                            translationHistory = translationHistory.filter(h => h.id != id);
+                            renderHistory();
+                        }
+                    });
+                });
+            }
+
+            // Get language name
+            function getLangName(code) {
+                const langs = { ar: 'عربي', en: 'إنجليزي', fr: 'فرنسي', de: 'ألماني', es: 'إسباني', zh: 'صيني' };
+                return langs[code] || code;
+            }
+
+            // Download translation
+            function downloadTranslation(item) {
+                const content = `النص الأصلي (${getLangName(item.sourceLang)}):\n${item.source}\n\nالنص المترجم (${getLangName(item.targetLang)}):\n${item.translated}\n\nالجودة:\n- الدقة: ${item.quality.accuracy}%\n- الأسلوب: ${item.quality.style}%\n- التكيف الثقافي: ${item.quality.cultural}%\n- الطلاقة: ${item.quality.fluency}%`;
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `translation_${item.id}.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            // Export all translations
+            exportAllBtn.addEventListener('click', () => {
+                if (translationHistory.length === 0) {
+                    alert('لا توجد ترجمات لتصديرها');
+                    return;
+                }
+                const content = translationHistory.map(item => 
+                    `النص الأصلي (${getLangName(item.sourceLang)}):\n${item.source}\n\nالنص المترجم (${getLangName(item.targetLang)}):\n${item.translated}\n\nالجودة:\n- الدقة: ${item.quality.accuracy}%\n- الأسلوب: ${item.quality.style}%\n- التكيف الثقافي: ${item.quality.cultural}%\n- الطلاقة: ${item.quality.fluency}%\n\n---\n`
+                ).join('');
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'all_translations.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+
+            // Delete all translations
+            deleteAllBtn.addEventListener('click', () => {
+                if (translationHistory.length === 0) {
+                    alert('لا توجد ترجمات لحذفها');
+                    return;
+                }
+                if (confirm('هل أنت متأكد من حذف جميع الترجمات؟')) {
+                    translationHistory = [];
+                    renderHistory();
+                }
+            });
+
+            // Event listeners
+            translateBtn.addEventListener('click', translateText);
+            clearBtn.addEventListener('click', clearText);
+            improveBtn.addEventListener('click', improveTranslation);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اقتراح عناوين جذابة | محلل النصوص الذكي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5CF6",
+                        secondary: "#6366F1",
+                    },
+                    borderRadius: {
+                        button: "8px",
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .btn-primary {
+            background-color: #8B5CF6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background-color: #6366F1;
+        }
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .title-option {
+            transition: all 0.3s ease;
+        }
+        .title-option:hover {
+            background-color: rgba(139, 92, 246, 0.1);
+            transform: scale(1.02);
+        }
+        .title-type-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+    <!-- Header -->
+    <%- include('partials/navbar') %>
+
+
+    <!-- Main Content -->
+    <main class="flex-1 pt-24 pb-16">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h1 class="text-4xl lg:text-5xl font-bold mb-6 animate-fade-in">اقتراح عناوين جذابة</h1>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto animate-fade-in">احصل على عناوين تسويقية مثالية تلبي احتياجاتك</p>
+            </div>
+
+            <!-- Title Suggestion Section -->
+            <div class="glass-card p-8 rounded-lg max-w-4xl mx-auto animate-fade-in">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold mb-2 flex items-center gap-2">
+                        <i class="ri-lightbulb-line text-primary"></i>
+                        أدخل وصف المحتوى
+                    </h2>
+                    <p class="text-sm text-gray-400 mb-4">صف المحتوى التسويقي الخاص بك لاقتراح عناوين مناسبة</p>
+                </div>
+
+                <!-- Input -->
+                <textarea
+                    id="input-text"
+                    placeholder="أدخل وصفًا للمحتوى (مثال: منتج جديد للعناية بالبشرة يعتمد على مكونات طبيعية)"
+                    class="w-full h-40 p-4 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none text-white mb-6"
+                ></textarea>
+
+                <!-- Tone Selection -->
+                <div class="mb-6">
+                    <h3 class="font-medium mb-3 flex items-center gap-2">
+                        <i class="ri-volume-up-line text-primary"></i>
+                        اختر نبرة العنوان
+                    </h3>
+                    <div class="flex flex-wrap gap-3">
+                        <button class="tone-btn active px-4 py-2 rounded-lg bg-primary text-white" data-tone="professional">احترافية</button>
+                        <button class="tone-btn px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600" data-tone="friendly">ودودة</button>
+                        <button class="tone-btn px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600" data-tone="provocative">استفزازية</button>
+                        <button class="tone-btn px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600" data-tone="humorous">فكاهية</button>
+                        <button class="tone-btn px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600" data-tone="emotional">عاطفية</button>
+                    </div>
+                </div>
+
+                <!-- Title Types -->
+                <div class="mb-6">
+                    <h3 class="font-medium mb-3 flex items-center gap-2">
+                        <i class="ri-stack-line text-primary"></i>
+                        أنواع العناوين المطلوبة
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                            <input type="checkbox" class="title-type text-primary rounded" value="lists" checked>
+                            <span>قوائم</span>
+                        </label>
+                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                            <input type="checkbox" class="title-type text-primary rounded" value="questions" checked>
+                            <span>أسئلة</span>
+                        </label>
+                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                            <input type="checkbox" class="title-type text-primary rounded" value="how-to" checked>
+                            <span>كيفية</span>
+                        </label>
+                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                            <input type="checkbox" class="title-type text-primary rounded" value="reasons" checked>
+                            <span>أسباب</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2 mb-6">
+                    <button id="reset-btn" class="btn-secondary font-medium flex items-center gap-2 hidden">
+                        <i class="ri-refresh-line"></i>
+                        إعادة ضبط
+                    </button>
+                    <button id="suggest-btn" class="btn-primary font-medium flex items-center gap-2 disabled:bg-gray-600 disabled:cursor-not-allowed" disabled>
+                        <i class="ri-sparkling-line"></i>
+                        اقتراح العناوين
+                    </button>
+                </div>
+
+                <!-- Suggested Titles -->
+                <div id="output-section" class="hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold flex items-center gap-2">
+                            <i class="ri-list-check text-primary"></i>
+                            العناوين المقترحة
+                        </h3>
+                        <div class="flex items-center space-x-2 space-x-reverse">
+                            <span class="text-sm text-gray-400">تم إنشاؤها في: <span id="generation-time">0</span> ثانية</span>
+                            <button id="regenerate-btn" class="text-primary hover:underline flex items-center gap-1 text-sm">
+                                <i class="ri-restart-line"></i>
+                                إعادة توليد
+                            </button>
+                        </div>
+                    </div>
+                    <div id="title-list" class="space-y-4"></div>
+                    <div class="mt-6 flex justify-between items-center">
+                        <div class="text-sm text-gray-400">
+                            <span id="selected-count">0</span> من <span id="total-count">0</span> عناوين محددة
+                        </div>
+                        <div class="flex gap-2">
+                            <button id="copy-selected-btn" class="btn-secondary font-medium flex items-center gap-2 disabled:opacity-50" disabled>
+                                <i class="ri-file-copy-line"></i>
+                                نسخ المحدد
+                            </button>
+                            <button id="copy-all-btn" class="btn-secondary font-medium flex items-center gap-2">
+                                <i class="ri-file-copy-line"></i>
+                                نسخ الكل
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Examples Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold mb-2">أمثلة على عناوين جذابة</h2>
+                <p class="text-gray-400">استلهم من هذه الأمثلة لإنشاء عناوين مثالية لمحتواك</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="glass-card p-6 rounded-lg">
+                    <h3 class="font-medium mb-3 flex items-center gap-2">
+                        <i class="ri-shopping-bag-line text-primary"></i>
+                        عناوين لمنتجات
+                    </h3>
+                    <ul class="space-y-3 text-gray-300">
+                        <li class="flex items-start gap-2">
+                            <span class="title-type-badge bg-purple-900/30 text-purple-400">قائمة</span>
+                            <span>5 أسباب تجعل هذا المنتج الأفضل في السوق</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="title-type-badge bg-blue-900/30 text-blue-400">سؤال</span>
+                            <span>هل تعلم أن هذا المنتج يمكن أن يغير حياتك؟</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="title-type-badge bg-green-900/30 text-green-400">كيفية</span>
+                            <span>كيف تحصل على أفضل النتائج باستخدام هذا المنتج؟</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="glass-card p-6 rounded-lg">
+                    <h3 class="font-medium mb-3 flex items-center gap-2">
+                        <i class="ri-article-line text-primary"></i>
+                        عناوين للمدونات
+                    </h3>
+                    <ul class="space-y-3 text-gray-300">
+                        <li class="flex items-start gap-2">
+                            <span class="title-type-badge bg-purple-900/30 text-purple-400">قائمة</span>
+                            <span>10 أخطاء شائعة يجب تجنبها عند إنشاء موقعك الأول</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="title-type-badge bg-blue-900/30 text-blue-400">سؤال</span>
+                            <span>لماذا يفشل معظم المدونين في تحقيق الدخل؟</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="title-type-badge bg-green-900/30 text-green-400">كيفية</span>
+                            <span>كيف تكتب محتوى يجذب الآلاف من الزوار؟</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+    <script>
+        // DOM Elements
+        const inputText = document.getElementById('input-text');
+        const resetBtn = document.getElementById('reset-btn');
+        const suggestBtn = document.getElementById('suggest-btn');
+        const outputSection = document.getElementById('output-section');
+        const titleList = document.getElementById('title-list');
+        const copyAllBtn = document.getElementById('copy-all-btn');
+        const copySelectedBtn = document.getElementById('copy-selected-btn');
+        const regenerateBtn = document.getElementById('regenerate-btn');
+        const selectedCountEl = document.getElementById('selected-count');
+        const totalCountEl = document.getElementById('total-count');
+        const generationTimeEl = document.getElementById('generation-time');
+        const toneButtons = document.querySelectorAll('.tone-btn');
+        const titleTypeCheckboxes = document.querySelectorAll('.title-type');
+    
+        // State
+        let selectedTone = 'professional';
+        let suggestedTitles = [];
+    
+        // Update button states
+        function updateButtonStates() {
+            const hasText = inputText.value.trim();
+            resetBtn.classList.toggle('hidden', !hasText);
+            suggestBtn.disabled = !hasText || !Array.from(titleTypeCheckboxes).some(cb => cb.checked);
+        }
+    
+        // Reset form
+        function resetForm() {
+            inputText.value = '';
+            outputSection.classList.add('hidden');
+            titleList.innerHTML = '';
+            resetBtn.classList.add('hidden');
+            suggestBtn.disabled = true;
+            selectedCountEl.textContent = '0';
+            totalCountEl.textContent = '0';
+            generationTimeEl.textContent = '0';
+            suggestedTitles = [];
+        }
+    
+        // Tone selection
+        toneButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                toneButtons.forEach(b => b.classList.remove('active', 'bg-primary', 'text-white'));
+                toneButtons.forEach(b => b.classList.add('bg-gray-700', 'hover:bg-gray-600'));
+                btn.classList.add('active', 'bg-primary', 'text-white');
+                btn.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                selectedTone = btn.dataset.tone;
+            });
+        });
+    
+        // Suggest titles with API call
+        async function suggestTitles() {
+            if (!inputText.value.trim()) {
+                alert('يرجى إدخال وصف المحتوى لاقتراح العناوين');
+                return;
+            }
+    
+            const selectedTypes = Array.from(titleTypeCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+    
+            if (selectedTypes.length === 0) {
+                alert('يرجى اختيار نوع واحد على الأقل من أنواع العناوين');
+                return;
+            }
+    
+            suggestBtn.disabled = true;
+            suggestBtn.innerHTML = '<span class="inline-block h-4 w-4 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2"></span>جاري الاقتراح...';
+    
+            try {
+                const startTime = performance.now();
+                const response = await fetch('/suggest-titles/suggest', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        content: inputText.value,
+                        tone: selectedTone,
+                        types: selectedTypes
+                    })
+                });
+    
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `فشل في اقتراح العناوين: ${response.status}`);
+                }
+    
+                const data = await response.json();
+                suggestedTitles = data.titles;
+                const endTime = performance.now();
+                const generationTime = ((endTime - startTime) / 1000).toFixed(2);
+    
+                renderTitles(suggestedTitles);
+                outputSection.classList.remove('hidden');
+                generationTimeEl.textContent = generationTime;
+                totalCountEl.textContent = suggestedTitles.length;
+                updateSelectedCount();
+    
+                if (data.feedback) {
+                    alert(data.feedback);
+                }
+            } catch (error) {
+                console.error('Error in suggestTitles:', error);
+                alert(`خطأ: ${error.message}`);
+            } finally {
+                suggestBtn.disabled = false;
+                suggestBtn.innerHTML = '<i class="ri-sparkling-line"></i> اقتراح العناوين';
+                updateButtonStates();
+            }
+        }
+    
+        // Improve titles with API call
+        async function improveTitles() {
+            if (!suggestedTitles.length) {
+                alert('لا توجد عناوين لتحسينها');
+                return;
+            }
+    
+            const improveBtn = document.getElementById('improve-btn');
+            improveBtn.disabled = true;
+            improveBtn.innerHTML = '<span class="inline-block h-4 w-4 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2"></span>جاري التحسين...';
+    
+            const selectedTypes = Array.from(titleTypeCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+    
+            if (selectedTypes.length === 0) {
+                alert('يرجى اختيار نوع واحد على الأقل من أنواع العناوين');
+                return;
+            }
+    
+            try {
+                const startTime = performance.now();
+                const response = await fetch('/suggest-titles/improve', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        content: inputText.value,
+                        currentTitles: suggestedTitles,
+                        tone: selectedTone,
+                        types: selectedTypes
+                    })
+                });
+    
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `فشل في تحسين العناوين: ${response.status}`);
+                }
+    
+                const data = await response.json();
+                suggestedTitles = data.titles;
+                const endTime = performance.now();
+                const generationTime = ((endTime - startTime) / 1000).toFixed(2);
+    
+                renderTitles(suggestedTitles);
+                generationTimeEl.textContent = generationTime;
+                totalCountEl.textContent = suggestedTitles.length;
+                updateSelectedCount();
+    
+                if (data.feedback) {
+                    alert(data.feedback);
+                }
+            } catch (error) {
+                console.error('Error in improveTitles:', error);
+                alert(`خطأ: ${error.message}`);
+            } finally {
+                improveBtn.disabled = false;
+                improveBtn.innerHTML = '<i class="ri-refresh-line"></i> تحسين العناوين';
+            }
+        }
+    
+        // Render titles in the list
+        function renderTitles(titles) {
+            titleList.innerHTML = '';
+            titles.forEach((title, index) => {
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'title-option p-4 rounded-lg border border-gray-700 flex justify-between items-center';
+                titleDiv.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" class="title-checkbox rounded text-primary" id="title-${index}">
+                        <label for="title-${index}" class="cursor-pointer">${title}</label>
+                    </div>
+                    <button class="copy-title-btn text-primary hover:underline flex items-center gap-1" data-title="${title}">
+                        <i class="ri-file-copy-line"></i>
+                        نسخ
+                    </button>
+                `;
+                titleList.appendChild(titleDiv);
+            });
+    
+            document.querySelectorAll('.title-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateSelectedCount);
+            });
+            document.querySelectorAll('.copy-title-btn').forEach(btn => {
+                btn.addEventListener('click', () => copySingleTitle(btn));
+            });
+        }
+    
+        // Update selected titles count
+        function updateSelectedCount() {
+            const selectedCount = document.querySelectorAll('.title-checkbox:checked').length;
+            selectedCountEl.textContent = selectedCount;
+            copySelectedBtn.disabled = selectedCount === 0;
+        }
+    
+        // Copy single title
+        function copySingleTitle(btn) {
+            const title = btn.dataset.title;
+            navigator.clipboard.writeText(title);
+            btn.innerHTML = '<i class="ri-check-line"></i> تم النسخ';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="ri-file-copy-line"></i> نسخ';
+            }, 2000);
+        }
+    
+        // Copy all titles
+        function copyAllTitles() {
+            const titles = suggestedTitles.join('\n');
+            navigator.clipboard.writeText(titles);
+            copyAllBtn.innerHTML = '<i class="ri-check-line"></i> تم النسخ';
+            setTimeout(() => {
+                copyAllBtn.innerHTML = '<i class="ri-file-copy-line"></i> نسخ الكل';
+            }, 2000);
+        }
+    
+        // Copy selected titles
+        function copySelectedTitles() {
+            const selectedTitles = Array.from(document.querySelectorAll('.title-checkbox:checked'))
+                .map(checkbox => checkbox.nextElementSibling.textContent)
+                .join('\n');
+            navigator.clipboard.writeText(selectedTitles);
+            copySelectedBtn.innerHTML = '<i class="ri-check-line"></i> تم النسخ';
+            setTimeout(() => {
+                copySelectedBtn.innerHTML = '<i class="ri-file-copy-line"></i> نسخ المحدد';
+            }, 2000);
+        }
+    
+        // Add Improve Titles button dynamically
+        document.addEventListener('DOMContentLoaded', () => {
+            const improveBtn = document.createElement('button');
+            improveBtn.id = 'improve-btn';
+            improveBtn.className = 'btn-secondary font-medium flex items-center gap-2';
+            improveBtn.innerHTML = '<i class="ri-refresh-line"></i> تحسين العناوين';
+            improveBtn.addEventListener('click', improveTitles);
+    
+            const buttonContainer = document.querySelector('#output-section .mt-6 .flex');
+            if (buttonContainer) {
+                buttonContainer.appendChild(improveBtn);
+            }
+    
+            updateButtonStates();
+            titleTypeCheckboxes.forEach(cb => cb.addEventListener('change', updateButtonStates));
+        });
+    
+        // Event Listeners
+        inputText.addEventListener('input', updateButtonStates);
+        resetBtn.addEventListener('click', resetForm);
+        suggestBtn.addEventListener('click', suggestTitles);
+        regenerateBtn.addEventListener('click', suggestTitles);
+        copyAllBtn.addEventListener('click', copyAllTitles);
+        copySelectedBtn.addEventListener('click', copySelectedTitles);
+    
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+    </script>
+   
+</body>
+</html>

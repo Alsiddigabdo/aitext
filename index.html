@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محلل النصوص الذكي | تحليل وتحسين النصوص بالذكاء الاصطناعي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5CF6",
+                        secondary: "#6366F1",
+                    },
+                    borderRadius: {
+                        none: "0px",
+                        sm: "4px",
+                        DEFAULT: "8px",
+                        md: "12px",
+                        lg: "16px",
+                        xl: "20px",
+                        "2xl": "24px",
+                        "3xl": "32px",
+                        full: "9999px",
+                        button: "8px",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+        .glass-card {
+            background: rgba(26, 36, 61, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .animate-fade-up {
+            animation: fadeUp 0.5s ease forwards;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background-color: rgba(139, 92, 246, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .feature-icon i {
+            font-size: 24px;
+            color: #8B5CF6;
+        }
+        .tool-card {
+            background: rgba(26, 36, 61, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+        .tool-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: #8B5CF6;
+        }
+        .tool-icon {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(139, 92, 246, 0.15);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tool-icon i {
+            font-size: 28px;
+            color: #8B5CF6;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 py-4 bg-gray-800 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-2 space-x-reverse">
+                    <span class="text-2xl font-['Pacifico'] text-primary">محلل النصوص</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8 space-x-reverse">
+                    <div class="flex space-x-6 space-x-reverse">
+                        <a href="#الرئيسية" class="text-gray-300 hover:text-primary transition">الرئيسية</a>
+                        <a href="#features" class="text-gray-300 hover:text-primary transition">المميزات</a>
+                        <a href="#التسعير" class="text-gray-300 hover:text-primary transition">التسعير</a>
+                        <a href="#tools" class="text-gray-300 hover:text-primary transition">الأدوات</a>
+                        <a href="#contact" class="text-gray-300 hover:text-primary transition">تواصل معنا</a>
+                    </div>
+                    <div class="flex items-center space-x-4 space-x-reverse">
+                        <select class="bg-transparent border-none pr-8 text-gray-300">
+                            <option value="ar">العربية</option>
+                            <option value="en">English</option>
+                        </select>
+                        <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-700">
+                            <i class="ri-sun-line text-xl text-gray-300"></i>
+                        </button>
+                        <a href="#signup" class="px-4 py-2 rounded-button bg-white text-primary border border-primary hover:bg-primary hover:text-white transition">تجربة مجانية</a>
+                        <a href="#login" class="px-4 py-2 rounded-button bg-primary text-white hover:bg-secondary transition">تسجيل الدخول</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4 md:hidden">
+                    <button id="theme-toggle-mobile" class="p-2 rounded-full hover:bg-gray-700">
+                        <i class="ri-sun-line text-xl text-gray-300"></i>
+                    </button>
+                    <button id="menu-toggle" class="p-2 rounded-lg hover:bg-gray-700">
+                        <i class="ri-menu-line text-2xl text-gray-300"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden bg-gray-800 mt-2 rounded-lg mx-4">
+                <div class="flex flex-col py-2 space-y-1">
+                    <a href="#الرئيسية" class="px-4 py-3 text-gray-300 hover:text-primary hover:bg-gray-700">الرئيسية</a>
+                    <a href="#features" class="px-4 py-3 text-gray-300 hover:text-primary hover:bg-gray-700">المميزات</a>
+                    <a href="#التسعير" class="px-4 py-3 text-gray-300 hover:text-primary hover:bg-gray-700">التسعير</a>
+                    <a href="#tools" class="px-4 py-3 text-gray-300 hover:text-primary hover:bg-gray-700">الأدوات</a>
+                    <a href="#contact" class="px-4 py-3 text-gray-300 hover:text-primary hover:bg-gray-700">تواصل معنا</a>
+                    <div class="pt-2 border-t border-gray-700">
+                        <a href="#signup" class="block px-4 py-3 text-center rounded-button bg-white text-primary border border-primary hover:bg-primary hover:text-white">تجربة مجانية</a>
+                        <a href="#login" class="block px-4 py-3 text-center rounded-button bg-primary text-white hover:bg-secondary mt-2">تسجيل الدخول</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="الرئيسية" class="pt-32 pb-24 bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="text-center lg:text-right">
+                    <h1 class="text-4xl lg:text-5xl font-bold mb-6 animate-fade-up">
+                        اكتشف قوة تحليل النصوص الذكي
+                    </h1>
+                    <p class="text-xl text-gray-400 mb-8 animate-fade-up" style="animation-delay: 100ms;">
+                        منصة متكاملة تجمع أحدث تقنيات الذكاء الاصطناعي لتحليل وتحسين نصوصك بكفاءة عالية
+                    </p>
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-4 animate-fade-up" style="animation-delay: 200ms;">
+                        <a href="#signup" class="px-8 py-3 rounded-button bg-primary text-white hover:bg-secondary transition">
+                            ابدأ الآن مجاناً
+                        </a>
+                        <a href="#demo" class="px-8 py-3 rounded-button bg-white bg-opacity-10 text-white hover:bg-opacity-20 transition">
+                            شاهد العرض التوضيحي
+                        </a>
+                    </div>
+                </div>
+                <div class="relative animate-fade-up" style="animation-delay: 300ms;">
+                    <img src="https://public.readdy.ai/ai/img_res/651332a7eaf632695ce1c8870fb81309.jpg" 
+                         alt="تحليل النصوص الذكي" 
+                         class="rounded-lg shadow-xl w-full">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 md:py-24 bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4 animate-fade-up">ميزات متقدمة</span>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 animate-fade-up">حلول شاملة لتحسين محتواك</h2>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto animate-fade-up">صمم محلل النصوص الذكي ليوفر لك كل ما تحتاجه لإنشاء محتوى عالي الجودة بكفاءة وسهولة</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                <div class="glass-card p-8 animate-fade-up">
+                    <div class="feature-icon">
+                        <i class="ri-file-text-line"></i>
+                    </div>
+                    <h3 class="text-xl font-medium mb-2">تحليل النصوص الشامل</h3>
+                    <p class="text-gray-400 mb-4">تحليل متعمق للنصوص يشمل الأسلوب، القواعد، والمفردات مع اقتراحات للتحسين</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تحليل الأسلوب اللغوي</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تصحيح الأخطاء النحوية</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>اقتراحات تحسين المفردات</li>
+                    </ul>
+                </div>
+                <div class="glass-card p-8 animate-fade-up" style="animation-delay: 100ms;">
+                    <div class="feature-icon">
+                        <i class="ri-emotion-line"></i>
+                    </div>
+                    <h3 class="text-xl font-medium mb-2">تحليل المشاعر</h3>
+                    <p class="text-gray-400 mb-4">تحليل دقيق لنبرة النص ومشاعره باستخدام خوارزميات الذكاء الاصطناعي المتقدمة</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تحديد النبرة العاطفية</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تحليل ردود الفعل</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تقارير تحليلية مفصلة</li>
+                    </ul>
+                </div>
+                <div class="glass-card p-8 animate-fade-up" style="animation-delay: 200ms;">
+                    <div class="feature-icon">
+                        <i class="ri-search-line"></i>
+                    </div>
+                    <h3 class="text-xl font-medium mb-2">تحسين SEO</h3>
+                    <p class="text-gray-400 mb-4">تحليل وتحسين المحتوى لمحركات البحث مع توصيات مخصصة للكلمات المفتاحية</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تحليل الكلمات المفتاحية</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تحسين العناوين والوصف</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تقارير تحسين المحتوى</li>
+                    </ul>
+                </div>
+                <div class="glass-card p-8 animate-fade-up" style="animation-delay: 300ms;">
+                    <div class="feature-icon">
+                        <i class="ri-refresh-line"></i>
+                    </div>
+                    <h3 class="text-xl font-medium mb-2">إعادة الصياغة</h3>
+                    <p class="text-gray-400 mb-4">تحويل النصوص إلى محتوى احترافي مع الحفاظ على المعنى الأصلي</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>صياغة بأسلوب احترافي</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تجنب الانتحال</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>خيارات متعددة للصياغة</li>
+                    </ul>
+                </div>
+                <div class="glass-card p-8 animate-fade-up" style="animation-delay: 400ms;">
+                    <div class="feature-icon">
+                        <i class="ri-database-2-line"></i>
+                    </div>
+                    <h3 class="text-xl font-medium mb-2">كشف الانتحال</h3>
+                    <p class="text-gray-400 mb-4">نظام متطور لكشف الانتحال يغطي مليارات المصادر عبر الإنترنت</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تغطية شاملة للمصادر</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>نتائج فورية مع دقة عالية</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تقارير مفصلة بالمصادر</li>
+                    </ul>
+                </div>
+                <div class="glass-card p-8 animate-fade-up" style="animation-delay: 500ms;">
+                    <div class="feature-icon">
+                        <i class="ri-lock-line"></i>
+                    </div>
+                    <h3 class="text-xl font-medium mb-2">الخصوصية والأمان</h3>
+                    <p class="text-gray-400 mb-4">حماية كاملة لبياناتك مع تشفير متقدم وضمان السرية التامة</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تشفير البيانات</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>عدم تخزين النصوص</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>معايير أمان عالية</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 md:py-24 bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4 animate-fade-up">إحصائيات</span>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 animate-fade-up">نتائج ملموسة تؤكد فعالية منصتنا</h2>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto animate-fade-up">نحن نفتخر بالأرقام التي حققناها مع عملائنا المميزين</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="glass-card p-6 rounded-lg text-center animate-fade-up">
+                    <div class="text-4xl font-bold text-primary mb-2">+500K</div>
+                    <p class="text-gray-400">نص تم تحليله</p>
+                </div>
+                <div class="glass-card p-6 rounded-lg text-center animate-fade-up" style="animation-delay: 100ms;">
+                    <div class="text-4xl font-bold text-primary mb-2">98%</div>
+                    <p class="text-gray-400">دقة في التحليل</p>
+                </div>
+                <div class="glass-card p-6 rounded-lg text-center animate-fade-up" style="animation-delay: 200ms;">
+                    <div class="text-4xl font-bold text-primary mb-2">+50K</div>
+                    <p class="text-gray-400">مستخدم نشط</p>
+                </div>
+                <div class="glass-card p-6 rounded-lg text-center animate-fade-up" style="animation-delay: 300ms;">
+                    <div class="text-4xl font-bold text-primary mb-2">+100</div>
+                    <p class="text-gray-400">لغة مدعومة</p>
+                </div>
+            </div>
+
+            <!-- Tools Cards Section -->
+            <div id="tools" class="mt-16">
+                <div class="text-center mb-12">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4 animate-fade-up">أدواتنا</span>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 animate-fade-up">استكشف أدواتنا المتقدمة</h2>
+                    <p class="text-lg text-gray-400 max-w-2xl mx-auto animate-fade-up">مجموعة واسعة من الأدوات لتحسين وتحليل النصوص بكفاءة</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <a href="AdvancedTextAnalyzer.html" class="tool-card p-6 rounded-lg text-center animate-fade-up">
+                        <div class="tool-icon mx-auto mb-4">
+                            <i class="ri-file-search-line"></i>
+                        </div>
+                        <h3 class="text-xl font-medium mb-2">تحليل النصوص المتقدم</h3>
+                        <p class="text-gray-400">تحليل شامل للأسلوب والوضوح</p>
+                    </a>
+                    <a href="compare-texts.html" class="tool-card p-6 rounded-lg text-center animate-fade-up" style="animation-delay: 100ms;">
+                        <div class="tool-icon mx-auto mb-4">
+                            <i class="ri-file-compare-line"></i>
+                        </div>
+                        <h3 class="text-xl font-medium mb-2">مقارنة النصوص</h3>
+                        <p class="text-gray-400">اكتشف الفروقات بين النصوص</p>
+                    </a>
+                    <a href="feedback.html" class="tool-card p-6 rounded-lg text-center animate-fade-up" style="animation-delay: 200ms;">
+                        <div class="tool-icon mx-auto mb-4">
+                            <i class="ri-feedback-line"></i>
+                        </div>
+                        <h3 class="text-xl font-medium mb-2">آراء المستخدمين</h3>
+                        <p class="text-gray-400">شارك رأيك واقتراحاتك</p>
+                    </a>
+                    <a href="HistorySaved.html" class="tool-card p-6 rounded-lg text-center animate-fade-up" style="animation-delay: 300ms;">
+                        <div class="tool-icon mx-auto mb-4">
+                            <i class="ri-history-line"></i>
+                        </div>
+                        <h3 class="text-xl font-medium mb-2">سجل التحليلات</h3>
+                        <p class="text-gray-400">راجع نصوصك المحفوظة</p>
+                    </a>
+                    <a href="SmartTranslation.html" class="tool-card p-6 rounded-lg text-center animate-fade-up" style="animation-delay: 400ms;">
+                        <div class="tool-icon mx-auto mb-4">
+                            <i class="ri-translate-2"></i>
+                        </div>
+                        <h3 class="text-xl font-medium mb-2">الترجمة الذكية</h3>
+                        <p class="text-gray-400">ترجمة احترافية بأسلوب طبيعي</p>
+                    </a>
+                    <a href="suggest-titles.html" class="tool-card p-6 rounded-lg text-center animate-fade-up" style="animation-delay: 500ms;">
+                        <div class="tool-icon mx-auto mb-4">
+                            <i class="ri-text"></i>
+                        </div>
+                        <h3 class="text-xl font-medium mb-2">اقتراح العناوين</h3>
+                        <p class="text-gray-400">عناوين جذابة لمحتواك</p>
+                    </a>
+                    <a href="TextConverter.html" class="tool-card p-6 rounded-lg text-center animate-fade-up" style="animation-delay: 600ms;">
+                        <div class="tool-icon mx-auto mb-4">
+                            <i class="ri-swap-line"></i>
+                        </div>
+                        <h3 class="text-xl font-medium mb-2">تحويل النصوص</h3>
+                        <p class="text-gray-400">تحويل النصوص بين الأنماط</p>
+                    </a>
+                    <a href="TextSummarization.html" class="tool-card p-6 rounded-lg text-center animate-fade-up" style="animation-delay: 700ms;">
+                        <div class="tool-icon mx-auto mb-4">
+                            <i class="ri-file-reduce-line"></i>
+                        </div>
+                        <h3 class="text-xl font-medium mb-2">تلخيص النصوص</h3>
+                        <p class="text-gray-400">استخلاص أهم المعلومات</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="التسعير" class="py-16 md:py-24 bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4 animate-fade-up">خطط الاشتراك</span>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 animate-fade-up">اختر الخطة المناسبة لك</h2>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto animate-fade-up">خطط مرنة تناسب احتياجات الأفراد والشركات</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="glass-card p-8 relative animate-fade-up">
+                    <h3 class="text-2xl font-bold mb-4 text-center">المجانية</h3>
+                    <div class="text-center mb-6">
+                        <span class="text-4xl font-bold">$0</span>
+                        <span class="text-gray-400"> / شهرياً</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تحليل حتى 1000 كلمة يومياً</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تصحيح الأخطاء الأساسي</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تحليل المشاعر الأساسي</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>إعادة صياغة محدودة</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تقارير بسيطة</li>
+                    </ul>
+                    <button class="w-full py-3 rounded-button bg-white text-primary border border-primary hover:bg-primary hover:text-white transition">ابدأ مجاناً</button>
+                </div>
+                <div class="glass-card p-8 relative border-2 border-primary md:scale-105 z-10 animate-fade-up" style="animation-delay: 100ms;">
+                    <div class="absolute -top-4 right-4 bg-primary text-white px-4 py-1 rounded-full text-sm">الأكثر طلباً</div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">الاحترافية</h3>
+                    <div class="text-center mb-6">
+                        <span class="text-4xl font-bold">$29</span>
+                        <span class="text-gray-400"> / شهرياً</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تحليل غير محدود</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>جميع ميزات الخطة المجانية</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تحليل SEO متقدم</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>الكشف عن الانتحال</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>دعم فني متميز</li>
+                    </ul>
+                    <button class="w-full py-3 rounded-button bg-primary text-white hover:bg-secondary transition">اختر الخطة</button>
+                </div>
+                <div class="glass-card p-8 relative animate-fade-up" style="animation-delay: 200ms;">
+                    <h3 class="text-2xl font-bold mb-4 text-center">الأعمال</h3>
+                    <div class="text-center mb-6">
+                        <span class="text-4xl font-bold">$99</span>
+                        <span class="text-gray-400"> / شهرياً</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>جميع ميزات الاحترافية</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>واجهة برمجة التطبيقات (API)</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>تحليلات مخصصة</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>إدارة فرق العمل</li>
+                        <li class="flex items-start"><i class="ri-check-line text-primary ml-2 mt-1"></i>دعم مخصص على مدار الساعة</li>
+                    </ul>
+                    <button class="w-full py-3 rounded-button bg-white text-primary border border-primary hover:bg-primary hover:text-white transition">تواصل معنا</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-16 md:py-24 bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4 animate-fade-up">آراء العملاء</span>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 animate-fade-up">ماذا يقول عملاؤنا عنا</h2>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto animate-fade-up">انضم إلى آلاف العملاء الراضين عن خدماتنا</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass-card p-6 animate-fade-up">
+                    <div class="flex items-center mb-4">
+                        <img src="https://public.readdy.ai/ai/img_res/bbd4b537ad83ece7b2d195266ae02372.jpg" 
+                             alt="صورة العميل" 
+                             class="w-12 h-12 rounded-full ml-4">
+                        <div>
+                            <h4 class="font-bold">أحمد المنصوري</h4>
+                            <p class="text-gray-400">مدير تحرير</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400">
+                        "أداة رائعة ساعدتني في تحسين جودة المحتوى بشكل كبير. التحليل الدقيق والتوصيات المفيدة وفرت علي الكثير من الوقت والجهد."
+                    </p>
+                </div>
+                <div class="glass-card p-6 animate-fade-up" style="animation-delay: 100ms;">
+                    <div class="flex items-center mb-4">
+                        <img src="https://public.readdy.ai/ai/img_res/7d1b468783adbe6b7c2be4c51fd74888.jpg" 
+                             alt="صورة العميل" 
+                             class="w-12 h-12 rounded-full ml-4">
+                        <div>
+                            <h4 class="font-bold">سارة العتيبي</h4>
+                            <p class="text-gray-400">كاتبة محتوى</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400">
+                        "تحليل المشاعر ساعدني في فهم تأثير محتواي على القراء بشكل أفضل. الأداة سهلة الاستخدام والنتائج دقيقة جداً."
+                    </p>
+                </div>
+                <div class="glass-card p-6 animate-fade-up" style="animation-delay: 200ms;">
+                    <div class="flex items-center mb-4">
+                        <img src="https://public.readdy.ai/ai/img_res/e13058b08cfcc904213620b5fe4c49e3.jpg" 
+                             alt="صورة العميل" 
+                             class="w-12 h-12 rounded-full ml-4">
+                        <div>
+                            <h4 class="font-bold">محمد القحطاني</h4>
+                            <p class="text-gray-400">مدير تسويق</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400">
+                        "أداة لا غنى عنها لفريق التسويق لدينا. ساعدتنا في تحسين محتوانا وزيادة ظهورنا في محركات البحث."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 md:py-24 bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-card max-w-4xl mx-auto p-8 md:p-12 text-center animate-fade-up">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">ابدأ الآن</span>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">ارفع بمحتواك إلى المستوى التالي</h2>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-8">انضم إلى آلاف المستخدمين لإنشاء محتوى عالي الجودة بمساعدة الذكاء الاصطناعي</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="#signup" class="px-6 py-3 rounded-button bg-primary text-white hover:bg-secondary transition flex items-center justify-center">
+                        <i class="ri-star-line ml-2"></i>ابدأ مجاناً
+                    </a>
+                    <a href="#contact" class="px-6 py-3 rounded-button bg-white text-primary border border-primary hover:bg-primary hover:text-white transition">تواصل مع فريق المبيعات</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-gray-800 border-t border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 space-x-reverse mb-5">
+                        <span class="text-2xl font-['Pacifico'] text-primary">محلل النصوص</span>
+                    </div>
+                    <p class="text-gray-400">أداة ذكية لتحليل وتحسين النصوص بتقنيات الذكاء الاصطناعي.</p>
+                    <div class="flex space-x-4 space-x-reverse mt-4">
+                        <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full hover:bg-primary hover:text-white">
+                            <i class="ri-twitter-x-line"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full hover:bg-primary hover:text-white">
+                            <i class="ri-linkedin-line"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full hover:bg-primary hover:text-white">
+                            <i class="ri-facebook-line"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium text-lg mb-4">روابط سريعة</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#الرئيسية" class="text-gray-400 hover:text-primary">الرئيسية</a></li>
+                        <li><a href="#features" class="text-gray-400 hover:text-primary">المميزات</a></li>
+                        <li><a href="#التسعير" class="text-gray-400 hover:text-primary">التسعير</a></li>
+                        <li><a href="#tools" class="text-gray-400 hover:text-primary">الأدوات</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-medium text-lg mb-4">مصادر</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-primary">مركز المساعدة</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary">التوثيق</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary">المدونة</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary">الأسئلة الشائعة</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-medium text-lg mb-4">تواصل معنا</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-center">
+                            <i class="ri-mail-line ml-2"></i>
+                            <span class="text-gray-400">info@example.com</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="ri-phone-line ml-2"></i>
+                            <span class="text-gray-400">+966 123 456 789</span>
+                        </li>
+                    </ul>
+                    <h4 class="font-medium text-lg mt-6 mb-4">النشرة البريدية</h4>
+                    <div class="flex">
+                        <input type="email" placeholder="بريدك الإلكتروني" class="flex-1 px-4 py-2 rounded-r-lg bg-gray-700 border-none text-gray-300 focus:outline-none focus:ring-1 focus:ring-primary">
+                        <button class="px-4 py-2 bg-primary text-white rounded-l-lg hover:bg-secondary">اشتراك</button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-12 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm text-gray-400">© 2025 محلل النصوص الذكي. جميع الحقوق محفوظة.</p>
+                <div class="flex space-x-4 space-x-reverse mt-4 md:mt-0">
+                    <a href="#terms" class="text-sm text-gray-400 hover:text-primary">الشروط والأحكام</a>
+                    <a href="#privacy" class="text-sm text-gray-400 hover:text-primary">سياسة الخصوصية</a>
+                    <a href="#cookies" class="text-sm text-gray-400 hover:text-primary">ملفات تعريف الارتباط</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('nav');
+            if (window.scrollY > 10) {
+                navbar.classList.add('py-2', 'shadow-md');
+                navbar.classList.remove('py-4');
+            } else {
+                navbar.classList.remove('py-2', 'shadow-md');
+                navbar.classList.add('py-4');
+            }
+        });
+
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Theme toggle
+        const toggleTheme = () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.querySelectorAll('[id^="theme-toggle"] i').forEach(icon => {
+                icon.classList.toggle('ri-sun-line', !isDark);
+                icon.classList.toggle('ri-moon-line', isDark);
+            });
+        };
+        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+        document.getElementById('theme-toggle-mobile').addEventListener('click', toggleTheme);
+
+        // Check system preference and stored theme
+        if (localStorage.getItem('theme') === 'dark' || 
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            document.querySelectorAll('[id^="theme-toggle"] i').forEach(icon => {
+                icon.classList.remove('ri-sun-line');
+                icon.classList.add('ri-moon-line');
+            });
+        }
+    </script>
+</body>
+</html>

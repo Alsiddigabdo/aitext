@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقييمات المستخدمين | محلل النصوص الذكي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;700;900&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: "#8B5CF6", secondary: "#6366F1" },
+                    borderRadius: { button: "8px" }
+                }
+            }
+        };
+    </script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #111827; color: #f3f4f6; }
+        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
+        .glass-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); }
+        .btn-primary { background-color: #8B5CF6; color: white; padding: 12px 24px; border-radius: 8px; transition: background-color 0.3s ease; }
+        .btn-primary:hover:not(:disabled) { background-color: #6366F1; }
+        .btn-secondary { background-color: rgba(255, 255, 255, 0.1); color: white; padding: 12px 24px; border-radius: 8px; transition: background-color 0.3s ease; }
+        .btn-secondary:hover { background-color: rgba(255, 255, 255, 0.2); }
+        .animate-spin { animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .review-card { transition: all 0.3s ease; }
+        .review-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+        .star-rating { color: #FBBF24; }
+        .empty-star { color: #4B5563; }
+        .feature-request { border-left: 3px solid #8B5CF6; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #8B5CF6; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+    <%- include('partials/navbar') %>
+
+    <main class="flex-1 pt-24 pb-16">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h1 class="text-4xl lg:text-5xl font-bold mb-6 animate-fade-in">آراء وتقييمات المستخدمين</h1>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto animate-fade-in">شاركنا رأيك وساعدنا في تحسين الخدمة</p>
+            </div>
+
+            <div class="glass-card p-8 rounded-lg mb-12">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div class="text-5xl font-bold text-primary mb-2">4.8</div>
+                        <div class="flex justify-center mb-2">
+                            <i class="ri-star-fill text-2xl star-rating"></i>
+                            <i class="ri-star-fill text-2xl star-rating"></i>
+                            <i class="ri-star-fill text-2xl star-rating"></i>
+                            <i class="ri-star-fill text-2xl star-rating"></i>
+                            <i class="ri-star-half-fill text-2xl star-rating"></i>
+                        </div>
+                        <p class="text-gray-400">متوسط التقييم من 1,245 مستخدم</p>
+                    </div>
+                    <div>
+                        <div class="flex items-center mb-2">
+                            <span class="w-20">5 نجوم</span>
+                            <div class="flex-1 bg-gray-700 rounded-full h-3 mx-2">
+                                <div class="bg-yellow-500 h-3 rounded-full" style="width: 85%"></div>
+                            </div>
+                            <span>85%</span>
+                        </div>
+                        <div class="flex items-center mb-2">
+                            <span class="w-20">4 نجوم</span>
+                            <div class="flex-1 bg-gray-700 rounded-full h-3 mx-2">
+                                <div class="bg-yellow-500 h-3 rounded-full" style="width: 12%"></div>
+                            </div>
+                            <span>12%</span>
+                        </div>
+                        <div class="flex items-center mb-2">
+                            <span class="w-20">3 نجوم</span>
+                            <div class="flex-1 bg-gray-700 rounded-full h-3 mx-2">
+                                <div class="bg-yellow-500 h-3 rounded-full" style="width: 2%"></div>
+                            </div>
+                            <span>2%</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="w-20">1-2 نجوم</span>
+                            <div class="flex-1 bg-gray-700 rounded-full h-3 mx-2">
+                                <div class="bg-yellow-500 h-3 rounded-full" style="width: 1%"></div>
+                            </div>
+                            <span>1%</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <button id="show-feedback-form" class="btn-primary font-medium flex items-center justify-center gap-2 mb-3">
+                            <i class="ri-pencil-line"></i>
+                            اكتب تقييمك
+                        </button>
+                        <button id="show-feature-form" class="btn-secondary font-medium flex items-center justify-center gap-2">
+                            <i class="ri-lightbulb-line"></i>
+                            اقترح فكرة جديدة
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="feedback-form" class="glass-card p-8 rounded-lg mb-12 hidden">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <i class="ri-feedback-line text-primary"></i>
+                    شاركنا رأيك
+                </h2>
+                <form id="submit-feedback">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block mb-2">اسمك</label>
+                            <input type="text" name="name" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-white" required>
+                        </div>
+                        <div>
+                            <label class="block mb-2">البريد الإلكتروني (اختياري)</label>
+                            <input type="email" name="email" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-white">
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block mb-2">تقييمك</label>
+                        <div class="flex space-x-2 space-x-reverse">
+                            <i class="ri-star-fill text-3xl empty-star cursor-pointer hover:text-yellow-500" data-rating="1"></i>
+                            <i class="ri-star-fill text-3xl empty-star cursor-pointer hover:text-yellow-500" data-rating="2"></i>
+                            <i class="ri-star-fill text-3xl empty-star cursor-pointer hover:text-yellow-500" data-rating="3"></i>
+                            <i class="ri-star-fill text-3xl empty-star cursor-pointer hover:text-yellow-500" data-rating="4"></i>
+                            <i class="ri-star-fill text-3xl empty-star cursor-pointer hover:text-yellow-500" data-rating="5"></i>
+                        </div>
+                        <input type="hidden" name="rating" id="rating-value">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block mb-2">عنوان التقييم</label>
+                        <input type="text" name="title" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-white" placeholder="مثال: تجربتي الرائعة مع المحلل" required>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block mb-2">التعليق</label>
+                        <textarea name="comment" class="w-full h-32 p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none text-white" placeholder="أخبرنا عن تجربتك مع الخدمة..." required></textarea>
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" id="cancel-feedback" class="btn-secondary font-medium px-6 py-3">
+                            إلغاء
+                        </button>
+                        <button type="submit" id="submit-feedback-btn" class="btn-primary font-medium px-6 py-3 flex items-center gap-2">
+                            <i class="ri-send-plane-line"></i>
+                            إرسال التقييم
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="feature-form" class="glass-card p-8 rounded-lg mb-12 hidden">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <i class="ri-lightbulb-flash-line text-primary"></i>
+                    اقترح ميزة جديدة
+                </h2>
+                <form id="submit-feature">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block mb-2">اسمك</label>
+                            <input type="text" name="name" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-white" required>
+                        </div>
+                        <div>
+                            <label class="block mb-2">البريد الإلكتروني (اختياري)</label>
+                            <input type="email" name="email" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-white">
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block mb-2">عنوان المقترح</label>
+                        <input type="text" name="title" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-white" placeholder="مثال: إضافة خاصية تحليل الصور" required>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block mb-2">وصف المقترح</label>
+                        <textarea name="comment" class="w-full h-32 p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none text-white" placeholder="صف الميزة التي تقترحها بالتفصيل..." required></textarea>
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" id="cancel-feature" class="btn-secondary font-medium px-6 py-3">
+                            إلغاء
+                        </button>
+                        <button type="submit" id="submit-feature-btn" class="btn-primary font-medium px-6 py-3 flex items-center gap-2">
+                            <i class="ri-send-plane-line"></i>
+                            إرسال المقترح
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <i class="ri-discuss-line text-primary"></i>
+                        أحدث التقييمات
+                    </h2>
+                    <div class="mt-3 md:mt-0">
+                        <select id="sort-feedback" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary">
+                            <option value="latest">الأحدث أولاً</option>
+                            <option value="highest">الأعلى تقييمًا</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="reviews-container" class="space-y-6"></div>
+                <div id="pagination" class="glass-card mt-6 p-4 rounded-lg">
+                    <div class="flex justify-center items-center space-x-2 space-x-reverse" id="pagination-buttons">
+                        <span id="loading-indicator" class="hidden animate-spin inline-block w-6 h-6 border-2 border-white rounded-full border-t-transparent"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <%- include('partials/footer') %>
+
+    <script>
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        const feedbackForm = document.getElementById('feedback-form');
+        const featureForm = document.getElementById('feature-form');
+        const cancelFeedback = document.getElementById('cancel-feedback');
+        const cancelFeature = document.getElementById('cancel-feature');
+        const submitFeedbackBtn = document.getElementById('submit-feedback-btn');
+        const submitFeatureBtn = document.getElementById('submit-feature-btn');
+        const stars = document.querySelectorAll('[data-rating]');
+        const ratingInput = document.getElementById('rating-value');
+        const reviewsContainer = document.getElementById('reviews-container');
+        const paginationButtons = document.getElementById('pagination-buttons');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        let currentRating = 0;
+        let currentPage = 1;
+
+        document.getElementById('show-feedback-form').addEventListener('click', () => {
+            feedbackForm.classList.remove('hidden');
+            featureForm.classList.add('hidden');
+        });
+
+        document.getElementById('show-feature-form').addEventListener('click', () => {
+            featureForm.classList.remove('hidden');
+            feedbackForm.classList.add('hidden');
+        });
+
+        cancelFeedback.addEventListener('click', () => {
+            feedbackForm.classList.add('hidden');
+            resetFeedbackForm();
+        });
+
+        cancelFeature.addEventListener('click', () => {
+            featureForm.classList.add('hidden');
+            resetFeatureForm();
+        });
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const rating = parseInt(star.dataset.rating);
+                currentRating = rating;
+                ratingInput.value = rating;
+                stars.forEach((s, index) => {
+                    if (index < rating) {
+                        s.classList.remove('empty-star');
+                        s.classList.add('star-rating');
+                    } else {
+                        s.classList.add('empty-star');
+                        s.classList.remove('star-rating');
+                    }
+                });
+            });
+            star.addEventListener('mouseover', () => {
+                const rating = parseInt(star.dataset.rating);
+                stars.forEach((s, index) => {
+                    if (index < rating) s.classList.add('text-yellow-500');
+                });
+            });
+            star.addEventListener('mouseout', () => {
+                stars.forEach((s, index) => {
+                    if (index >= currentRating) s.classList.remove('text-yellow-500');
+                });
+            });
+        });
+
+        document.getElementById('submit-feedback').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            data.isFeatureRequest = false;
+
+            submitFeedbackBtn.disabled = true;
+            submitFeedbackBtn.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 border-white rounded-full border-t-transparent mr-2"></span> جاري الإرسال...';
+
+            try {
+                const response = await fetch('/feedback/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (!result.success) throw new Error(result.message || 'فشل في إرسال التقييم');
+                alert('شكرًا لك على مشاركة رأيك! تم استلام تقييمك بنجاح.');
+                resetFeedbackForm();
+                feedbackForm.classList.add('hidden');
+                fetchFeedback(currentPage);
+            } catch (error) {
+                alert(`خطأ: ${error.message}`);
+            } finally {
+                submitFeedbackBtn.disabled = false;
+                submitFeedbackBtn.innerHTML = '<i class="ri-send-plane-line"></i> إرسال التقييم';
+            }
+        });
+
+        document.getElementById('submit-feature').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            data.isFeatureRequest = true;
+
+            submitFeatureBtn.disabled = true;
+            submitFeatureBtn.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 border-white rounded-full border-t-transparent mr-2"></span> جاري الإرسال...';
+
+            try {
+                const response = await fetch('/feedback/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (!result.success) throw new Error(result.message || 'فشل في إرسال المقترح');
+                alert('شكرًا لك على اقتراحك! تم استلامه بنجاح.');
+                resetFeatureForm();
+                featureForm.classList.add('hidden');
+                fetchFeedback(currentPage);
+            } catch (error) {
+                alert(`خطأ: ${error.message}`);
+            } finally {
+                submitFeatureBtn.disabled = false;
+                submitFeatureBtn.innerHTML = '<i class="ri-send-plane-line"></i> إرسال المقترح';
+            }
+        });
+
+        function resetFeedbackForm() {
+            document.getElementById('submit-feedback').reset();
+            stars.forEach(star => {
+                star.classList.add('empty-star');
+                star.classList.remove('star-rating', 'text-yellow-500');
+            });
+            currentRating = 0;
+            ratingInput.value = '';
+        }
+
+        function resetFeatureForm() {
+            document.getElementById('submit-feature').reset();
+        }
+
+        async function fetchFeedback(page = 1) {
+            try {
+                loadingIndicator.classList.remove('hidden');
+                const response = await fetch(`/feedback/list?page=${page}`);
+                if (!response.ok) throw new Error('فشل في جلب التقييمات');
+                const data = await response.json();
+                currentPage = data.currentPage;
+                renderFeedback(data.items);
+                renderPagination(data.totalPages, data.currentPage);
+            } catch (error) {
+                console.error('Error fetching feedback:', error);
+                reviewsContainer.innerHTML = '<p class="text-red-500">خطأ في تحميل التقييمات</p>';
+            } finally {
+                loadingIndicator.classList.add('hidden');
+            }
+        }
+
+        function renderFeedback(feedback) {
+            reviewsContainer.innerHTML = '';
+            if (feedback.length === 0) {
+                reviewsContainer.innerHTML = '<p class="text-gray-400">لا توجد تقييمات بعد.</p>';
+                return;
+            }
+            feedback.forEach(item => {
+                const date = new Date(item.created_at);
+                const timeAgo = Math.floor((Date.now() - date) / (1000 * 60 * 60 * 24));
+                const timeText = timeAgo > 30 ? `منذ ${Math.floor(timeAgo / 30)} شهر` : timeAgo > 1 ? `منذ ${timeAgo} أيام` : 'اليوم';
+
+                const starsHtml = item.rating ? Array(5).fill().map((_, i) => 
+                    `<i class="ri-star-fill ${i < item.rating ? 'star-rating' : 'empty-star'}"></i>`
+                ).join('') : '';
+
+                reviewsContainer.innerHTML += `
+                    <div class="glass-card p-6 rounded-lg review-card ${item.is_feature_request ? 'feature-request' : ''}" data-feedback-id="${item.id}">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center space-x-3 space-x-reverse">
+                                <div class="user-avatar">${item.name[0]}</div>
+                                <div>
+                                    <h4 class="font-medium">${item.name}</h4>
+                                    <div class="flex items-center space-x-1 space-x-reverse">
+                                        <div class="flex">${starsHtml}</div>
+                                        <span class="text-sm text-gray-400">${timeText}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="text-gray-400 hover:text-primary">
+                                <i class="ri-share-fill"></i>
+                            </button>
+                        </div>
+                        <h5 class="font-medium mb-2">${item.is_feature_request ? '[مقترح] ' : ''}${item.title}</h5>
+                        <p class="text-gray-300 mb-4">${item.comment}</p>
+                        <div class="flex items-center space-x-4 space-x-reverse text-sm">
+                            <button class="like-btn flex items-center space-x-1 space-x-reverse text-gray-400 hover:text-primary" data-feedback-id="${item.id}">
+                                <i class="ri-thumb-up-line"></i>
+                                <span>${item.is_feature_request ? 'أوافق' : 'مفيد'} (${item.likes})</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.querySelectorAll('.like-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const feedbackId = btn.dataset.feedbackId;
+                    try {
+                        const response = await fetch('/feedback/like', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ feedbackId })
+                        });
+                        const data = await response.json();
+                        if (!data.success) throw new Error(data.message || 'فشل في إضافة الإعجاب');
+                        btn.querySelector('span').textContent = `${btn.textContent.includes('أوافق') ? 'أوافق' : 'مفيد'} (${data.likes})`;
+                    } catch (error) {
+                        console.error('Error liking feedback:', error);
+                        alert(`خطأ: ${error.message}`);
+                    }
+                });
+            });
+        }
+
+        function renderPagination(totalPages, currentPage) {
+            paginationButtons.innerHTML = '';
+
+            const prevButton = document.createElement('button');
+            prevButton.className = `w-10 h-10 flex items-center justify-center rounded-lg ${currentPage === 1 ? 'bg-gray-800 cursor-not-allowed' : 'bg-gray-700 hover:bg-gray-600 transition'}`;
+            prevButton.innerHTML = '<i class="ri-arrow-right-s-line"></i>';
+            prevButton.disabled = currentPage === 1;
+            prevButton.onclick = () => fetchFeedback(currentPage - 1);
+            paginationButtons.appendChild(prevButton);
+
+            for (let i = 1; i <= Math.max(1, totalPages); i++) {
+                const pageButton = document.createElement('button');
+                pageButton.className = `w-10 h-10 flex items-center justify-center rounded-lg ${i === currentPage ? 'bg-primary text-white' : 'bg-gray-700 hover:bg-gray-600 transition'}`;
+                pageButton.textContent = i;
+                pageButton.onclick = () => fetchFeedback(i);
+                paginationButtons.appendChild(pageButton);
+            }
+
+            const nextButton = document.createElement('button');
+            nextButton.className = `w-10 h-10 flex items-center justify-center rounded-lg ${currentPage === totalPages ? 'bg-gray-800 cursor-not-allowed' : 'bg-gray-700 hover:bg-gray-600 transition'}`;
+            nextButton.innerHTML = '<i class="ri-arrow-left-s-line"></i>';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.onclick = () => fetchFeedback(currentPage + 1);
+            paginationButtons.appendChild(nextButton);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => fetchFeedback(currentPage));
+    </script>
+</body>
+</html>

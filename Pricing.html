@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خطط التسعير - محلل النصوص الذكي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1; /* Indigo */
+            --secondary: #06b6d4; /* Cyan */
+            --accent: #a855f7; /* Purple */
+            --muted: #9ca3af;
+            --dark-bg: #111827;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --transition: all 0.3s ease;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: #f3f4f6;
+        }
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .text-gradient {
+            background: linear-gradient(to left, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        .animate-fade-up {
+            animation: fadeUp 0.5s ease forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-delay-100 { animation-delay: 100ms; }
+        .hover\:shadow-button:hover {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Navbar (مثال بسيط) -->
+    <nav class="fixed w-full z-50 py-4 bg-gray-800/70 backdrop-blur-md border-b border-gray-700">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="/" class="text-xl font-semibold">محلل النصوص الذكي</a>
+            <div class="space-x-4">
+                <a href="#" class="text-gray-300 hover:text-white">الرئيسية</a>
+                <a href="#" class="text-gray-300 hover:text-white">التسعير</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 mt-20">
+        <section class="py-16 md:py-24">
+            <div class="container mx-auto px-4 md:px-6">
+                <!-- Header -->
+                <div class="text-center mb-12">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-400 text-sm font-medium mb-4 animate-fade-in">
+                        خطط الاشتراك
+                    </span>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-4 text-gradient animate-fade-in">
+                        اختر الخطة المناسبة لاحتياجاتك
+                    </h1>
+                    <p class="text-lg text-gray-400 max-w-2xl mx-auto animate-fade-in animate-delay-100">
+                        خطط مرنة تناسب احتياجات الأفراد والشركات مع إمكانية الترقية في أي وقت
+                    </p>
+
+                    <!-- Billing Toggle -->
+                    <div class="flex justify-center mt-8 mb-10">
+                        <div class="bg-gray-700/50 p-1 rounded-full inline-flex">
+                            <button id="monthly-btn" class="px-4 py-2 rounded-full text-sm bg-white text-gray-900 font-medium transition-all">
+                                فوترة شهرية
+                            </button>
+                            <button id="yearly-btn" class="px-4 py-2 rounded-full text-sm text-gray-400 hover:text-white transition-all">
+                                فوترة سنوية
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <!-- Free Plan -->
+                    <div class="glass-card p-6 relative overflow-hidden animate-fade-up">
+                        <div class="mb-6">
+                            <h3 class="text-xl font-semibold">مجاني</h3>
+                            <p class="text-sm text-gray-400 mt-1">للاستخدام الشخصي البسيط</p>
+                        </div>
+                        <div class="mb-6">
+                            <div class="flex items-baseline">
+                                <span class="text-3xl font-bold">$0</span>
+                                <span class="text-gray-400 ml-1">/ شهرياً</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>تحليل حتى 500 كلمة يومياً</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>تصحيح الأخطاء الإملائية والنحوية</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>تحليل المشاعر الأساسي</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>إعادة صياغة محدودة</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>دعم اللغة العربية والإنجليزية</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span class="text-gray-400">تحليل SEO متقدم</span></li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span class="text-gray-400">اقتراحات متقدمة للعناوين</span></li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span class="text-gray-400">الكشف عن الانتحال</span></li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span class="text-gray-400">الوصول إلى واجهة برمجة التطبيقات API</span></li>
+                        </ul>
+                        <button class="w-full py-2.5 rounded-lg bg-cyan-500 text-white hover:bg-cyan-600 font-medium transition-all">ابدأ مجاناً</button>
+                    </div>
+
+                    <!-- Professional Plan -->
+                    <div class="glass-card p-6 relative overflow-hidden border-indigo-500 md:scale-105 z-10 shadow-lg animate-fade-up" style="animation-delay: 100ms;">
+                        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-indigo-500 text-white text-xs px-3 py-1 rounded-full">
+                            الأكثر طلباً
+                        </div>
+                        <div class="mb-6">
+                            <h3 class="text-xl font-semibold">احترافي</h3>
+                            <p class="text-sm text-gray-400 mt-1">للكتاب والمحررين</p>
+                        </div>
+                        <div class="mb-6">
+                            <div class="flex items-baseline">
+                                <span class="text-3xl font-bold">$<span id="pro-price">19.99</span></span>
+                                <span class="text-gray-400 ml-1">/ شهرياً</span>
+                            </div>
+                            <div id="pro-saving" class="text-xs text-indigo-400 mt-1 hidden">وفر 25% مع الاشتراك السنوي</div>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>تحليل غير محدود للنصوص</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>جميع ميزات الخطة المجانية</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>تحليل SEO متقدم</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>اقتراحات متقدمة للعناوين</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>الكشف عن الانتحال</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>دعم متعدد اللغات</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>دعم فني على مدار الساعة</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span class="text-gray-400">تخصيص الأسلوب والصوت</span></li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span class="text-gray-400">الوصول إلى واجهة برمجة التطبيقات API</span></li>
+                        </ul>
+                        <button class="w-full py-2.5 rounded-lg bg-indigo-500 text-white hover:bg-indigo-600 font-medium transition-all">اختر الخطة</button>
+                    </div>
+
+                    <!-- Business Plan -->
+                    <div class="glass-card p-6 relative overflow-hidden animate-fade-up" style="animation-delay: 200ms;">
+                        <div class="mb-6">
+                            <h3 class="text-xl font-semibold">الأعمال</h3>
+                            <p class="text-sm text-gray-400 mt-1">للشركات والفرق</p>
+                        </div>
+                        <div class="mb-6">
+                            <div class="flex items-baseline">
+                                <span class="text-3xl font-bold">$<span id="business-price">49.99</span></span>
+                                <span class="text-gray-400 ml-1">/ شهرياً</span>
+                            </div>
+                            <div id="business-saving" class="text-xs text-indigo-400 mt-1 hidden">وفر 20% مع الاشتراك السنوي</div>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>جميع ميزات الخطة الاحترافية</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>واجهة برمجة التطبيقات (API)</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>تحليلات مخصصة</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>إدارة الفريق والمستخدمين</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>تخصيص الأسلوب والصوت</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>دعم مخصص وأولوية</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>تكامل مع أدوات الفريق</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>تدريب مخصص</li>
+                            <li class="flex items-start"><svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>فحص النصوص الطويلة (كتب، تقارير)</li>
+                        </ul>
+                        <button class="w-full py-2.5 rounded-lg bg-cyan-500 text-white hover:bg-cyan-600 font-medium transition-all">تواصل معنا</button>
+                    </div>
+                </div>
+
+                <!-- FAQs -->
+                <div class="mt-20 max-w-4xl mx-auto">
+                    <div class="text-center mb-10">
+                        <h2 class="text-2xl md:text-3xl font-bold mb-4">الأسئلة الشائعة</h2>
+                        <p class="text-gray-400">الإجابات عن الأسئلة الأكثر شيوعاً حول خططنا</p>
+                    </div>
+                    <div class="space-y-5">
+                        <div class="glass-card p-5">
+                            <h3 class="text-lg font-medium mb-2 flex items-start">
+                                <svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-1 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                هل يمكنني تجربة الخدمة قبل الاشتراك؟
+                            </h3>
+                            <p class="text-gray-400 pr-8">نعم، يمكنك استخدام الخطة المجانية بدون حدود زمنية وتجربة ميزاتها الأساسية. بالإضافة إلى ذلك، نقدم فترة تجريبية مجانية لمدة 7 أيام للخطة الاحترافية.</p>
+                        </div>
+                        <div class="glass-card p-5">
+                            <h3 class="text-lg font-medium mb-2 flex items-start">
+                                <svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-1 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                هل يمكنني الترقية أو تغيير خطتي في أي وقت؟
+                            </h3>
+                            <p class="text-gray-400 pr-8">نعم، يمكنك الترقية إلى خطة أعلى في أي وقت. عند الترقية، سيتم احتساب المبلغ المتبقي من اشتراكك الحالي نحو الخطة الجديدة.</p>
+                        </div>
+                        <div class="glass-card p-5">
+                            <h3 class="text-lg font-medium mb-2 flex items-start">
+                                <svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-1 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                ما هي اللغات المدعومة؟
+                            </h3>
+                            <p class="text-gray-400 pr-8">نحن ندعم حالياً العربية (الفصحى والعامية)، الإنجليزية، الفرنسية، الإسبانية، الألمانية، والإيطالية. نعمل باستمرار على إضافة المزيد من اللغات.</p>
+                        </div>
+                        <div class="glass-card p-5">
+                            <h3 class="text-lg font-medium mb-2 flex items-start">
+                                <svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-1 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                هل يمكنني إلغاء اشتراكي في أي وقت؟
+                            </h3>
+                            <p class="text-gray-400 pr-8">نعم، يمكنك إلغاء اشتراكك في أي وقت من خلال لوحة التحكم. إذا قمت بالإلغاء، ستظل خطتك نشطة حتى نهاية فترة الفوترة الحالية.</p>
+                        </div>
+                        <div class="glass-card p-5">
+                            <h3 class="text-lg font-medium mb-2 flex items-start">
+                                <svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-1 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                هل الدفع آمن؟
+                            </h3>
+                            <p class="text-gray-400 pr-8">نعم، نحن نستخدم بوابات دفع آمنة ومشفرة مثل Stripe و PayPal لضمان أمان معلوماتك المالية. لا نقوم بتخزين تفاصيل بطاقة الائتمان الخاصة بك على خوادمنا.</p>
+                        </div>
+                        <div class="glass-card p-5">
+                            <h3 class="text-lg font-medium mb-2 flex items-start">
+                                <svg class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-1 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                هل هناك حد لعدد النصوص التي يمكنني تحليلها؟
+                            </h3>
+                            <p class="text-gray-400 pr-8">في الخطة المجانية، هناك حد يومي قدره 500 كلمة. في الخطط المدفوعة، يمكنك تحليل نصوص غير محدودة، مع وجود بعض القيود على الخطة الاحترافية بالنسبة للنصوص الطويلة جداً.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA Section -->
+                <div class="mt-20 max-w-5xl mx-auto">
+                    <div class="glass-card p-8 md:p-12 overflow-hidden relative">
+                        <div class="absolute -top-20 -left-20 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl"></div>
+                        <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl"></div>
+                        <div class="relative z-10 md:flex items-center">
+                            <div class="md:w-3/5 mb-8 md:mb-0 md:ml-8">
+                                <h2 class="text-2xl md:text-3xl font-bold mb-4">هل تبحث عن حلول مخصصة؟</h2>
+                                <p class="text-gray-400 mb-6">
+                                    نحن نقدم حلولاً مخصصة للشركات الكبيرة والمؤسسات التعليمية. تواصل مع فريق المبيعات للحصول على عرض سعر يناسب احتياجاتك الخاصة.
+                                </p>
+                                <button class="px-6 py-3 rounded-lg bg-indigo-500 text-white font-medium hover:bg-indigo-600 transition-all hover:shadow-button active:scale-95 flex items-center justify-center">
+                                    <svg class="h-5 w-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                                    تواصل مع فريق المبيعات
+                                </button>
+                            </div>
+                            <div class="md:w-2/5 space-y-4">
+                                <div class="flex items-start bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4">
+                                    <svg class="h-6 w-6 text-indigo-400 flex-shrink-0 ml-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 3C6.477 3 2 7.477 2 13s4.477 10 10 10 10-4.477 10-10c0-2.136-.83-4.077-2.182-5.516z"></path></svg>
+                                    <div>
+                                        <h3 class="font-medium mb-1">الأمان والخصوصية</h3>
+                                        <p class="text-sm text-gray-400">نضمن أمان وخصوصية بياناتك. لن يتم مشاركة نصوصك أو استخدامها لأي أغراض أخرى.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4">
+                                    <svg class="h-6 w-6 text-indigo-400 flex-shrink-0 ml-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.915a1 1 0 00.95-.69l1.519-4.674z"></path></svg>
+                                    <div>
+                                        <h3 class="font-medium mb-1">دعم متميز</h3>
+                                        <p class="text-sm text-gray-400">فريق دعم متميز جاهز للمساعدة على مدار الساعة وبعدة لغات.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4">
+                                    <svg class="h-6 w-6 text-indigo-400 flex-shrink-0 ml-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                    <div>
+                                        <h3 class="font-medium mb-1">تحديثات مستمرة</h3>
+                                        <p class="text-sm text-gray-400">نطور خدماتنا باستمرار وإضافة ميزات جديدة شهرياً.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer (مثال بسيط) -->
+    <footer class="py-12 bg-gray-900">
+        <div class="container mx-auto px-4 text-center text-gray-400">
+            <p>© 2025 محلل النصوص الذكي. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const monthlyBtn = document.getElementById('monthly-btn');
+            const yearlyBtn = document.getElementById('yearly-btn');
+            const proPrice = document.getElementById('pro-price');
+            const proSaving = document.getElementById('pro-saving');
+            const businessPrice = document.getElementById('business-price');
+            const businessSaving = document.getElementById('business-saving');
+
+            monthlyBtn.addEventListener('click', () => {
+                monthlyBtn.classList.add('bg-white', 'text-gray-900', 'font-medium');
+                monthlyBtn.classList.remove('text-gray-400');
+                yearlyBtn.classList.remove('bg-white', 'text-gray-900', 'font-medium');
+                yearlyBtn.classList.add('text-gray-400');
+                proPrice.textContent = '19.99';
+                businessPrice.textContent = '49.99';
+                proSaving.classList.add('hidden');
+                businessSaving.classList.add('hidden');
+            });
+
+            yearlyBtn.addEventListener('click', () => {
+                yearlyBtn.classList.add('bg-white', 'text-gray-900', 'font-medium');
+                yearlyBtn.classList.remove('text-gray-400');
+                monthlyBtn.classList.remove('bg-white', 'text-gray-900', 'font-medium');
+                monthlyBtn.classList.add('text-gray-400');
+                proPrice.textContent = '14.99';
+                businessPrice.textContent = '39.99';
+                proSaving.classList.remove('hidden');
+                businessSaving.classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

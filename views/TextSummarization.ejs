@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تلخيص النصوص | محلل النصوص الذكي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5CF6",
+                        secondary: "#6366F1",
+                    },
+                    borderRadius: {
+                        button: "8px",
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #111827; color: #f3f4f6; }
+        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
+        .glass-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); }
+        .btn-primary { background-color: #8B5CF6; color: white; padding: 12px 24px; border-radius: 8px; transition: background-color 0.3s ease; }
+        .btn-primary:hover:not(:disabled) { background-color: #6366F1; }
+        .btn-secondary { background-color: rgba(255, 255, 255, 0.1); color: white; padding: 12px 24px; border-radius: 8px; transition: background-color 0.3s ease; }
+        .btn-secondary:hover { background-color: rgba(255, 255, 255, 0.2); }
+        .animate-spin { animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .summary-point { position: relative; padding-right: 1.5rem; }
+        .summary-point::before { content: ""; position: absolute; right: 0; top: 0.7rem; width: 0.5rem; height: 0.5rem; background-color: #8B5CF6; border-radius: 50%; }
+        .char-count { position: absolute; left: 1rem; bottom: 1rem; font-size: 0.75rem; color: rgba(255,255,255,0.5); }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+    <!-- Header -->
+    <%- include('partials/navbar') %>
+
+
+    <!-- Main Content -->
+    <main class="flex-1 pt-24 pb-16">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h1 class="text-4xl lg:text-5xl font-bold mb-6 animate-fade-in">تلخيص النصوص</h1>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto animate-fade-in">استخرج أهم المعلومات من النصوص الطويلة بضغطة زر</p>
+            </div>
+
+            <!-- Summarization Section -->
+            <div class="glass-card p-8 rounded-lg max-w-6xl mx-auto animate-fade-in">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold mb-2 flex items-center gap-2">
+                        <i class="ri-file-text-line text-primary"></i>
+                        أدخل النص الذي تريد تلخيصه
+                    </h2>
+                    <p class="text-sm text-gray-400 mb-4">الصق النص الذي تريد تلخيصه في المربع أدناه</p>
+                </div>
+
+                <!-- Input Area -->
+                <div class="relative mb-6">
+                    <textarea
+                        id="input-text"
+                        placeholder="الصق النص الذي تريد تلخيصه هنا (مثال: مقال، تقرير، بحث علمي، إلخ)..."
+                        class="w-full h-64 p-4 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none text-white"
+                    ></textarea>
+                    <div class="char-count" id="input-count">0 حرف</div>
+                </div>
+
+                <!-- Summary Options -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h3 class="font-medium mb-3 flex items-center gap-2">
+                            <i class="ri-ruler-line text-primary"></i>
+                            طول الملخص
+                        </h3>
+                        <div class="flex flex-col gap-3">
+                            <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                <input type="radio" name="summary-length" class="text-primary" value="short" checked>
+                                <span>ملخص قصير (نقاط رئيسية فقط)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                <input type="radio" name="summary-length" class="text-primary" value="medium">
+                                <span>ملخص متوسط (25% من النص الأصلي)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                <input type="radio" name="summary-length" class="text-primary" value="long">
+                                <span>ملخص مفصل (50% من النص الأصلي)</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-medium mb-3 flex items-center gap-2">
+                            <i class="ri-stack-line text-primary"></i>
+                            تنسيق الملخص
+                        </h3>
+                        <div class="flex flex-col gap-3">
+                            <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                <input type="radio" name="summary-format" class="text-primary" value="paragraph" checked>
+                                <span>فقرة نصية</span>
+                            </label>
+                            <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                <input type="radio" name="summary-format" class="text-primary" value="points">
+                                <span>نقاط مختصرة</span>
+                            </label>
+                            <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                <input type="radio" name="summary-format" class="text-primary" value="both">
+                                <span>فقرة ونقاط معًا</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2 mb-6">
+                    <button id="reset-btn" class="btn-secondary font-medium flex items-center gap-2 hidden">
+                        <i class="ri-refresh-line"></i>
+                        إعادة ضبط
+                    </button>
+                    <button id="summarize-btn" class="btn-primary font-medium flex items-center gap-2 disabled:bg-gray-600">
+                        <i class="ri-file-list-line"></i>
+                        تلخيص النص
+                    </button>
+                </div>
+
+                <!-- Summary Result -->
+                <div id="output-section" class="hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold flex items-center gap-2">
+                            <i class="ri-file-list-2-line text-primary"></i>
+                            الملخص الناتج
+                        </h3>
+                        <div class="flex items-center space-x-2 space-x-reverse">
+                            <span class="text-sm text-gray-400">تم التلخيص في: <span id="processing-time">0</span> ثانية</span>
+                            <button id="regenerate-btn" class="text-primary hover:underline flex items-center gap-1 text-sm">
+                                <i class="ri-restart-line"></i>
+                                إعادة توليد
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="summary-result" class="space-y-4 text-gray-300"></div>
+                    
+                    <div class="mt-6 flex justify-between items-center">
+                        <div class="text-sm text-gray-400">
+                            <span id="original-length">0</span> كلمة → <span id="summary-length">0</span> كلمة (تخفيض <span id="reduction-percent">0</span>%)
+                        </div>
+                        <div>
+                            <button id="copy-summary-btn" class="btn-secondary font-medium flex items-center gap-2">
+                                <i class="ri-file-copy-line"></i>
+                                نسخ الملخص
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold mb-2">كيف يمكنك استخدام أداة التلخيص؟</h2>
+                <p class="text-gray-400">أمثلة عملية لأهم استخدامات أداة تلخيص النصوص</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass-card p-6 rounded-lg">
+                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="ri-book-line text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="font-medium mb-3">للطلاب والباحثين</h3>
+                    <ul class="space-y-2 text-gray-300 text-sm">
+                        <li class="summary-point">تلخيص الأبحاث والمقالات العلمية</li>
+                        <li class="summary-point">استخراج الأفكار الرئيسية من الكتب</li>
+                        <li class="summary-point">تحضير ملخصات للامتحانات</li>
+                    </ul>
+                </div>
+                
+                <div class="glass-card p-6 rounded-lg">
+                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="ri-newspaper-line text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="font-medium mb-3">للصحفيين والكتاب</h3>
+                    <ul class="space-y-2 text-gray-300 text-sm">
+                        <li class="summary-point">تلخيص التقارير الطويلة</li>
+                        <li class="summary-point">استخراج النقاط الرئيسية من المقابلات</li>
+                        <li class="summary-point">إعداد ملخصات سريعة للأحداث</li>
+                    </ul>
+                </div>
+                
+                <div class="glass-card p-6 rounded-lg">
+                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="ri-briefcase-line text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="font-medium mb-3">للمحترفين والشركات</h3>
+                    <ul class="space-y-2 text-gray-300 text-sm">
+                        <li class="summary-point">تلخيص محاضر الاجتماعات</li>
+                        <li class="summary-point">استخلاص النقاط الرئيسية من العقود</li>
+                        <li class="summary-point">تحليل التقارير السوقية بسرعة</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+    <script>
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        // DOM Elements
+        const inputText = document.getElementById('input-text');
+        const inputCount = document.getElementById('input-count');
+        const resetBtn = document.getElementById('reset-btn');
+        const summarizeBtn = document.getElementById('summarize-btn');
+        const outputSection = document.getElementById('output-section');
+        const summaryResult = document.getElementById('summary-result');
+        const copySummaryBtn = document.getElementById('copy-summary-btn');
+        const regenerateBtn = document.getElementById('regenerate-btn');
+        const originalLengthEl = document.getElementById('original-length');
+        const summaryLengthEl = document.getElementById('summary-length');
+        const reductionPercentEl = document.getElementById('reduction-percent');
+        const processingTimeEl = document.getElementById('processing-time');
+
+        // Update character count and button states
+        function updateInputStats() {
+            const text = inputText.value;
+            const charCount = text.length;
+            const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+            
+            inputCount.textContent = `${charCount.toLocaleString()} حرف، ${wordCount.toLocaleString()} كلمة`;
+            resetBtn.classList.toggle('hidden', !text);
+            summarizeBtn.disabled = !text.trim();
+        }
+
+        // Reset functionality
+        function resetForm() {
+            inputText.value = '';
+            inputCount.textContent = '0 حرف';
+            outputSection.classList.add('hidden');
+            summaryResult.innerHTML = '';
+            resetBtn.classList.add('hidden');
+            summarizeBtn.disabled = true;
+            originalLengthEl.textContent = '0';
+            summaryLengthEl.textContent = '0';
+            reductionPercentEl.textContent = '0';
+            processingTimeEl.textContent = '0';
+        }
+
+        // Summarize text with API call
+        async function summarizeText() {
+            if (!inputText.value.trim()) {
+                alert('يرجى إدخال نص لتلخيصه');
+                return;
+            }
+
+            summarizeBtn.disabled = true;
+            summarizeBtn.innerHTML = '<span class="inline-block h-4 w-4 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2"></span>جاري التلخيص...';
+
+            const summaryLength = document.querySelector('input[name="summary-length"]:checked').value;
+            const summaryFormat = document.querySelector('input[name="summary-format"]:checked').value;
+
+            try {
+                const startTime = performance.now();
+                const response = await fetch('/text-summarization/summarize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: inputText.value,
+                        summaryLength,
+                        summaryFormat
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `فشل في تلخيص النص: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const endTime = performance.now();
+                const processingTime = ((endTime - startTime) / 1000).toFixed(2);
+
+                const originalText = inputText.value.trim();
+                const originalWordCount = originalText.split(/\s+/).length;
+                const summaryWordCount = data.summary.trim().split(/\s+/).length;
+
+                summaryResult.innerHTML = formatSummary(data.summary, summaryFormat);
+                outputSection.classList.remove('hidden');
+                processingTimeEl.textContent = processingTime;
+                originalLengthEl.textContent = originalWordCount.toLocaleString();
+                summaryLengthEl.textContent = summaryWordCount.toLocaleString();
+                reductionPercentEl.textContent = Math.floor(100 - (summaryWordCount / originalWordCount * 100));
+            } catch (error) {
+                console.error('Error in summarizeText:', error);
+                alert(`خطأ: ${error.message}`);
+            } finally {
+                summarizeBtn.disabled = false;
+                summarizeBtn.innerHTML = '<i class="ri-file-list-line"></i> تلخيص النص';
+            }
+        }
+
+        // Format summary based on user selection
+        function formatSummary(summary, format) {
+            if (format === 'paragraph') {
+                return `<p class="text-gray-300">${summary}</p>`;
+            } else if (format === 'points') {
+                const points = summary.split('\n').filter(line => line.trim());
+                return `
+                    <ul class="space-y-3 text-gray-300">
+                        ${points.map(point => `<li class="summary-point">${point}</li>`).join('')}
+                    </ul>
+                `;
+            } else { // both
+                const [paragraph, ...points] = summary.split('\n\n');
+                return `
+                    <p class="text-gray-300 mb-4">${paragraph}</p>
+                    <ul class="space-y-3 text-gray-300">
+                        ${points.map(point => `<li class="summary-point">${point}</li>`).join('')}
+                    </ul>
+                `;
+            }
+        }
+
+        // Copy summary
+        function copySummary() {
+            const summaryText = summaryResult.textContent;
+            navigator.clipboard.writeText(summaryText);
+            copySummaryBtn.innerHTML = '<i class="ri-check-line"></i> تم النسخ';
+            setTimeout(() => {
+                copySummaryBtn.innerHTML = '<i class="ri-file-copy-line"></i> نسخ الملخص';
+            }, 2000);
+        }
+
+        // Event Listeners
+        inputText.addEventListener('input', updateInputStats);
+        resetBtn.addEventListener('click', resetForm);
+        summarizeBtn.addEventListener('click', summarizeText);
+        regenerateBtn.addEventListener('click', summarizeText);
+        copySummaryBtn.addEventListener('click', copySummary);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateInputStats();
+        });
+    </script>
+</body>
+</html>

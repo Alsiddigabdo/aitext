@@ -1,0 +1,46 @@
+<nav class="fixed w-full z-50 py-4 bg-gray-800 shadow-sm transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-2 space-x-reverse">
+                <span class="text-2xl font-['Pacifico'] text-primary">Smart Text Analyzer </span>
+            </a>
+            <div class="hidden md:flex items-center space-x-8 space-x-reverse">
+                <div class="flex space-x-6 space-x-reverse">
+                    <a href="/" class="text-gray-300 hover:text-primary transition">الرئيسية</a>
+                    <a href="#features" class="text-gray-300 hover:text-primary transition">المميزات</a>
+                    <a href="#التسعير" class="text-gray-300 hover:text-primary transition">التسعير</a>
+                    <a href="#tools" class="text-gray-300 hover:text-primary transition">الأدوات</a>
+                    <a href="#contact" class="text-gray-300 hover:text-primary transition">تواصل معنا</a>
+                    <!-- إذا أردت إضافة وصف الموقع كعنصر في القائمة -->
+                    <!-- <span class="text-gray-300">Smart Text Analyzer – منصة تحليل وتحسين النصوص الذكية</span> -->
+                </div>
+                <div class="flex items-center space-x-4 space-x-reverse">
+                  
+                    <a href="/auth/register" class="px-4 py-2 rounded-button bg-white text-primary border border-primary hover:bg-primary hover:text-white transition">تجربة مجانية</a>
+                    <a href="/auth/login" class="px-4 py-2 rounded-button bg-primary text-white hover:bg-secondary transition">تسجيل الدخول</a>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4 md:hidden">
+                <button id="theme-toggle-mobile" class="p-2 rounded-full hover:bg-gray-700">
+                    <i class="ri-sun-line text-xl text-gray-300"></i>
+                </button>
+                <button id="menu-toggle" class="p-2 rounded-lg hover:bg-gray-700">
+                    <i class="ri-menu-line text-2xl text-gray-300"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-800 mt-2 rounded-lg mx-4">
+            <div class="flex flex-col py-2 space-y-1">
+                <a href="/" class="px-4 py-3 text-gray-300 hover:text-primary hover:bg-gray-700">الرئيسية</a>
+                <a href="#features" class="px-4 py-3 text-gray-300 hover:text-primary hover:bg-gray-700">المميزات</a>
+                <a href="#التسعير" class="px-4 py-3 text-gray-300 hover:text-primary hover:bg-gray-700">التسعير</a>
+                <a href="#tools" class="px-4 py-3 text-gray-300 hover:text-primary hover:bg-gray-700">الأدوات</a>
+                <a href="#contact" class="px-4 py-3 text-gray-300 hover:text-primary hover:bg-gray-700">تواصل معنا</a>
+                <div class="pt-2 border-t border-gray-700">
+                    <a href="/auth/register" class="block px-4 py-3 text-center rounded-button bg-white text-primary border border-primary hover:bg-primary hover:text-white">تجربة مجانية</a>
+                    <a href="/auth/login" class="block px-4 py-3 text-center rounded-button bg-primary text-white hover:bg-secondary mt-2">تسجيل الدخول</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

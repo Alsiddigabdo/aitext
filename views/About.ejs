@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حولنا | Smart Text Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5CF6",
+                        secondary: "#6366F1",
+                    },
+                    borderRadius: {
+                        button: "8px",
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .btn-primary {
+            background-color: #8B5CF6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background-color: #6366F1;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-sm fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-['Pacifico']">Smart Text Analyzer</h1>
+                </div>
+                <nav class="hidden md:flex space-x-8 space-x-reverse">
+                    <a href="#" class="text-gray-300 hover:text-primary">الرئيسية</a>
+                    <a href="#" class="text-gray-300 hover:text-primary">تحليل النصوص</a>
+                    <a href="#" class="text-gray-300 hover:text-primary">الاشتراكات</a>
+                    <a href="#" class="text-gray-300 hover:text-primary">API</a>
+                    <a href="#" class="text-gray-300 hover:text-primary">حولنا</a>
+                    <a href="#" class="text-gray-300 hover:text-primary">تواصل معنا</a>
+                </nav>
+                <div class="hidden md:flex items-center space-x-4 space-x-reverse">
+                    <button class="bg-white text-primary border border-primary px-4 py-2 rounded-button hover:bg-primary hover:text-white transition-colors whitespace-nowrap">
+                        تجربة مجانية
+                    </button>
+                    <button class="bg-primary text-white px-4 py-2 rounded-button hover:bg-secondary transition-colors whitespace-nowrap">
+                        تسجيل الدخول
+                    </button>
+                    <select class="bg-transparent border-none pr-8 text-gray-300">
+                        <option value="ar">العربية</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <button class="md:hidden flex items-center justify-center w-10 h-10" onclick="toggleMobileMenu()">
+                    <i class="ri-menu-line text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-800 shadow-lg">
+            <div class="px-4 py-2 space-y-2">
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">الرئيسية</a>
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">تحليل النصوص</a>
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">الاشتراكات</a>
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">API</a>
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">حولنا</a>
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">تواصل معنا</a>
+                <div class="pt-4 border-t border-gray-700">
+                    <button class="w-full bg-white text-primary border border-primary px-4 py-2 rounded-button hover:bg-primary hover:text-white transition-colors mb-2 whitespace-nowrap">
+                        تجربة مجانية
+                    </button>
+                    <button class="w-full bg-primary text-white px-4 py-2 rounded-button hover:bg-secondary transition-colors mb-2 whitespace-nowrap">
+                        تسجيل الدخول
+                    </button>
+                    <select class="w-full bg-transparent border-none pr-8 text-gray-300">
+                        <option value="ar">العربية</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 pt-24 pb-16">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h1 class="text-4xl lg:text-5xl font-bold mb-6 animate-fade-in">حول Smart Text Analyzer</h1>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto animate-fade-in">منصة ذكية لتحليل النصوص وتحسينها باستخدام الذكاء الاصطناعي</p>
+            </div>
+
+            <!-- About Section -->
+            <div class="glass-card p-8 rounded-lg mb-12 animate-fade-in">
+                <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                    <i class="ri-information-line text-primary"></i>
+                    من نحن
+                </h2>
+                <p class="text-gray-300 mb-6">Smart Text Analyzer هو تطبيق ويب حديث يعتمد على الذكاء الاصطناعي لتحليل النصوص وتحسينها، مصمم لمساعدة الكُتاب، المسوقين، الطلاب، والصحفيين على رفع جودة المحتوى بسرعة وأسلوب احترافي.</p>
+                <p class="text-gray-300">هدفنا هو توفير أداة مبتكرة تسهل عملية الكتابة وتجعلها أكثر كفاءة، سواء كنت تحتاج إلى تصحيح الأخطاء، إعادة صياغة النصوص، أو تحليل المشاعر.</p>
+            </div>
+
+            <!-- Features Section -->
+            <div class="glass-card p-8 rounded-lg mb-12 animate-fade-in">
+                <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                    <i class="ri-star-line text-primary"></i>
+                    ميزاتنا الأساسية
+                </h2>
+                <ul class="space-y-4 text-gray-300 list-disc pr-5">
+                    <li>تصحيح الأخطاء الإملائية والنحوية تلقائيًا.</li>
+                    <li>إعادة صياغة احترافية بأسلوب واضح وطبيعي.</li>
+                    <li>تحليل المشاعر لتحديد نبرة النص (إيجابي، سلبي، محايد).</li>
+                    <li>الكشف عن الانتحال لضمان تفرد المحتوى.</li>
+                    <li>تحليل SEO لتحسين المقالات لمحركات البحث.</li>
+                    <li>اقتراح عناوين تسويقية جذابة.</li>
+                    <li>تقييم وضوح وسهولة القراءة للنصوص.</li>
+                </ul>
+            </div>
+
+            <!-- Why Us Section -->
+            <div class="glass-card p-8 rounded-lg animate-fade-in">
+                <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                    <i class="ri-rocket-line text-primary"></i>
+                    لماذا Smart Text Analyzer؟
+                </h2>
+                <p class="text-gray-300 mb-6">نحن نجمع بين التكنولوجيا المتطورة وسهولة الاستخدام لنقدم أداة قوية تلبي احتياجاتك. مع زيادة الطلب على تحسين المحتوى من الكُتاب والمسوقين والطلاب، نحن هنا لتوفير حلول ذكية توفر الوقت وتعزز الإبداع.</p>
+                <a href="#" class="btn-primary inline-flex items-center gap-2">
+                    <i class="ri-play-line"></i>
+                    ابدأ الآن
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center">
+                <p class="text-gray-400">© 2025 Smart Text Analyzer. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>

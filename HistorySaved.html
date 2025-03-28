@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سجل التحليلات | محلل النصوص الذكي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5CF6",
+                        secondary: "#6366F1",
+                    },
+                    borderRadius: {
+                        none: "0px",
+                        sm: "4px",
+                        DEFAULT: "8px",
+                        md: "12px",
+                        lg: "16px",
+                        xl: "20px",
+                        "2xl": "24px",
+                        "3xl": "32px",
+                        full: "9999px",
+                        button: "8px",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+        .glass-card {
+            background: rgba(26, 36, 61, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .animate-pulse-slow {
+            animation: pulse 3s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        textarea {
+            min-height: 200px;
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .history-item {
+            transition: all 0.3s ease;
+        }
+        .history-item:hover {
+            transform: translateX(-5px);
+            background: rgba(139, 92, 246, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 py-4 bg-gray-800 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-2 space-x-reverse">
+                    <span class="text-2xl font-['Pacifico'] text-primary">محلل النصوص</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-4 space-x-reverse">
+                    <a href="/" class="px-4 py-2 rounded-button bg-primary text-white hover:bg-secondary transition">العودة للرئيسية</a>
+                </div>
+                <button class="md:hidden flex items-center justify-center w-10 h-10">
+                    <i class="ri-menu-line text-2xl text-gray-300"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="mt-20 flex-grow">
+        <section class="py-12 md:py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">سجل التحليلات</span>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-4">التحليلات المحفوظة</h1>
+                    <p class="text-lg text-gray-400 max-w-2xl mx-auto">استعرض وأعد استخدام تحليلاتك السابقة</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Filters Sidebar -->
+                    <div class="lg:col-span-3">
+                        <div class="glass-card p-6 rounded-lg sticky top-24">
+                            <h2 class="text-xl font-bold mb-6 flex items-center">
+                                <i class="ri-filter-line ml-2"></i> تصفية النتائج
+                            </h2>
+                            
+                            <div class="space-y-6">
+                                <!-- Search -->
+                                <div>
+                                    <h3 class="font-medium mb-3">بحث</h3>
+                                    <div class="relative">
+                                        <input type="text" placeholder="ابحث في التحليلات..." class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary">
+                                        <i class="ri-search-line absolute left-3 top-2.5 text-gray-400"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Date Filter -->
+                                <div>
+                                    <h3 class="font-medium mb-3">التاريخ</h3>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="radio" name="dateFilter" class="text-primary" checked>
+                                            <span>جميع التواريخ</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="radio" name="dateFilter" class="text-primary">
+                                            <span>آخر 7 أيام</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="radio" name="dateFilter" class="text-primary">
+                                            <span>هذا الشهر</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="radio" name="dateFilter" class="text-primary">
+                                            <span>نطاق مخصص</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Analysis Type -->
+                                <div>
+                                    <h3 class="font-medium mb-3">نوع التحليل</h3>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="checkbox" class="text-primary" checked>
+                                            <span>تحويل إلى أكاديمي</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="checkbox" class="text-primary" checked>
+                                            <span>تحويل إلى رسمي</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="checkbox" class="text-primary" checked>
+                                            <span>تحويل إلى فصيح</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="checkbox" class="text-primary" checked>
+                                            <span>تلخيص النص</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Action Buttons -->
+                                <button class="w-full py-3 rounded-button bg-primary text-white hover:bg-secondary transition flex items-center justify-center">
+                                    <i class="ri-filter-line ml-2"></i> تطبيق الفلتر
+                                </button>
+                                <button class="w-full py-3 rounded-button bg-gray-700 text-white hover:bg-gray-600 transition flex items-center justify-center">
+                                    <i class="ri-eraser-line ml-2"></i> مسح الفلاتر
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- History Content -->
+                    <div class="lg:col-span-9">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                            <h2 class="text-xl font-bold flex items-center">
+                                <i class="ri-history-line ml-2"></i> التحليلات السابقة
+                            </h2>
+                            <div class="flex items-center space-x-3 space-x-reverse mt-3 md:mt-0">
+                                <button class="px-4 py-2 rounded-button bg-gray-700 text-white hover:bg-gray-600 transition flex items-center">
+                                    <i class="ri-download-line ml-2"></i> تصدير الكل
+                                </button>
+                                <button class="px-4 py-2 rounded-button bg-gray-700 text-white hover:bg-gray-600 transition flex items-center">
+                                    <i class="ri-delete-bin-line ml-2"></i> حذف الكل
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Sorting Options -->
+                        <div class="glass-card p-4 rounded-lg mb-6">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
+                                <div class="text-sm text-gray-400">
+                                    عرض <span class="text-white">1-8</span> من <span class="text-white">24</span> تحليل
+                                </div>
+                                <div class="flex items-center space-x-3 space-x-reverse">
+                                    <span class="text-sm text-gray-400">ترتيب حسب:</span>
+                                    <select class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary">
+                                        <option>الأحدث أولاً</option>
+                                        <option>الأقدم أولاً</option>
+                                        <option>الأكثر استخداماً</option>
+                                        <option>الأطول</option>
+                                        <option>الأقصر</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- History Items -->
+                        <div class="space-y-4">
+                            <!-- History Item 1 -->
+                            <div class="glass-card p-5 rounded-lg history-item">
+                                <div class="flex flex-col md:flex-row md:items-start md:justify-between">
+                                    <div class="md:w-3/4">
+                                        <div class="flex items-center space-x-2 space-x-reverse mb-2">
+                                            <span class="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">تحويل إلى أكاديمي</span>
+                                            <span class="text-xs text-gray-400">12 مارس 2025 - 10:45 ص</span>
+                                        </div>
+                                        <h3 class="font-medium mb-1">تحليل نص بحثي حول الذكاء الاصطناعي</h3>
+                                        <p class="text-sm text-gray-400 line-clamp-2 mb-3">في هذا البحث سنناقش تأثير الذكاء الاصطناعي على سوق العمل في المستقبل القريب وكيفية الاستعداد لهذه التغيرات الجذرية التي ستطرأ على العديد من الوظائف...</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2 space-x-reverse md:space-x-0 md:space-x-reverse-2">
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="إعادة التحليل">
+                                            <i class="ri-repeat-line text-primary"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="تنزيل">
+                                            <i class="ri-download-line text-gray-300"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="حذف">
+                                            <i class="ri-delete-bin-line text-red-400"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- History Item 2 -->
+                            <div class="glass-card p-5 rounded-lg history-item">
+                                <div class="flex flex-col md:flex-row md:items-start md:justify-between">
+                                    <div class="md:w-3/4">
+                                        <div class="flex items-center space-x-2 space-x-reverse mb-2">
+                                            <span class="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">تحويل إلى رسمي</span>
+                                            <span class="text-xs text-gray-400">10 مارس 2025 - 03:20 م</span>
+                                        </div>
+                                        <h3 class="font-medium mb-1">رسالة طلب توظيف لشركة التقنية الحديثة</h3>
+                                        <p class="text-sm text-gray-400 line-clamp-2 mb-3">أقدم لسيادتكم طلب التوظيف هذا راجياً منكم النظر في مؤهلاتي وخبراتي التي تتناسب مع متطلبات الوظيفة المعلن عنها في موقعكم الإلكتروني...</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2 space-x-reverse md:space-x-0 md:space-x-reverse-2">
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="إعادة التحليل">
+                                            <i class="ri-repeat-line text-primary"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="تنزيل">
+                                            <i class="ri-download-line text-gray-300"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="حذف">
+                                            <i class="ri-delete-bin-line text-red-400"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- History Item 3 -->
+                            <div class="glass-card p-5 rounded-lg history-item">
+                                <div class="flex flex-col md:flex-row md:items-start md:justify-between">
+                                    <div class="md:w-3/4">
+                                        <div class="flex items-center space-x-2 space-x-reverse mb-2">
+                                            <span class="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">تحويل إلى فصيح</span>
+                                            <span class="text-xs text-gray-400">8 مارس 2025 - 09:15 ص</span>
+                                        </div>
+                                        <h3 class="font-medium mb-1">تحويل نص عامي عن السفر إلى لغة فصحى</h3>
+                                        <p class="text-sm text-gray-400 line-clamp-2 mb-3">كانت الرحلة جميلة جداً واستمتعت كثيراً بالمناظر الطبيعية الخلابة التي شاهدتها خلال تجوالي في أنحاء المدينة القديمة...</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2 space-x-reverse md:space-x-0 md:space-x-reverse-2">
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="إعادة التحليل">
+                                            <i class="ri-repeat-line text-primary"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="تنزيل">
+                                            <i class="ri-download-line text-gray-300"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="حذف">
+                                            <i class="ri-delete-bin-line text-red-400"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- History Item 4 -->
+                            <div class="glass-card p-5 rounded-lg history-item">
+                                <div class="flex flex-col md:flex-row md:items-start md:justify-between">
+                                    <div class="md:w-3/4">
+                                        <div class="flex items-center space-x-2 space-x-reverse mb-2">
+                                            <span class="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">تلخيص النص</span>
+                                            <span class="text-xs text-gray-400">5 مارس 2025 - 11:30 ص</span>
+                                        </div>
+                                        <h3 class="font-medium mb-1">ملخص مقال علمي حول تغير المناخ</h3>
+                                        <p class="text-sm text-gray-400 line-clamp-2 mb-3">يشير المقال إلى أن تغير المناخ أصبح من أكبر التحديات التي تواجه البشرية في العصر الحالي، مع توقع زيادة درجات الحرارة العالمية بمقدار 1.5 درجة مئوية بحلول عام 2030 إذا استمرت الانبعاثات بمعدلها الحالي...</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2 space-x-reverse md:space-x-0 md:space-x-reverse-2">
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="إعادة التحليل">
+                                            <i class="ri-repeat-line text-primary"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="تنزيل">
+                                            <i class="ri-download-line text-gray-300"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="حذف">
+                                            <i class="ri-delete-bin-line text-red-400"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- History Item 5 -->
+                            <div class="glass-card p-5 rounded-lg history-item">
+                                <div class="flex flex-col md:flex-row md:items-start md:justify-between">
+                                    <div class="md:w-3/4">
+                                        <div class="flex items-center space-x-2 space-x-reverse mb-2">
+                                            <span class="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">تحويل إلى أكاديمي</span>
+                                            <span class="text-xs text-gray-400">3 مارس 2025 - 04:45 م</span>
+                                        </div>
+                                        <h3 class="font-medium mb-1">تحسين نص مقدمة بحث علمي</h3>
+                                        <p class="text-sm text-gray-400 line-clamp-2 mb-3">يهدف هذا البحث إلى دراسة تأثير وسائل التواصل الاجتماعي على الصحة النفسية للمراهقين، مع التركيز على الجوانب الإيجابية والسلبية لاستخدام هذه المنصات بشكل مكثف...</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2 space-x-reverse md:space-x-0 md:space-x-reverse-2">
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="إعادة التحليل">
+                                            <i class="ri-repeat-line text-primary"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="تنزيل">
+                                            <i class="ri-download-line text-gray-300"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="حذف">
+                                            <i class="ri-delete-bin-line text-red-400"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- History Item 6 -->
+                            <div class="glass-card p-5 rounded-lg history-item">
+                                <div class="flex flex-col md:flex-row md:items-start md:justify-between">
+                                    <div class="md:w-3/4">
+                                        <div class="flex items-center space-x-2 space-x-reverse mb-2">
+                                            <span class="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">تحويل إلى رسمي</span>
+                                            <span class="text-xs text-gray-400">1 مارس 2025 - 08:20 ص</span>
+                                        </div>
+                                        <h3 class="font-medium mb-1">تحسين نص بريد إلكتروني احترافي</h3>
+                                        <p class="text-sm text-gray-400 line-clamp-2 mb-3">تحية طيبة وبعد، نود إعلامكم بأننا قد استلمنا طلبكم المقدم بتاريخ 25 فبراير 2025 وسيتم النظر فيه خلال الأيام القليلة القادمة، وسيتم إعلامكم بالنتيجة فور الانتهاء من عملية المراجعة...</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2 space-x-reverse md:space-x-0 md:space-x-reverse-2">
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="إعادة التحليل">
+                                            <i class="ri-repeat-line text-primary"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="تنزيل">
+                                            <i class="ri-download-line text-gray-300"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="حذف">
+                                            <i class="ri-delete-bin-line text-red-400"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- History Item 7 -->
+                            <div class="glass-card p-5 rounded-lg history-item">
+                                <div class="flex flex-col md:flex-row md:items-start md:justify-between">
+                                    <div class="md:w-3/4">
+                                        <div class="flex items-center space-x-2 space-x-reverse mb-2">
+                                            <span class="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">تحويل إلى فصيح</span>
+                                            <span class="text-xs text-gray-400">27 فبراير 2025 - 02:15 م</span>
+                                        </div>
+                                        <h3 class="font-medium mb-1">تحويل وصفة طبخ عامية إلى فصحى</h3>
+                                        <p class="text-sm text-gray-400 line-clamp-2 mb-3">لتحضير الكبة الشهية، ابدأ بخلط البرغل مع اللحم المفروم ناعماً ثم أضف البهارات مثل القرفة والبهار العربي وقلب المكونات جيداً حتى تتجانس...</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2 space-x-reverse md:space-x-0 md:space-x-reverse-2">
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="إعادة التحليل">
+                                            <i class="ri-repeat-line text-primary"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="تنزيل">
+                                            <i class="ri-download-line text-gray-300"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="حذف">
+                                            <i class="ri-delete-bin-line text-red-400"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- History Item 8 -->
+                            <div class="glass-card p-5 rounded-lg history-item">
+                                <div class="flex flex-col md:flex-row md:items-start md:justify-between">
+                                    <div class="md:w-3/4">
+                                        <div class="flex items-center space-x-2 space-x-reverse mb-2">
+                                            <span class="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">تلخيص النص</span>
+                                            <span class="text-xs text-gray-400">24 فبراير 2025 - 10:00 ص</span>
+                                        </div>
+                                        <h3 class="font-medium mb-1">ملخص تقرير اقتصادي عن سوق العمل</h3>
+                                        <p class="text-sm text-gray-400 line-clamp-2 mb-3">يشير التقرير إلى نمو قطاع التكنولوجيا بنسبة 15% خلال العام الماضي، مع توقع استمرار هذا النمو خلال السنوات الثلاث القادمة، بينما شهد قطاع السياحة انخفاضاً بنسبة 8% بسبب القيود المفروضة على السفر...</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2 space-x-reverse md:space-x-0 md:space-x-reverse-2">
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="إعادة التحليل">
+                                            <i class="ri-repeat-line text-primary"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="تنزيل">
+                                            <i class="ri-download-line text-gray-300"></i>
+                                        </button>
+                                        <button class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="حذف">
+                                            <i class="ri-delete-bin-line text-red-400"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div class="glass-card mt-6 p-4 rounded-lg">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                                <div class="text-sm text-gray-400 mb-3 md:mb-0">
+                                    عرض <span class="text-white">1-8</span> من <span class="text-white">24</span> تحليل
+                                </div>
+                                <div class="flex items-center space-x-2 space-x-reverse">
+                                    <button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-700 hover:bg-gray-600 transition">
+                                        <i class="ri-arrow-right-s-line"></i>
+                                    </button>
+                                    <button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white">1</button>
+                                    <button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-700 hover:bg-gray-600 transition">2</button>
+                                    <button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-700 hover:bg-gray-600 transition">3</button>
+                                    <span class="px-2">...</span>
+                                    <button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-700 hover:bg-gray-600 transition">5</button>
+                                    <button class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-700 hover:bg-gray-600 transition">
+                                        <i class="ri-arrow-left-s-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Features Section -->
+        <section class="py-12 md:py-16 bg-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">إمكانيات سجل التحليلات</h2>
+                    <p class="text-lg text-gray-400 max-w-2xl mx-auto">استفد من تحليلاتك السابقة بكل سهولة</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glass-card p-6">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                            <i class="ri-history-line text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-medium mb-2">سجل كامل للتحليلات</h3>
+                        <p class="text-gray-400">احتفظ بسجل كامل لجميع النصوص التي قمت بتحليلها مع إمكانية البحث والتصفية حسب التاريخ أو النوع.</p>
+                    </div>
+                    <div class="glass-card p-6">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                            <i class="ri-repeat-line text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-medium mb-2">إعادة التحليل بسرعة</h3>
+                        <p class="text-gray-400">أعد تحليل أي نص سابق مع تعديلات بسيطة أو باستخدام إعدادات مختلفة دون الحاجة لإدخال النص من جديد.</p>
+                    </div>
+                    <div class="glass-card p-6">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                            <i class="ri-download-line text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-medium mb-2">تصدير متعدد التنسيقات</h3>
+                        <p class="text-gray-400">قم بتنزيل نتائج التحليل بتنسيقات مختلفة مثل PDF أو DOCX أو TXT لاستخدامها خارج الموقع.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 bg-gray-800 border-t border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm text-gray-400 mb-4 md:mb-0">© 2025 محلل النصوص الذكي. جميع الحقوق محفوظة.</p>
+                <div class="flex space-x-4 space-x-reverse">
+                    <a href="#terms" class="text-sm text-gray-400 hover:text-primary">الشروط والأحكام</a>
+                    <a href="#privacy" class="text-sm text-gray-400 hover:text-primary">سياسة الخصوصية</a>
+                    <a href="#contact" class="text-sm text-gray-400 hover:text-primary">اتصل بنا</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const historyItems = document.querySelectorAll('.history-item');
+        
+        // Mock functions for actions
+        function reanalyzeItem(e) {
+            const item = e.currentTarget.closest('.history-item');
+            console.log('إعادة تحليل العنصر:', item.querySelector('h3').textContent);
+            // Here you would typically redirect to analysis page with the original text
+        }
+        
+        function downloadItem(e) {
+            const item = e.currentTarget.closest('.history-item');
+            console.log('تنزيل العنصر:', item.querySelector('h3').textContent);
+            // Here you would trigger download of the analysis result
+        }
+        
+        function deleteItem(e) {
+            const item = e.currentTarget.closest('.history-item');
+            if (confirm('هل أنت متأكد من حذف هذا التحليل؟')) {
+                item.style.opacity = '0';
+                setTimeout(() => item.remove(), 300);
+            }
+        }
+        
+        // Add event listeners to all action buttons
+        historyItems.forEach(item => {
+            const buttons = item.querySelectorAll('button');
+            buttons[0].addEventListener('click', reanalyzeItem); // Reanalyze button
+            buttons[1].addEventListener('click', downloadItem);  // Download button
+            buttons[2].addEventListener('click', deleteItem);   // Delete button
+        });
+        
+        // Search functionality
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            historyItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>

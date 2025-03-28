@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التحليل المتقدم للنصوص | محلل النصوص الذكي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5CF6",
+                        secondary: "#6366F1",
+                    },
+                    borderRadius: {
+                        button: "8px",
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #111827; color: #f3f4f6; }
+        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
+        .glass-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); }
+        .btn-primary { background-color: #8B5CF6; color: white; padding: 12px 24px; border-radius: 8px; transition: background-color 0.3s ease; }
+        .btn-primary:hover:not(:disabled) { background-color: #6366F1; }
+        .btn-secondary { background-color: rgba(255, 255, 255, 0.1); color: white; padding: 12px 24px; border-radius: 8px; transition: background-color 0.3s ease; }
+        .btn-secondary:hover { background-color: rgba(255, 255, 255, 0.2); }
+        .animate-spin { animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <%- include('partials/navbar') %>
+    <!-- Main Content -->
+    <main class="pt-24 pb-16">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h1 class="text-4xl lg:text-5xl font-bold mb-6 animate-fade-in">التحليل المتقدم للنصوص</h1>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto animate-fade-in">استخدم أدواتنا المتقدمة لتحليل نصوصك بشكل شامل واحصل على تقرير تفصيلي</p>
+            </div>
+
+            <!-- Analyzer Section -->
+            <div class="glass-card p-8 rounded-lg max-w-4xl mx-auto animate-fade-in">
+                <div class="flex flex-col md:flex-row items-center gap-6 mb-6">
+                    <div class="w-full md:w-2/3">
+                        <h2 class="text-xl font-bold mb-2 flex items-center gap-2">
+                            <i class="ri-file-text-line text-primary"></i>
+                            أدخل النص أو قم بتحميل ملف
+                        </h2>
+                        <p class="text-sm text-gray-400 mb-4">ندعم ملفات PDF وDOCX وTXT</p>
+                    </div>
+                    <div class="w-full md:w-1/3 flex justify-end">
+                        <label class="relative cursor-pointer px-4 py-2 rounded-button bg-primary text-white hover:bg-secondary transition-colors flex items-center gap-2">
+                            <i class="ri-upload-cloud-line"></i>
+                            تحميل ملف
+                            <input id="file-upload" type="file" class="hidden" accept=".pdf,.docx,.txt">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Textarea and Controls -->
+                <textarea
+                    id="text-input"
+                    placeholder="أدخل النص هنا للتحليل... (مثال: مرحباً، هذا نص تجريبي لاختبار خدمة تحليل النصوص المتقدم.)"
+                    class="w-full h-40 p-4 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none text-white"
+                ></textarea>
+                <div class="mt-4 flex items-center justify-between">
+                    <div id="char-count" class="text-sm text-gray-400">0 حرف</div>
+                    <div class="flex gap-2">
+                        <button id="reset-btn" class="btn-secondary font-medium flex items-center gap-2 hidden">
+                            <i class="ri-refresh-line"></i> إعادة ضبط
+                        </button>
+                        <button id="analyze-btn" class="btn-primary font-medium flex items-center gap-2 disabled:bg-gray-600">
+                            <i class="ri-search-line"></i> تحليل النص
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="mt-6">
+                    <div class="flex overflow-x-auto border-b border-gray-700 gap-2 pb-2">
+                        <button data-tab="grammar" class="tab-btn px-4 py-2 whitespace-nowrap rounded-button flex items-center gap-2 bg-primary text-white">
+                            <i class="ri-check-line"></i> <span>التدقيق اللغوي</span>
+                        </button>
+                        <button data-tab="language" class="tab-btn px-4 py-2 whitespace-nowrap rounded-button flex items-center gap-2 hover:bg-gray-700 text-gray-300">
+                            <i class="ri-text"></i> <span>تحليل اللغة</span>
+                        </button>
+                        <button data-tab="sentiment" class="tab-btn px-4 py-2 whitespace-nowrap rounded-button flex items-center gap-2 hover:bg-gray-700 text-gray-300">
+                            <i class="ri-emotion-line"></i> <span>تحليل المشاعر</span>
+                        </button>
+                        <button data-tab="seo" class="tab-btn px-4 py-2 whitespace-nowrap rounded-button flex items-center gap-2 hover:bg-gray-700 text-gray-300">
+                            <i class="ri-search-line"></i> <span>تحسين SEO</span>
+                        </button>
+                        <button data-tab="style" class="tab-btn px-4 py-2 whitespace-nowrap rounded-button flex items-center gap-2 hover:bg-gray-700 text-gray-300">
+                            <i class="ri-edit-line"></i> <span>تحسين الأسلوب</span>
+                        </button>
+                        <button data-tab="classification" class="tab-btn px-4 py-2 whitespace-nowrap rounded-button flex items-center gap-2 hover:bg-gray-700 text-gray-300">
+                            <i class="ri-file-list-line"></i> <span>تصنيف النص</span>
+                        </button>
+                        <button data-tab="plagiarism" class="tab-btn px-4 py-2 whitespace-nowrap rounded-button flex items-center gap-2 hover:bg-gray-700 text-gray-300">
+                            <i class="ri-file-warning-line"></i> <span>كشف الانتحال</span>
+                        </button>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div id="tab-content" class="mt-8">
+                        <div id="grammar" class="tab-content animate-fade-in">
+                            <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="ri-check-line text-primary"></i> التدقيق النحوي والإملائي</h3>
+                            <p class="text-gray-400 mb-4">تحقق من الأخطاء النحوية والإملائية في نصك</p>
+                            <div id="grammar-results" class="hidden mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700"></div>
+                        </div>
+                        <div id="language" class="tab-content hidden animate-fade-in">
+                            <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="ri-text text-primary"></i> تحليل اللغة واللهجة</h3>
+                            <p class="text-gray-400 mb-4">تعرف على اللغة واللهجة المستخدمة</p>
+                            <div id="language-results" class="hidden mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700"></div>
+                        </div>
+                        <div id="sentiment" class="tab-content hidden animate-fade-in">
+                            <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="ri-emotion-line text-primary"></i> تحليل المشاعر</h3>
+                            <p class="text-gray-400 mb-4">تحليل نغمة النص وتأثيره العاطفي</p>
+                            <div id="sentiment-results" class="hidden mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700"></div>
+                        </div>
+                        <div id="seo" class="tab-content hidden animate-fade-in">
+                            <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="ri-search-line text-primary"></i> تحسين محركات البحث (SEO)</h3>
+                            <p class="text-gray-400 mb-4">تحسين النص لمحركات البحث</p>
+                            <div id="seo-results" class="hidden mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700"></div>
+                        </div>
+                        <div id="style" class="tab-content hidden animate-fade-in">
+                            <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="ri-edit-line text-primary"></i> تحسين الأسلوب</h3>
+                            <p class="text-gray-400 mb-4">اقتراحات لتحسين أسلوب الكتابة</p>
+                            <div id="style-results" class="hidden mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700"></div>
+                        </div>
+                        <div id="classification" class="tab-content hidden animate-fade-in">
+                            <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="ri-file-list-line text-primary"></i> تصنيف النص</h3>
+                            <p class="text-gray-400 mb-4">تعرف على نوع النص</p>
+                            <div id="classification-results" class="hidden mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700"></div>
+                        </div>
+                        <div id="plagiarism" class="tab-content hidden animate-fade-in">
+                            <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="ri-file-warning-line text-primary"></i> كشف الانتحال</h3>
+                            <p class="text-gray-400 mb-4">التحقق من تفرد المحتوى</p>
+                            <div id="plagiarism-results" class="hidden mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+                    <div class="glass-card p-6">
+                        <div class="flex items-center gap-2 mb-2"><i class="ri-global-line text-primary text-xl"></i><h3 class="text-lg font-bold">دعم متعدد اللغات</h3></div>
+                        <p class="text-gray-400">ندعم أكثر من 20 لغة عالمية بما فيها العربية والإنجليزية.</p>
+                    </div>
+                    <div class="glass-card p-6">
+                        <div class="flex items-center gap-2 mb-2"><i class="ri-file-text-line text-primary text-xl"></i><h3 class="text-lg font-bold">تحليل وثائق كاملة</h3></div>
+                        <p class="text-gray-400">تحميل مستندات (PDF، DOCX، TXT) لتحليل شامل.</p>
+                    </div>
+                    <div class="glass-card p-6">
+                        <div class="flex items-center gap-2 mb-2"><i class="ri-bar-chart-line text-primary text-xl"></i><h3 class="text-lg font-bold">تقارير تفصيلية</h3></div>
+                        <p class="text-gray-400">تقارير بيانية توضح نقاط القوة والضعف.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        // دالة لإرسال الطلب إلى الخلفية
+        const analyzeText = async (text, analysisType) => {
+            try {
+                const response = await fetch('/analyzer/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, analysisType })
+                });
+                if (!response.ok) throw new Error('فشل في التحليل');
+                return await response.json();
+            } catch (error) {
+                console.error('Error analyzing text:', error);
+                return { error: 'حدث خطأ أثناء تحليل النص' };
+            }
+        };
+
+        // عرض النتائج
+        const displayResults = (result, analysisType) => {
+            const resultsContainer = document.getElementById(`${analysisType}-results`);
+            let html = '';
+            if (result.error) {
+                html = `<p class="text-red-400">${result.error}</p>`;
+            } else {
+                const response = result.result; // نتيجة التحليل من الخلفية
+                switch (analysisType) {
+                    case 'grammar':
+                        html = `<h4 class="mb-2 font-medium">نتائج التحليل:</h4><p>${response}</p>`;
+                        break;
+                    case 'language':
+                        html = `<h4 class="mb-2 font-medium">نتائج التحليل:</h4><p>${response}</p>`;
+                        break;
+                    case 'sentiment':
+                        html = `<h4 class="mb-2 font-medium">نتائج التحليل:</h4><p>${response}</p>`;
+                        break;
+                    case 'seo':
+                        html = `<h4 class="mb-2 font-medium">نتائج التحليل:</h4><p>${response}</p>`;
+                        break;
+                    case 'style':
+                        html = `<h4 class="mb-2 font-medium">نتائج التحليل:</h4><p>${response}</p>`;
+                        break;
+                    case 'classification':
+                        html = `<h4 class="mb-2 font-medium">نتائج التحليل:</h4><p>${response}</p>`;
+                        break;
+                    case 'plagiarism':
+                        html = `<h4 class="mb-2 font-medium">نتائج التحليل:</h4><p>${response}</p>`;
+                        break;
+                }
+            }
+            resultsContainer.innerHTML = html;
+            resultsContainer.classList.remove('hidden');
+        };
+
+        // إعدادات التفاعل
+        const textInput = document.getElementById('text-input');
+        const charCount = document.getElementById('char-count');
+        const resetBtn = document.getElementById('reset-btn');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const fileUpload = document.getElementById('file-upload');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        textInput.addEventListener('input', () => {
+            charCount.textContent = `${textInput.value.length} حرف`;
+            resetBtn.classList.toggle('hidden', !textInput.value);
+            analyzeBtn.disabled = !textInput.value.trim();
+        });
+
+        fileUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+                if (validTypes.includes(file.type)) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        textInput.value = event.target.result;
+                        charCount.textContent = `${textInput.value.length} حرف`;
+                        resetBtn.classList.remove('hidden');
+                        analyzeBtn.disabled = false;
+                    };
+                    reader.readAsText(file);
+                    alert(`تم استلام الملف: ${file.name}`);
+                } else {
+                    alert('نوع ملف غير مدعوم. يرجى تحميل ملف PDF أو DOCX أو TXT');
+                }
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            textInput.value = '';
+            charCount.textContent = '0 حرف';
+            resetBtn.classList.add('hidden');
+            analyzeBtn.disabled = true;
+            document.querySelectorAll('[id$="-results"]').forEach(result => result.classList.add('hidden'));
+        });
+
+        analyzeBtn.addEventListener('click', async () => {
+            if (!textInput.value.trim()) return;
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = '<span class="inline-block h-4 w-4 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2"></span>جاري التحليل...';
+            const activeTab = document.querySelector('.tab-btn.bg-primary').dataset.tab;
+            const result = await analyzeText(textInput.value, activeTab);
+            displayResults(result, activeTab);
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerHTML = '<i class="ri-search-line"></i> تحليل النص';
+        });
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('bg-primary', 'text-white');
+                    btn.classList.add('text-gray-300', 'hover:bg-gray-700');
+                });
+                button.classList.add('bg-primary', 'text-white');
+                button.classList.remove('text-gray-300', 'hover:bg-gray-700');
+                tabContents.forEach(content => content.classList.add('hidden'));
+                document.getElementById(button.dataset.tab).classList.remove('hidden');
+            });
+        });
+
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>

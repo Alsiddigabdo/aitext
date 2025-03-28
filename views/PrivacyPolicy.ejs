@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سياسة الخصوصية | Smart Text Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5CF6",
+                        secondary: "#6366F1",
+                    },
+                    borderRadius: {
+                        button: "8px",
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .btn-primary {
+            background-color: #8B5CF6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background-color: #6366F1;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-sm fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-['Pacifico']">Smart Text Analyzer</h1>
+                </div>
+                <nav class="hidden md:flex space-x-8 space-x-reverse">
+                    <a href="#" class="text-gray-300 hover:text-primary">الرئيسية</a>
+                    <a href="#" class="text-gray-300 hover:text-primary">تحليل النصوص</a>
+                    <a href="#" class="text-gray-300 hover:text-primary">الاشتراكات</a>
+                    <a href="#" class="text-gray-300 hover:text-primary">API</a>
+                    <a href="#" class="text-gray-300 hover:text-primary">حولنا</a>
+                    <a href="#" class="text-gray-300 hover:text-primary">تواصل معنا</a>
+                </nav>
+                <div class="hidden md:flex items-center space-x-4 space-x-reverse">
+                    <button class="bg-white text-primary border border-primary px-4 py-2 rounded-button hover:bg-primary hover:text-white transition-colors whitespace-nowrap">
+                        تجربة مجانية
+                    </button>
+                    <button class="bg-primary text-white px-4 py-2 rounded-button hover:bg-secondary transition-colors whitespace-nowrap">
+                        تسجيل الدخول
+                    </button>
+                    <select class="bg-transparent border-none pr-8 text-gray-300">
+                        <option value="ar">العربية</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <button class="md:hidden flex items-center justify-center w-10 h-10" onclick="toggleMobileMenu()">
+                    <i class="ri-menu-line text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-800 shadow-lg">
+            <div class="px-4 py-2 space-y-2">
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">الرئيسية</a>
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">تحليل النصوص</a>
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">الاشتراكات</a>
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">API</a>
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">حولنا</a>
+                <a href="#" class="block text-gray-300 hover:text-primary py-2">تواصل معنا</a>
+                <div class="pt-4 border-t border-gray-700">
+                    <button class="w-full bg-white text-primary border border-primary px-4 py-2 rounded-button hover:bg-primary hover:text-white transition-colors mb-2 whitespace-nowrap">
+                        تجربة مجانية
+                    </button>
+                    <button class="w-full bg-primary text-white px-4 py-2 rounded-button hover:bg-secondary transition-colors mb-2 whitespace-nowrap">
+                        تسجيل الدخول
+                    </button>
+                    <select class="w-full bg-transparent border-none pr-8 text-gray-300">
+                        <option value="ar">العربية</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 pt-24 pb-16">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h1 class="text-4xl lg:text-5xl font-bold mb-6 animate-fade-in">سياسة الخصوصية</h1>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto animate-fade-in">نلتزم بحماية بياناتك أثناء استخدامك لـ Smart Text Analyzer</p>
+            </div>
+
+            <!-- Privacy Policy Section -->
+            <div class="glass-card p-8 rounded-lg animate-fade-in">
+                <h2 class="text-2xl font-bold mb-4">تاريخ التحديث: 25 مارس 2025</h2>
+                <p class="text-gray-300 mb-6">في Smart Text Analyzer، خصوصيتك هي أولويتنا. توضح هذه السياسة كيف نجمع معلوماتك، نستخدمها، ونحميها أثناء تفاعلك مع خدماتنا.</p>
+
+                <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+                    <i class="ri-shield-line text-primary"></i>
+                    1. المعلومات التي نجمعها
+                </h3>
+                <ul class="space-y-2 text-gray-300 mb-6 list-disc pr-5">
+                    <li>المعلومات التي تقدمها: مثل النصوص التي تحللها، البريد الإلكتروني عند التسجيل.</li>
+                    <li>بيانات الاستخدام: مثل الصفحات التي تزورها ووقت الاستخدام.</li>
+                    <li>البيانات التقنية: مثل نوع الجهاز وعنوان IP.</li>
+                </ul>
+
+                <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+                    <i class="ri-tools-line text-primary"></i>
+                    2. كيف نستخدم معلوماتك
+                </h3>
+                <ul class="space-y-2 text-gray-300 mb-6 list-disc pr-5">
+                    <li>لتقديم خدمات مثل تحليل النصوص وإعادة الصياغة.</li>
+                    <li>لتحسين تجربتك بناءً على تحليل البيانات.</li>
+                    <li>للتواصل معك بخصوص الدعم أو التحديثات.</li>
+                </ul>
+
+                <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+                    <i class="ri-share-line text-primary"></i>
+                    3. مشاركة المعلومات
+                </h3>
+                <p class="text-gray-300 mb-6">لا نشارك بياناتك إلا بموافقتك أو عند الضرورة القانونية أو مع مزودي خدمات موثوقين ملتزمين بالسرية.</p>
+
+                <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+                    <i class="ri-lock-line text-primary"></i>
+                    4. حماية بياناتك
+                </h3>
+                <p class="text-gray-300 mb-6">نستخدم تقنيات أمنية متقدمة لحماية بياناتك، لكن لا يمكن ضمان الأمان المطلق عبر الإنترنت.</p>
+
+                <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+                    <i class="ri-user-settings-line text-primary"></i>
+                    5. حقوقك
+                </h3>
+                <p class="text-gray-300 mb-6">يمكنك طلب الوصول إلى بياناتك، تعديلها، أو حذفها عبر التواصل معنا. كما يمكنك التحكم في ملفات تعريف الارتباط.</p>
+
+                <h3 class="text-xl font-bold mb-2 flex items-center gap-2">
+                    <i class="ri-mail-line text-primary"></i>
+                    6. التواصل معنا
+                </h3>
+                <p class="text-gray-300">للأسئلة أو الاستفسارات: <a href="mailto:support@smarttextanalyzer.com" class="text-primary hover:underline">support@smarttextanalyzer.com</a></p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center">
+                <p class="text-gray-400">© 2025 Smart Text Analyzer. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
