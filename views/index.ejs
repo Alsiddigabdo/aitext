@@ -952,70 +952,85 @@
         });
         
         // تأثير التحميل عند إرسال نموذج OpenAI
-  document.getElementById('openaiKeyForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const openaiKey = document.getElementById('openaiKey').value;
-    const messageDiv = document.getElementById('message');
-    const btnText = document.getElementById('btnText');
-    const btnLoading = document.getElementById('btnLoading');
-    const submitBtn = document.getElementById('submitBtn');
-    const token = localStorage.getItem('token'); // افترض أن التوكن مخزن في localStorage
+ document.getElementById('openaiKeyForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const openaiKey = document.getElementById('openaiKey').value;
+  const messageDiv = document.getElementById('message');
+  const btnText = document.getElementById('btnText');
+  const btnLoading = document.getElementById('btnLoading');
+  const submitBtn = document.getElementById('submitBtn');
+  const token = localStorage.getItem('token');
 
-    btnText.classList.add('hidden');
-    btnLoading.classList.remove('hidden');
-    submitBtn.disabled = true;
+  // التحقق من صحة المفتاح الأساسي
+  if (!openaiKey.startsWith('sk-')) {
+    messageDiv.className = 'text-red-400 text-center text-sm mt-4';
+    messageDiv.textContent = 'يجب أن يبدأ مفتاح OpenAI بـ sk-';
+    return;
+  }
 
-    try {
-      const response = await fetch('/api/activate-openai', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ openaiKey })
-      });
-      const result = await response.json();
+  btnText.classList.add('hidden');
+  btnLoading.classList.remove('hidden');
+  submitBtn.disabled = true;
 
-      if (response.ok) {
-        messageDiv.className = 'text-green-400 text-center text-sm mt-4';
-        messageDiv.textContent = result.message;
+  try {
+    const response = await fetch('/api/activate-openai', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ openaiKey })
+    });
+    
+    const result = await response.json();
 
-        setTimeout(() => {
-          document.getElementById('openaiKeyForm').reset();
-          messageDiv.textContent = '';
-          btnText.classList.remove('hidden');
-          btnLoading.classList.add('hidden');
-          submitBtn.disabled = false;
-
-          const successAlert = document.createElement('div');
-          successAlert.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center';
-          successAlert.innerHTML = `
-            <i class="ri-checkbox-circle-fill mr-2"></i>
-            ${result.message}
-          `;
-          document.body.appendChild(successAlert);
-
-          setTimeout(() => {
-            successAlert.classList.add('opacity-0', 'translate-y-4', 'transition-all', 'duration-300');
-            setTimeout(()sperssuccessAlert.remove(), 300);
-          }, 3000);
-        }, 2000);
-      } else {
-        messageDiv.className = 'text-red-400 text-center text-sm mt-4';
-        messageDiv.textContent = result.message;
-        btnText.classList.remove('hidden');
-        btnLoading.classList.add('hidden');
-        submitBtn.disabled = false;
-      }
-    } catch (error) {
+    if (response.ok) {
+      messageDiv.className = 'text-green-400 text-center text-sm mt-4';
+      messageDiv.textContent = result.message;
+      
+      // إظهار تنبيه النجاح
+      showAlert('success', result.message);
+      
+      // إعادة تعيين النموذج بعد التأخير
+      setTimeout(() => {
+        document.getElementById('openaiKeyForm').reset();
+        messageDiv.textContent = '';
+      }, 2000);
+    } else {
       messageDiv.className = 'text-red-400 text-center text-sm mt-4';
-      messageDiv.textContent = 'حدث خطأ غير متوقع. حاول مرة أخرى.';
-      btnText.classList.remove('hidden');
-      btnLoading.classList.add('hidden');
-      submitBtn.disabled = false;
+      messageDiv.textContent = result.message;
+      showAlert('error', result.message);
     }
-  });
-        
+  } catch (error) {
+    messageDiv.className = 'text-red-400 text-center text-sm mt-4';
+    messageDiv.textContent = 'حدث خطأ في الاتصال بالخادم';
+    showAlert('error', 'حدث خطأ في الاتصال بالخادم');
+  } finally {
+    btnText.classList.remove('hidden');
+    btnLoading.classList.add('hidden');
+    submitBtn.disabled = false;
+  }
+});
+
+// دالة مساعدة لعرض التنبيهات
+function showAlert(type, message) {
+  const alertDiv = document.createElement('div');
+  alertDiv.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg flex items-center animate-fade-in ${
+    type === 'success' ? 'bg-green-500' : 'bg-red-500'
+  } text-white`;
+  
+  alertDiv.innerHTML = `
+    <i class="ri-${type === 'success' ? 'checkbox-circle' : 'error-warning'}-fill mr-2"></i>
+    ${message}
+  `;
+  
+  document.body.appendChild(alertDiv);
+  
+  setTimeout(() => {
+    alertDiv.classList.add('opacity-0', 'translate-y-4', 'transition-all', 'duration-300');
+    setTimeout(() => alertDiv.remove(), 300);
+  }, 3000);
+}
         // تأثير الشريط المتحرك للشركاء
         const marquee = document.querySelector('.marquee');
         const marqueeContainer = document.querySelector('.marquee-container');
