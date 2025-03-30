@@ -13,19 +13,24 @@ class OpenAIController {
         }
 
         try {
-            // التحقق من عدم وجود أحرف غير آمنة
-            if (/[^a-zA-Z0-9\-_]/.test(openaiKey)) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'المفتاح يحتوي على أحرف غير مسموح بها'
-                });
-            }
-
             const result = await OpenAIModel.saveApiKey(userId, openaiKey);
-            res.status(200).json(result);
+            
+            if (result.success) {
+                return res.status(200).json(result);
+            } else {
+                return res.status(429).json(result); // 429 Too Many Requests
+            }
         } catch (error) {
             console.error('API Key Activation Error:', error);
-            res.status(500).json({ 
+            
+            if (error.message.includes('ER_USER_LIMIT_REACHED')) {
+                return res.status(429).json({ 
+                    success: false, 
+                    message: 'تم تجاوز الحد المسموح من الاتصالات، يرجى المحاولة بعد ساعة' 
+                });
+            }
+            
+            return res.status(500).json({ 
                 success: false, 
                 message: 'حدث خطأ أثناء تفعيل المفتاح' 
             });
