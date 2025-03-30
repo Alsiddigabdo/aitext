@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const TranslationController = require('../controllers/TranslationController');
+const TranslationController = require('../controllers/SmartTranslationController');
 const { authenticateToken } = require('../controllers/AuthController');
 
 router.post('/translate', authenticateToken, TranslationController.translate);
