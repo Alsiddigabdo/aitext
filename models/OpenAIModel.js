@@ -1,9 +1,12 @@
-const db = require('../config/db');
+const { pool, handleDisconnect } = require('../config/db');
 
 class OpenAIModel {
     static async saveApiKey(userId, apiKey) {
+        let connection;
         try {
-            // تنظيف المفتاح من أي أحرف خطرة
+            await handleDisconnect();
+            connection = await pool.getConnection();
+            
             const cleanedKey = apiKey.replace(/[^a-zA-Z0-9\-_]/g, '');
             
             const sql = `
@@ -14,13 +17,23 @@ class OpenAIModel {
                     updated_at = NOW()
             `;
             
-            await db.query(sql, [userId, cleanedKey]);
+            await connection.query(sql, [userId, cleanedKey]);
             
-            console.log(`✅ API key saved for user ${userId}`);
+            console.log(`✅ تم حفظ مفتاح API للمستخدم ${userId}`);
             return { success: true, message: 'تم حفظ مفتاح OpenAI بنجاح' };
         } catch (error) {
-            console.error('❌ Error saving API key:', error);
+            console.error('❌ خطأ في حفظ مفتاح API:', error);
+            
+            if (error.code === 'ER_USER_LIMIT_REACHED') {
+                return { 
+                    success: false, 
+                    message: 'تم تجاوز الحد المسموح من الاتصالات، يرجى المحاولة لاحقًا' 
+                };
+            }
+            
             throw new Error('فشل في حفظ مفتاح API');
+        } finally {
+            if (connection) connection.release();
         }
     }
 }
