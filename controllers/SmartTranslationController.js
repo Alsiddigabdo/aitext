@@ -1,53 +1,66 @@
 const SmartTranslationModel = require('../models/SmartTranslationModel');
-const createError = require('http-errors');
 
 class SmartTranslationController {
-  static async renderTranslationPage(req, res, next) {
-    console.log('📝 عرض صفحة الترجمة الذكية');
+  static async renderTranslationPage(req, res) {
+    if (!req.session.user) {
+      return res.redirect('/auth/login');
+    }
     res.render('SmartTranslation');
   }
 
-  static async translateText(req, res, next) {
+  static async translateText(req, res) {
     const { text, sourceLang, targetLang, options } = req.body;
+    const userId = req.session.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'يجب تسجيل الدخول لاستخدام هذه الخدمة' });
+    }
 
     if (!text || !sourceLang || !targetLang) {
-      console.warn('⚠️ بيانات غير كاملة للترجمة:', { text, sourceLang, targetLang });
-      return next(createError(400, 'النص واللغات المصدر والهدف مطلوبة'));
+      return res.status(400).json({ 
+        error: 'النص واللغات المصدر والهدف مطلوبة',
+        details: { text: !!text, sourceLang: !!sourceLang, targetLang: !!targetLang }
+      });
     }
 
     try {
-      console.log('📝 بدء ترجمة النص');
-      const result = await SmartTranslationModel.translateText({ text, sourceLang, targetLang, options });
-      console.log('✅ تمت الترجمة بنجاح');
+      const result = await SmartTranslationModel.translateText({ text, sourceLang, targetLang, options, userId });
       res.json(result);
     } catch (error) {
-      console.error('❌ خطأ في translateText:', error.stack || error.message);
       if (error.message.includes('429')) {
-        return next(createError(429, 'تم تجاوز حد الطلبات. يرجى المحاولة مجدداً بعد 20 ثانية أو ترقية حسابك في OpenAI.'));
+        return res.status(429).json({ 
+          error: 'تم تجاوز حد الطلبات. يرجى المحاولة مجدداً بعد 20 ثانية أو ترقية حسابك في OpenAI.' 
+        });
       }
-      next(createError(500, error.message));
+      res.status(500).json({ error: error.message });
     }
   }
 
-  static async improveTranslation(req, res, next) {
+  static async improveTranslation(req, res) {
     const { text, translatedText, targetLang, options } = req.body;
+    const userId = req.session.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'يجب تسجيل الدخول لاستخدام هذه الخدمة' });
+    }
 
     if (!text || !translatedText || !targetLang) {
-      console.warn('⚠️ بيانات غير كاملة لتحسين الترجمة:', { text, translatedText, targetLang });
-      return next(createError(400, 'النص الأصلي والترجمة الحالية واللغة الهدف مطلوبة'));
+      return res.status(400).json({ 
+        error: 'النص الأصلي والترجمة الحالية واللغة الهدف مطلوبة',
+        details: { text: !!text, translatedText: !!translatedText, targetLang: !!targetLang }
+      });
     }
 
     try {
-      console.log('📝 بدء تحسين الترجمة');
-      const result = await SmartTranslationModel.improveTranslation({ text, translatedText, targetLang, options });
-      console.log('✅ تم تحسين الترجمة بنجاح');
+      const result = await SmartTranslationModel.improveTranslation({ text, translatedText, targetLang, options, userId });
       res.json(result);
     } catch (error) {
-      console.error('❌ خطأ في improveTranslation:', error.stack || error.message);
       if (error.message.includes('429')) {
-        return next(createError(429, 'تم تجاوز حد الطلبات. يرجى المحاولة مجدداً بعد 20 ثانية أو ترقية حسابك في OpenAI.'));
+        return res.status(429).json({ 
+          error: 'تم تجاوز حد الطلبات. يرجى المحاولة مجدداً بعد 20 ثانية أو ترقية حسابك في OpenAI.' 
+        });
       }
-      next(createError(500, error.message));
+      res.status(500).json({ error: error.message });
     }
   }
 }
