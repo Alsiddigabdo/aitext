@@ -16,26 +16,29 @@ const textConverterRoutes = require('./routes/textConverter');
 const feedbackRoutes = require('./routes/feedback');
 const analysisHistoryRouter = require('./routes/analysisHistory');
 const apiKeyRoutes = require('./routes/apiKeyRoutes');
-const promptGeneratorRouter = require('./routes/promptGenerator'); // إضافة الـ Router الجديد
-const personalityAnalysisRouter = require('./routes/personalityAnalysis'); // إضافة الـ Router الجديد
+const promptGeneratorRouter = require('./routes/promptGenerator');
+const personalityAnalysisRouter = require('./routes/personalityAnalysis');
+
 const app = express();
 
 // إعداد محرك العرض
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// إعداد الجلسات
+// إعداد الجلسات (مع تعليق للانتقال إلى Redis لاحقًا)
 app.use(session({
-    secret: 'your-secret-key',
+    secret: 'your-secret-key', // يُفضل استخدام متغير بيئي مثل process.env.SESSION_SECRET
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        secure: false,
-        maxAge: 24 * 60 * 60 * 1000
+        secure: process.env.NODE_ENV === 'production', // آمن في الإنتاج فقط (HTTPS)
+        maxAge: 24 * 60 * 60 * 1000 // 24 ساعة
     }
+    // للانتقال إلى Redis في المستقبل، أضف:
+    // store: new RedisStore({ client: redisClient }),
 }));
 
-app.use(morgan('dev'));
+app.use(morgan('dev')); // تسجيل الطلبات (يمكن تغييره إلى 'combined' في الإنتاج)
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cookieParser());
@@ -51,10 +54,11 @@ app.use('/text-summarization', textSummarizationRoutes);
 app.use('/text-converter', textConverterRoutes);
 app.use('/auth', authRoutes);
 app.use('/feedback', feedbackRoutes);
-app.use('/analysis-history', analysisHistoryRouter); // تأكد من أن هذا السطر موجود قبل معالجة الأخطاء
+app.use('/analysis-history', analysisHistoryRouter);
 app.use('/api', apiKeyRoutes);
-app.use('/prompt-generator', promptGeneratorRouter); // ربط الـ Router الجديد
-app.use('/personality-analysis', personalityAnalysisRouter); // ربط الـ Router الجديد
+app.use('/prompt-generator', promptGeneratorRouter);
+app.use('/personality-analysis', personalityAnalysisRouter);
+
 // معالجة الأخطاء
 app.use((req, res, next) => {
     next(createError(404));
@@ -66,7 +70,7 @@ app.use((err, req, res, next) => {
 });
 
 // بدء الخادم
-const PORT = 8080;
+const PORT = process.env.PORT || 8080; // استخدام PORT من Scalingo أو 8080 محليًا
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
