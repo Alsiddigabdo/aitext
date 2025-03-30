@@ -14,9 +14,9 @@ const textSummarizationRoutes = require('./routes/textSummarization');
 const textConverterRoutes = require('./routes/textConverter');
 const feedbackRoutes = require('./routes/feedback');
 const analysisHistoryRouter = require('./routes/analysisHistory');
-const apiKeyRoutes = require('./routes/apiKeyRoutes');
 const promptGeneratorRouter = require('./routes/promptGenerator');
 const personalityAnalysisRouter = require('./routes/personalityAnalysis');
+const openaiRoutes = require('./routes/openai');
 
 const app = express();
 
@@ -42,10 +42,9 @@ app.use('/text-converter', textConverterRoutes);
 app.use('/auth', authRoutes);
 app.use('/feedback', feedbackRoutes);
 app.use('/analysis-history', analysisHistoryRouter);
-app.use('/api', apiKeyRoutes);
 app.use('/prompt-generator', promptGeneratorRouter);
 app.use('/personality-analysis', personalityAnalysisRouter);
-
+app.use('/api', openaiRoutes);
 // معالجة الخطأ 404
 app.use((req, res, next) => {
     res.status(404).render('error', { 
