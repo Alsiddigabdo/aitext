@@ -17,6 +17,7 @@
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "cookie-parser": "^1.4.7",
+    "connect-redis": "^7.1.1", // إضافة connect-redis لربط Redis مع express-session
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
@@ -27,7 +28,8 @@
     "node-cache": "^5.1.2",
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.10.0",
-    "pdf-parse": "^1.1.1"
+    "pdf-parse": "^1.1.1",
+    "redis": "^4.7.0" // إضافة redis كعميل للاتصال بخادم Redis
   },
   "devDependencies": {
     "nodemon": "^3.0.0"
