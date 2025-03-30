@@ -21,12 +21,12 @@ class SmartTranslationModel {
       const apiKey = await this.getUserApiKey(userId);
       const prompt = `
         أنت مترجم ذكي محترف. قم بترجمة النص التالي من "${sourceLang}" إلى "${targetLang}" مع مراعاة الخيارات التالية:
-        - الحفاظ على الأسلوب: ${options.preserveStyle}
-        - النبرة الرسمية: ${options.formalTone}
-        - الوضع الأكاديمي: ${options.academicMode}
-        - الوضع التسويقي: ${options.marketingMode}
-        - التكيف الثقافي: ${options.culturalAdapt}
-        - اكتشاف التعابير: ${options.idiomsDetection}
+        - الحفاظ على الأسلوب: ${options.preserveStyle ? 'نعم' : 'لا'}
+        - النبرة الرسمية: ${options.formalTone ? 'نعم' : 'لا'}
+        - الوضع الأكاديمي: ${options.academicMode ? 'نعم' : 'لا'}
+        - الوضع التسويقي: ${options.marketingMode ? 'نعم' : 'لا'}
+        - التكيف الثقافي: ${options.culturalAdapt ? 'نعم' : 'لا'}
+        - اكتشاف التعابير: ${options.idiomsDetection ? 'نعم' : 'لا'}
         أعد النتيجة في صيغة JSON تحتوي على:
         - translatedText: النص المترجم
         - quality: كائن يحتوي على (accuracy, style, cultural, fluency) كنسب مئوية (0-100)
@@ -49,7 +49,8 @@ class SmartTranslationModel {
           { role: "user", content: text }
         ],
         temperature: 0.5,
-        max_tokens: 1000
+        max_tokens: 1000,
+        timeout: 30000 // إضافة مهلة زمنية للطلب (30 ثانية)
       }, {
         headers: {
           'Content-Type': 'application/json',
@@ -63,6 +64,7 @@ class SmartTranslationModel {
       let resultText = response.data.choices[0].message.content;
       console.log('Raw API response:', resultText);
 
+      // تنظيف الاستجابة من أي نصوص غير مرغوب فيها
       resultText = resultText.replace(/```json\n|```/g, '').trim();
       console.log('Cleaned API response:', resultText);
 
@@ -74,9 +76,19 @@ class SmartTranslationModel {
         throw new Error('استجابة API غير صالحة');
       }
 
+      // التحقق من اكتمال البيانات
       if (!result.translatedText || !result.quality || !result.feedback) {
         throw new Error('استجابة API غير كاملة');
       }
+
+      // التحقق من صحة قيم الجودة
+      const qualityKeys = ['accuracy', 'style', 'cultural', 'fluency'];
+      qualityKeys.forEach(key => {
+        if (!Number.isInteger(result.quality[key]) || result.quality[key] < 0 || result.quality[key] > 100) {
+          console.warn(`⚠️ قيمة ${key} غير صالحة: ${result.quality[key]}`);
+          result.quality[key] = 80; // قيمة افتراضية في حالة القيم غير الصحيحة
+        }
+      });
 
       await this.saveTranslation({ text, sourceLang, targetLang, options, result, userId });
       return result;
@@ -91,12 +103,12 @@ class SmartTranslationModel {
       const apiKey = await this.getUserApiKey(userId);
       const prompt = `
         أنت مترجم ذكي محترف. قم بتحسين الترجمة التالية للنص الأصلي إلى "${targetLang}" مع مراعاة الخيارات التالية:
-        - الحفاظ على الأسلوب: ${options.preserveStyle}
-        - النبرة الرسمية: ${options.formalTone}
-        - الوضع الأكاديمي: ${options.academicMode}
-        - الوضع التسويقي: ${options.marketingMode}
-        - التكيف الثقافي: ${options.culturalAdapt}
-        - اكتشاف التعابير: ${options.idiomsDetection}
+        - الحفاظ على الأسلوب: ${options.preserveStyle ? 'نعم' : 'لا'}
+        - النبرة الرسمية: ${options.formalTone ? 'نعم' : 'لا'}
+        - الوضع الأكاديمي: ${options.academicMode ? 'نعم' : 'لا'}
+        - الوضع التسويقي: ${options.marketingMode ? 'نعم' : 'لا'}
+        - التكيف الثقافي: ${options.culturalAdapt ? 'نعم' : 'لا'}
+        - اكتشاف التعابير: ${options.idiomsDetection ? 'نعم' : 'لا'}
         النص الأصلي: "${text}"
         الترجمة الحالية: "${translatedText}"
         أعد النتيجة في صيغة JSON تحتوي على:
@@ -121,7 +133,8 @@ class SmartTranslationModel {
           { role: "user", content: "حسّن الترجمة" }
         ],
         temperature: 0.5,
-        max_tokens: 1000
+        max_tokens: 1000,
+        timeout: 30000 // إضافة مهلة زمنية للطلب (30 ثانية)
       }, {
         headers: {
           'Content-Type': 'application/json',
@@ -135,6 +148,7 @@ class SmartTranslationModel {
       let resultText = response.data.choices[0].message.content;
       console.log('Raw API response:', resultText);
 
+      // تنظيف الاستجابة من أي نصوص غير مرغوب فيها
       resultText = resultText.replace(/```json\n|```/g, '').trim();
       console.log('Cleaned API response:', resultText);
 
@@ -146,9 +160,19 @@ class SmartTranslationModel {
         throw new Error('استجابة API غير صالحة');
       }
 
+      // التحقق من اكتمال البيانات
       if (!result.translatedText || !result.quality || !result.feedback) {
         throw new Error('استجابة API غير كاملة');
       }
+
+      // التحقق من صحة قيم الجودة
+      const qualityKeys = ['accuracy', 'style', 'cultural', 'fluency'];
+      qualityKeys.forEach(key => {
+        if (!Number.isInteger(result.quality[key]) || result.quality[key] < 0 || result.quality[key] > 100) {
+          console.warn(`⚠️ قيمة ${key} غير صالحة: ${result.quality[key]}`);
+          result.quality[key] = 80; // قيمة افتراضية في حالة القيم غير الصحيحة
+        }
+      });
 
       await this.saveTranslation({ text, sourceLang: targetLang, targetLang, options, result, userId, improved: true });
       return result;
@@ -166,7 +190,7 @@ class SmartTranslationModel {
           translated_text, quality, feedback, improved, created_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
       `;
-      await db.query(sql, [
+      const [resultRows] = await db.query(sql, [
         userId,
         text,
         sourceLang,
@@ -177,7 +201,7 @@ class SmartTranslationModel {
         result.feedback,
         improved ? 1 : 0
       ]);
-      console.log('✅ تم حفظ الترجمة بنجاح');
+      console.log('✅ تم حفظ الترجمة بنجاح، ID:', resultRows.insertId);
     } catch (error) {
       console.error('❌ خطأ في حفظ الترجمة:', error.message || error);
       throw new Error('فشل في حفظ الترجمة: ' + (error.message || 'خطأ غير معروف'));
