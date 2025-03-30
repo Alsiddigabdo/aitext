@@ -2,8 +2,6 @@ const db = require('../config/db');
 const axios = require('axios');
 
 class SmartTranslationModel {
-  static API_KEY = process.env.API_KEY;
-
   static async getUserApiKey(userId) {
     try {
       const [rows] = await db.query('SELECT api_key FROM api_keys WHERE user_id = ?', [userId]);
@@ -11,12 +9,10 @@ class SmartTranslationModel {
       if (Array.isArray(rows) && rows.length > 0) {
         return rows[0].api_key;
       }
-      console.log('No user-specific API key found, using default:', this.API_KEY);
-      return this.API_KEY;
+      throw new Error('يرجى إدخال مفتاح API في إعدادات حسابك.');
     } catch (error) {
       console.error('Error in getUserApiKey:', error.message || error);
-      console.log('Falling back to default API key:', this.API_KEY);
-      return this.API_KEY;
+      throw error;
     }
   }
 
@@ -38,7 +34,14 @@ class SmartTranslationModel {
         لا تضف أي معلومات إضافية خارج هذا الهيكل.
       `;
 
-      console.log('Sending translation request to API:', { text, sourceLang, targetLang, options, apiKey: apiKey.substring(0, 5) + '...' });
+      console.log('Sending translation request to API:', { 
+        text, 
+        sourceLang, 
+        targetLang, 
+        options, 
+        apiKey: apiKey.substring(0, 5) + '...' 
+      });
+
       const response = await axios.post('https://api.openai.com/v1/chat/completions', {
         model: "gpt-4o-mini",
         messages: [
@@ -60,7 +63,6 @@ class SmartTranslationModel {
       let resultText = response.data.choices[0].message.content;
       console.log('Raw API response:', resultText);
 
-      // تنظيف الاستجابة من علامات Markdown
       resultText = resultText.replace(/```json\n|```/g, '').trim();
       console.log('Cleaned API response:', resultText);
 
@@ -104,7 +106,14 @@ class SmartTranslationModel {
         لا تضف أي معلومات إضافية خارج هذا الهيكل.
       `;
 
-      console.log('Sending improve request to API:', { text, translatedText, targetLang, options, apiKey: apiKey.substring(0, 5) + '...' });
+      console.log('Sending improve request to API:', { 
+        text, 
+        translatedText, 
+        targetLang, 
+        options, 
+        apiKey: apiKey.substring(0, 5) + '...' 
+      });
+
       const response = await axios.post('https://api.openai.com/v1/chat/completions', {
         model: "gpt-4o-mini",
         messages: [
@@ -126,7 +135,6 @@ class SmartTranslationModel {
       let resultText = response.data.choices[0].message.content;
       console.log('Raw API response:', resultText);
 
-      // تنظيف الاستجابة من علامات Markdown
       resultText = resultText.replace(/```json\n|```/g, '').trim();
       console.log('Cleaned API response:', resultText);
 
