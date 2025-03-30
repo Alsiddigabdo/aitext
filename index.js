@@ -4,8 +4,8 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const createError = require('http-errors');
 const session = require('express-session');
-const RedisStore = require('connect-redis').default;
-const redis = require('redis');
+const Redis = require('redis'); // تغيير إلى استيراد مباشر
+const RedisStore = require('connect-redis').default; // تهيئة حديثة لـ connect-redis
 
 const indexRouter = require('./routes/index');
 const authRoutes = require('./routes/authRouter');
@@ -28,21 +28,22 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // إعداد عميل Redis
-const redisClient = redis.createClient({
-    url: process.env.SCALINGO_REDIS_URL || 'redis://localhost:6379',
-    legacyMode: true
+const redisClient = Redis.createClient({
+    url: process.env.SCALINGO_REDIS_URL || 'redis://localhost:6379'
 });
-redisClient.connect().catch(err => {
-    console.error('Redis connection error:', err);
-});
+
+// الاتصال بـ Redis مع معالجة الأخطاء
+redisClient.connect()
+    .then(() => console.log('Connected to Redis successfully'))
+    .catch(err => console.error('Redis connection error:', err));
 
 // إعداد الجلسات مع Redis
 app.use(session({
-    store: new RedisStore({ client: redisClient }),
+    store: new RedisStore({ client: redisClient }), // استخدام Redis كمخزن
     secret: process.env.SESSION_SECRET || 'your-secret-key',
     resave: false,
     saveUninitialized: false,
-    cookie: {
+    cookie: { 
         secure: process.env.NODE_ENV === 'production',
         maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,
@@ -72,22 +73,22 @@ app.use('/api', apiKeyRoutes);
 app.use('/prompt-generator', promptGeneratorRouter);
 app.use('/personality-analysis', personalityAnalysisRouter);
 
-// معالجة الخطأ 404 مع تقديم صفحة EJS
+// معالجة الخطأ 404
 app.use((req, res, next) => {
-    res.status(404).render('error', {
-        message: 'الصفحة غير موجودة',
-        status: 404
+    res.status(404).render('error', { 
+        message: 'الصفحة غير موجودة', 
+        status: 404 
     });
 });
 
-// معالجة الأخطاء العامة مع تقديم صفحة EJS
+// معالجة الأخطاء العامة
 app.use((err, req, res, next) => {
     const status = err.status || 500;
     const message = err.message || 'حدث خطأ في الخادم';
     console.error(`Error ${status}: ${message}`, err.stack);
-    res.status(status).render('error', {
-        message: message,
-        status: status
+    res.status(status).render('error', { 
+        message: message, 
+        status: status 
     });
 });
 
