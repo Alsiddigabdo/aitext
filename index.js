@@ -3,6 +3,7 @@ const path = require('path');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const createError = require('http-errors');
+const session = require('express-session');
 
 const indexRouter = require('./routes/index');
 const authRoutes = require('./routes/authRouter');
@@ -14,17 +15,26 @@ const textSummarizationRoutes = require('./routes/textSummarization');
 const textConverterRoutes = require('./routes/textConverter');
 const feedbackRoutes = require('./routes/feedback');
 const analysisHistoryRouter = require('./routes/analysisHistory');
-const promptGeneratorRouter = require('./routes/promptGenerator');
-const personalityAnalysisRouter = require('./routes/personalityAnalysis');
-//const openaiRoutes = require('./routes/openai');
-
+const apiKeyRoutes = require('./routes/apiKeyRoutes');
+const promptGeneratorRouter = require('./routes/promptGenerator'); // إضافة الـ Router الجديد
+const personalityAnalysisRouter = require('./routes/personalityAnalysis'); // إضافة الـ Router الجديد
 const app = express();
 
 // إعداد محرك العرض
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// الوسيطات (Middleware)
+// إعداد الجلسات
+app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { 
+        secure: false,
+        maxAge: 24 * 60 * 60 * 1000
+    }
+}));
+
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
@@ -41,31 +51,22 @@ app.use('/text-summarization', textSummarizationRoutes);
 app.use('/text-converter', textConverterRoutes);
 app.use('/auth', authRoutes);
 app.use('/feedback', feedbackRoutes);
-app.use('/analysis-history', analysisHistoryRouter);
-app.use('/prompt-generator', promptGeneratorRouter);
-app.use('/personality-analysis', personalityAnalysisRouter);
-//app.use('/api', openaiRoutes);
-// معالجة الخطأ 404
+app.use('/analysis-history', analysisHistoryRouter); // تأكد من أن هذا السطر موجود قبل معالجة الأخطاء
+app.use('/api', apiKeyRoutes);
+app.use('/prompt-generator', promptGeneratorRouter); // ربط الـ Router الجديد
+app.use('/personality-analysis', personalityAnalysisRouter); // ربط الـ Router الجديد
+// معالجة الأخطاء
 app.use((req, res, next) => {
-    res.status(404).render('error', { 
-        message: 'الصفحة غير موجودة', 
-        status: 404 
-    });
+    next(createError(404));
 });
 
-// معالجة الأخطاء العامة
 app.use((err, req, res, next) => {
-    const status = err.status || 500;
-    const message = err.message || 'حدث خطأ في الخادم';
-    console.error(`Error ${status}: ${message}`, err.stack);
-    res.status(status).render('error', { 
-        message: message, 
-        status: status 
-    });
+    res.status(err.status || 500);
+    res.json({ success: false, message: err.message });
 });
 
 // بدء الخادم
-const PORT = process.env.PORT || 8080;
+const PORT = 8080;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
