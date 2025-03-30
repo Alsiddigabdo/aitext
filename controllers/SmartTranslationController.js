@@ -1,16 +1,14 @@
 const SmartTranslationModel = require('../models/SmartTranslationModel');
+const authenticateToken = require('../middleware/auth');
 
 class SmartTranslationController {
   static async renderTranslationPage(req, res) {
-    if (!req.session.user) {
-      return res.redirect('/auth/login');
-    }
     res.render('SmartTranslation');
   }
 
   static async translateText(req, res) {
     const { text, sourceLang, targetLang, options } = req.body;
-    const userId = req.session.user?.id;
+    const userId = req.user?.id; // من JWT
 
     if (!userId) {
       return res.status(401).json({ error: 'يجب تسجيل الدخول لاستخدام هذه الخدمة' });
@@ -38,7 +36,7 @@ class SmartTranslationController {
 
   static async improveTranslation(req, res) {
     const { text, translatedText, targetLang, options } = req.body;
-    const userId = req.session.user?.id;
+    const userId = req.user?.id; // من JWT
 
     if (!userId) {
       return res.status(401).json({ error: 'يجب تسجيل الدخول لاستخدام هذه الخدمة' });
