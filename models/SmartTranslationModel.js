@@ -2,6 +2,8 @@ const db = require('../config/db');
 const axios = require('axios');
 
 class SmartTranslationModel {
+  static API_KEY = process.env.API_KEY;
+
   static async getUserApiKey(userId) {
     try {
       const [rows] = await db.query('SELECT api_key FROM api_keys WHERE user_id = ?', [userId]);
@@ -9,10 +11,12 @@ class SmartTranslationModel {
       if (Array.isArray(rows) && rows.length > 0) {
         return rows[0].api_key;
       }
-      throw new Error('يرجى إدخال مفتاح API في صفحة تفعيل OpenAI.');
+      console.log('No user-specific API key found, using default:', this.API_KEY);
+      return this.API_KEY;
     } catch (error) {
-      console.error('❌ خطأ في getUserApiKey:', error.message || error);
-      throw error;
+      console.error('Error in getUserApiKey:', error.message || error);
+      console.log('Falling back to default API key:', this.API_KEY);
+      return this.API_KEY;
     }
   }
 
@@ -21,12 +25,12 @@ class SmartTranslationModel {
       const apiKey = await this.getUserApiKey(userId);
       const prompt = `
         أنت مترجم ذكي محترف. قم بترجمة النص التالي من "${sourceLang}" إلى "${targetLang}" مع مراعاة الخيارات التالية:
-        - الحفاظ على الأسلوب: ${options.preserveStyle ? 'نعم' : 'لا'}
-        - النبرة الرسمية: ${options.formalTone ? 'نعم' : 'لا'}
-        - الوضع الأكاديمي: ${options.academicMode ? 'نعم' : 'لا'}
-        - الوضع التسويقي: ${options.marketingMode ? 'نعم' : 'لا'}
-        - التكيف الثقافي: ${options.culturalAdapt ? 'نعم' : 'لا'}
-        - اكتشاف التعابير: ${options.idiomsDetection ? 'نعم' : 'لا'}
+        - الحفاظ على الأسلوب: ${options.preserveStyle}
+        - النبرة الرسمية: ${options.formalTone}
+        - الوضع الأكاديمي: ${options.academicMode}
+        - الوضع التسويقي: ${options.marketingMode}
+        - التكيف الثقافي: ${options.culturalAdapt}
+        - اكتشاف التعابير: ${options.idiomsDetection}
         أعد النتيجة في صيغة JSON تحتوي على:
         - translatedText: النص المترجم
         - quality: كائن يحتوي على (accuracy, style, cultural, fluency) كنسب مئوية (0-100)
@@ -34,14 +38,7 @@ class SmartTranslationModel {
         لا تضف أي معلومات إضافية خارج هذا الهيكل.
       `;
 
-      console.log('Sending translation request to API:', { 
-        text, 
-        sourceLang, 
-        targetLang, 
-        options, 
-        apiKey: apiKey.substring(0, 5) + '...' 
-      });
-
+      console.log('Sending translation request to API:', { text, sourceLang, targetLang, options, apiKey: apiKey.substring(0, 5) + '...' });
       const response = await axios.post('https://api.openai.com/v1/chat/completions', {
         model: "gpt-4o-mini",
         messages: [
@@ -49,22 +46,21 @@ class SmartTranslationModel {
           { role: "user", content: text }
         ],
         temperature: 0.5,
-        max_tokens: 1000,
-        timeout: 30000 // إضافة مهلة زمنية للطلب (30 ثانية)
+        max_tokens: 1000
       }, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`
         }
       }).catch(error => {
-        console.error('❌ فشل طلب API:', error.response ? error.response.data : error.message);
-        throw new Error('فشل في الاتصال بخدمة OpenAI: ' + (error.response?.data?.error?.message || error.message));
+        console.error('API request failed:', error.response ? error.response.data : error.message);
+        throw error;
       });
 
       let resultText = response.data.choices[0].message.content;
       console.log('Raw API response:', resultText);
 
-      // تنظيف الاستجابة من أي نصوص غير مرغوب فيها
+      // تنظيف الاستجابة من علامات Markdown
       resultText = resultText.replace(/```json\n|```/g, '').trim();
       console.log('Cleaned API response:', resultText);
 
@@ -72,23 +68,13 @@ class SmartTranslationModel {
       try {
         result = JSON.parse(resultText);
       } catch (e) {
-        console.error('❌ فشل في تحليل استجابة API:', e);
+        console.error('Failed to parse API response:', e);
         throw new Error('استجابة API غير صالحة');
       }
 
-      // التحقق من اكتمال البيانات
       if (!result.translatedText || !result.quality || !result.feedback) {
         throw new Error('استجابة API غير كاملة');
       }
-
-      // التحقق من صحة قيم الجودة
-      const qualityKeys = ['accuracy', 'style', 'cultural', 'fluency'];
-      qualityKeys.forEach(key => {
-        if (!Number.isInteger(result.quality[key]) || result.quality[key] < 0 || result.quality[key] > 100) {
-          console.warn(`⚠️ قيمة ${key} غير صالحة: ${result.quality[key]}`);
-          result.quality[key] = 80; // قيمة افتراضية في حالة القيم غير الصحيحة
-        }
-      });
 
       await this.saveTranslation({ text, sourceLang, targetLang, options, result, userId });
       return result;
@@ -103,12 +89,12 @@ class SmartTranslationModel {
       const apiKey = await this.getUserApiKey(userId);
       const prompt = `
         أنت مترجم ذكي محترف. قم بتحسين الترجمة التالية للنص الأصلي إلى "${targetLang}" مع مراعاة الخيارات التالية:
-        - الحفاظ على الأسلوب: ${options.preserveStyle ? 'نعم' : 'لا'}
-        - النبرة الرسمية: ${options.formalTone ? 'نعم' : 'لا'}
-        - الوضع الأكاديمي: ${options.academicMode ? 'نعم' : 'لا'}
-        - الوضع التسويقي: ${options.marketingMode ? 'نعم' : 'لا'}
-        - التكيف الثقافي: ${options.culturalAdapt ? 'نعم' : 'لا'}
-        - اكتشاف التعابير: ${options.idiomsDetection ? 'نعم' : 'لا'}
+        - الحفاظ على الأسلوب: ${options.preserveStyle}
+        - النبرة الرسمية: ${options.formalTone}
+        - الوضع الأكاديمي: ${options.academicMode}
+        - الوضع التسويقي: ${options.marketingMode}
+        - التكيف الثقافي: ${options.culturalAdapt}
+        - اكتشاف التعابير: ${options.idiomsDetection}
         النص الأصلي: "${text}"
         الترجمة الحالية: "${translatedText}"
         أعد النتيجة في صيغة JSON تحتوي على:
@@ -118,14 +104,7 @@ class SmartTranslationModel {
         لا تضف أي معلومات إضافية خارج هذا الهيكل.
       `;
 
-      console.log('Sending improve request to API:', { 
-        text, 
-        translatedText, 
-        targetLang, 
-        options, 
-        apiKey: apiKey.substring(0, 5) + '...' 
-      });
-
+      console.log('Sending improve request to API:', { text, translatedText, targetLang, options, apiKey: apiKey.substring(0, 5) + '...' });
       const response = await axios.post('https://api.openai.com/v1/chat/completions', {
         model: "gpt-4o-mini",
         messages: [
@@ -133,22 +112,21 @@ class SmartTranslationModel {
           { role: "user", content: "حسّن الترجمة" }
         ],
         temperature: 0.5,
-        max_tokens: 1000,
-        timeout: 30000 // إضافة مهلة زمنية للطلب (30 ثانية)
+        max_tokens: 1000
       }, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`
         }
       }).catch(error => {
-        console.error('❌ فشل طلب API:', error.response ? error.response.data : error.message);
-        throw new Error('فشل في الاتصال بخدمة OpenAI: ' + (error.response?.data?.error?.message || error.message));
+        console.error('API request failed:', error.response ? error.response.data : error.message);
+        throw error;
       });
 
       let resultText = response.data.choices[0].message.content;
       console.log('Raw API response:', resultText);
 
-      // تنظيف الاستجابة من أي نصوص غير مرغوب فيها
+      // تنظيف الاستجابة من علامات Markdown
       resultText = resultText.replace(/```json\n|```/g, '').trim();
       console.log('Cleaned API response:', resultText);
 
@@ -156,23 +134,13 @@ class SmartTranslationModel {
       try {
         result = JSON.parse(resultText);
       } catch (e) {
-        console.error('❌ فشل في تحليل استجابة API:', e);
+        console.error('Failed to parse API response:', e);
         throw new Error('استجابة API غير صالحة');
       }
 
-      // التحقق من اكتمال البيانات
       if (!result.translatedText || !result.quality || !result.feedback) {
         throw new Error('استجابة API غير كاملة');
       }
-
-      // التحقق من صحة قيم الجودة
-      const qualityKeys = ['accuracy', 'style', 'cultural', 'fluency'];
-      qualityKeys.forEach(key => {
-        if (!Number.isInteger(result.quality[key]) || result.quality[key] < 0 || result.quality[key] > 100) {
-          console.warn(`⚠️ قيمة ${key} غير صالحة: ${result.quality[key]}`);
-          result.quality[key] = 80; // قيمة افتراضية في حالة القيم غير الصحيحة
-        }
-      });
 
       await this.saveTranslation({ text, sourceLang: targetLang, targetLang, options, result, userId, improved: true });
       return result;
@@ -184,13 +152,8 @@ class SmartTranslationModel {
 
   static async saveTranslation({ text, sourceLang, targetLang, options, result, userId, improved = false }) {
     try {
-      const sql = `
-        INSERT INTO translations (
-          user_id, source_text, source_lang, target_lang, options, 
-          translated_text, quality, feedback, improved, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-      `;
-      const [resultRows] = await db.query(sql, [
+      const sql = 'INSERT INTO translations (user_id, source_text, source_lang, target_lang, options, translated_text, quality, feedback, improved, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())';
+      await db.query(sql, [
         userId,
         text,
         sourceLang,
@@ -201,10 +164,10 @@ class SmartTranslationModel {
         result.feedback,
         improved ? 1 : 0
       ]);
-      console.log('✅ تم حفظ الترجمة بنجاح، ID:', resultRows.insertId);
+      console.log('✅ تم حفظ الترجمة بنجاح');
     } catch (error) {
       console.error('❌ خطأ في حفظ الترجمة:', error.message || error);
-      throw new Error('فشل في حفظ الترجمة: ' + (error.message || 'خطأ غير معروف'));
+      throw new Error('فشل في حفظ الترجمة.');
     }
   }
 }
