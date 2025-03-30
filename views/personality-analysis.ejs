@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحليل الشخصية المتكامل | SmartTextAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary: #7C3AED;
+            --primary-light: #A78BFA;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --darker: #0A1120;
+        }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: #E2E8F0;
+        }
+        
+        .glass-card {
+            background: rgba(26, 36, 61, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+        }
+        
+        .neu-card {
+            background: linear-gradient(145deg, #101829, #0e1424);
+            box-shadow: 8px 8px 16px #0a0f1a, -8px -8px 16px #121f3a;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .neu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 12px 12px 24px #0a0f1a, -12px -12px 24px #121f3a;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .option-card {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .option-card:hover {
+            transform: translateY(-2px);
+            background-color: rgba(124, 58, 237, 0.1);
+            border-color: var(--primary);
+        }
+        
+        .option-card.selected {
+            background-color: rgba(124, 58, 237, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+        
+        .progress-container {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 9999px;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.5s ease;
+            border-radius: 9999px;
+        }
+        
+        .trait-card {
+            transition: all 0.3s ease;
+        }
+        
+        .trait-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .blob {
+            position: absolute;
+            filter: blur(60px);
+            opacity: 0.2;
+            z-index: -1;
+        }
+        
+        .blob-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            top: 10%;
+            left: 10%;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent);
+            bottom: 10%;
+            right: 10%;
+            animation: float 10s ease-in-out infinite 2s;
+        }
+        
+        .personality-tabs .active {
+            background: rgba(124, 58, 237, 0.2);
+            color: white;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Floating Blobs Background -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <!-- Header -->
+    <header class="fixed w-full z-50 bg-dark/90 backdrop-blur-md border-b border-dark-700 shadow-lg">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="/" class="flex items-center space-x-2 space-x-reverse">
+                    <div class="p-2 rounded-lg bg-primary/10 transition">
+                        <i class="ri-ai-generate text-2xl text-primary"></i>
+                    </div>
+                    <span class="text-2xl font-bold gradient-text">SmartTextAI</span>
+                </a>
+                
+                <!-- Navigation -->
+                <div class="hidden md:flex items-center space-x-1 space-x-reverse">
+                    <a href="/" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition">الرئيسية</a>
+                    <a href="/personality-analysis" class="px-4 py-2 rounded-lg text-white bg-primary/20">تحليل الشخصية</a>
+                    <a href="/tools" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition">الأدوات</a>
+                    <a href="/auth/logout" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition">تسجيل الخروج</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="mt-20 flex-grow">
+        <section class="py-12 md:py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Hero Section -->
+                <div class="text-center mb-12 animate__animated animate__fadeIn">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4 gradient-text">تحليل الشخصية المتكامل</h1>
+                    <p class="text-lg text-gray-300 max-w-2xl mx-auto">اكتشف أسرار شخصيتك، أنماط تفكيرك، وأسلوبك في اتخاذ القرارات باستخدام الذكاء الاصطناعي</p>
+                    <div class="mt-6 flex justify-center space-x-4 space-x-reverse">
+                        <a href="#personality-test" class="px-6 py-2 rounded-full bg-primary text-white hover:bg-primary/90 transition">ابدأ الآن</a>
+                        <a href="#how-it-works" class="px-6 py-2 rounded-full border border-primary text-primary hover:bg-primary/10 transition">كيف يعمل؟</a>
+                    </div>
+                </div>
+
+                <!-- How It Works -->
+                <div id="how-it-works" class="glass-card p-8 rounded-2xl mb-12">
+                    <h2 class="text-2xl font-bold mb-6 text-center gradient-text">كيف يعمل تحليل الشخصية؟</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="ri-questionnaire-line text-2xl text-primary"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">أجب عن الأسئلة</h3>
+                            <p class="text-gray-400">مجموعة من الأسئلة المصممة بعناية لتحليل جوانب شخصيتك المختلفة</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="ri-brain-line text-2xl text-primary"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">التحليل الذكي</h3>
+                            <p class="text-gray-400">يستخدم الذكاء الاصطناعي أحدث النماذج العلمية لتحليل إجاباتك</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="ri-file-chart-line text-2xl text-primary"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">احصل على النتائج</h3>
+                            <p class="text-gray-400">تقرير مفصل عن شخصيتك مع نصائح مخصصة لتحسين حياتك</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personality Test Section -->
+                <div id="personality-test" class="neu-card p-6 rounded-2xl mb-8">
+                    <!-- Tabs Navigation -->
+                    <div class="flex overflow-x-auto personality-tabs mb-6">
+                        <button data-tab="personality" class="tab-btn px-6 py-3 font-medium text-gray-400 hover:text-white transition active">
+                            <i class="ri-user-3-line ml-2"></i> اختبار الشخصية
+                        </button>
+                        <button data-tab="decision" class="tab-btn px-6 py-3 font-medium text-gray-400 hover:text-white transition">
+                            <i class="ri-checkbox-line ml-2"></i> اتخاذ القرار
+                        </button>
+                        <button data-tab="thinking" class="tab-btn px-6 py-3 font-medium text-gray-400 hover:text-white transition">
+                            <i class="ri-lightbulb-flash-line ml-2"></i> أنماط التفكير
+                        </button>
+                    </div>
+
+                    <!-- Personality Test Content -->
+                    <div id="personality-tab" class="tab-content active">
+                        <div id="personality-start" class="text-center py-8">
+                            <div class="max-w-md mx-auto">
+                                <div class="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <i class="ri-user-search-line text-3xl text-primary"></i>
+                                </div>
+                                <h2 class="text-2xl font-bold mb-4">اختبار الشخصية</h2>
+                                <p class="text-gray-400 mb-6">20 سؤالًا لتحليل شخصيتك بناءً على نموذج Big Five المعتمد علميًا</p>
+                                <button id="start-personality" class="px-8 py-3 rounded-full bg-primary text-white hover:bg-primary/90 transition flex items-center mx-auto">
+                                    <i class="ri-play-line ml-2"></i> ابدأ الاختبار
+                                </button>
+                            </div>
+                        </div>
+                        <div id="personality-questions" class="hidden">
+                            <div class="flex items-center mb-6">
+                                <span id="personality-progress-text" class="text-sm text-gray-400">السؤال 1 من 20</span>
+                                <div class="flex-1 mx-4 progress-container rounded-full">
+                                    <div id="personality-progress" class="progress-bar rounded-full" style="width: 5%"></div>
+                                </div>
+                                <span class="text-sm text-primary tooltip">
+                                    <i class="ri-information-line"></i>
+                                    <span class="tooltip-text">يمكنك النقر على أي إجابة للانتقال للسؤال التالي</span>
+                                </span>
+                            </div>
+                            <div id="personality-question-container" class="neu-card p-6 rounded-xl"></div>
+                        </div>
+                        <div id="personality-results" class="hidden">
+                            <div class="neu-card p-6 rounded-xl mb-6">
+                                <h2 class="text-2xl font-bold mb-4 gradient-text">نتائج تحليل شخصيتك</h2>
+                                <p id="personality-summary" class="text-gray-300 mb-6"></p>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                    <div class="trait-card neu-card p-4 rounded-lg">
+                                        <div class="flex items-center mb-3">
+                                            <div class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center mr-3">
+                                                <i class="ri-team-line text-blue-500"></i>
+                                            </div>
+                                            <h3 class="font-bold">الانبساطية</h3>
+                                        </div>
+                                        <div class="progress-container rounded-full mb-2">
+                                            <div id="extroversion-bar" class="progress-bar rounded-full" style="width: 0%; background: #3B82F6"></div>
+                                        </div>
+                                        <p id="extroversion-desc" class="text-sm text-gray-400"></p>
+                                    </div>
+                                    
+                                    <div class="trait-card neu-card p-4 rounded-lg">
+                                        <div class="flex items-center mb-3">
+                                            <div class="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center mr-3">
+                                                <i class="ri-emotion-line text-red-500"></i>
+                                            </div>
+                                            <h3 class="font-bold">العصابية</h3>
+                                        </div>
+                                        <div class="progress-container rounded-full mb-2">
+                                            <div id="neuroticism-bar" class="progress-bar rounded-full" style="width: 0%; background: #EF4444"></div>
+                                        </div>
+                                        <p id="neuroticism-desc" class="text-sm text-gray-400"></p>
+                                    </div>
+                                    
+                                    <div class="trait-card neu-card p-4 rounded-lg">
+                                        <div class="flex items-center mb-3">
+                                            <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center mr-3">
+                                                <i class="ri-lightbulb-line text-green-500"></i>
+                                            </div>
+                                            <h3 class="font-bold">الانفتاح</h3>
+                                        </div>
+                                        <div class="progress-container rounded-full mb-2">
+                                            <div id="openness-bar" class="progress-bar rounded-full" style="width: 0%; background: #10B981"></div>
+                                        </div>
+                                        <p id="openness-desc" class="text-sm text-gray-400"></p>
+                                    </div>
+                                    
+                                    <div class="trait-card neu-card p-4 rounded-lg">
+                                        <div class="flex items-center mb-3">
+                                            <div class="w-10 h-10 rounded-full bg-yellow-500/10 flex items-center justify-center mr-3">
+                                                <i class="ri-heart-line text-yellow-500"></i>
+                                            </div>
+                                            <h3 class="font-bold">الوفاقية</h3>
+                                        </div>
+                                        <div class="progress-container rounded-full mb-2">
+                                            <div id="agreeableness-bar" class="progress-bar rounded-full" style="width: 0%; background: #F59E0B"></div>
+                                        </div>
+                                        <p id="agreeableness-desc" class="text-sm text-gray-400"></p>
+                                    </div>
+                                    
+                                    <div class="trait-card neu-card p-4 rounded-lg">
+                                        <div class="flex items-center mb-3">
+                                            <div class="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center mr-3">
+                                                <i class="ri-checkbox-circle-line text-purple-500"></i>
+                                            </div>
+                                            <h3 class="font-bold">الضمير الحي</h3>
+                                        </div>
+                                        <div class="progress-container rounded-full mb-2">
+                                            <div id="conscientiousness-bar" class="progress-bar rounded-full" style="width: 0%; background: #8B5CF6"></div>
+                                        </div>
+                                        <p id="conscientiousness-desc" class="text-sm text-gray-400"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-center space-x-4 space-x-reverse">
+                                <button id="save-results" class="px-6 py-2 rounded-full bg-primary text-white hover:bg-primary/90 transition">
+                                    <i class="ri-save-line ml-2"></i> حفظ النتائج
+                                </button>
+                                <button id="share-results" class="px-6 py-2 rounded-full border border-primary text-primary hover:bg-primary/10 transition">
+                                    <i class="ri-share-line ml-2"></i> مشاركة النتائج
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Decision Making Test Content -->
+                    <div id="decision-tab" class="tab-content">
+                        <div id="decision-start" class="text-center py-8">
+                            <div class="max-w-md mx-auto">
+                                <div class="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <i class="ri-checkbox-line text-3xl text-primary"></i>
+                                </div>
+                                <h2 class="text-2xl font-bold mb-4">اختبار اتخاذ القرار</h2>
+                                <p class="text-gray-400 mb-6">20 سؤالًا لتحليل أسلوبك في اتخاذ القرارات</p>
+                                <button id="start-decision" class="px-8 py-3 rounded-full bg-primary text-white hover:bg-primary/90 transition flex items-center mx-auto">
+                                    <i class="ri-play-line ml-2"></i> ابدأ الاختبار
+                                </button>
+                            </div>
+                        </div>
+                        <div id="decision-questions" class="hidden">
+                            <div class="flex items-center mb-6">
+                                <span id="decision-progress-text" class="text-sm text-gray-400">السؤال 1 من 20</span>
+                                <div class="flex-1 mx-4 progress-container rounded-full">
+                                    <div id="decision-progress" class="progress-bar rounded-full" style="width: 5%"></div>
+                                </div>
+                            </div>
+                            <div id="decision-question-container" class="neu-card p-6 rounded-xl"></div>
+                        </div>
+                        <div id="decision-results" class="hidden">
+                            <div class="neu-card p-6 rounded-xl">
+                                <h2 class="text-2xl font-bold mb-4 gradient-text">نتائج تحليل أسلوب اتخاذ القرار</h2>
+                                <p id="decision-summary" class="text-gray-300 mb-6"></p>
+                                <canvas id="decision-chart" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thinking Styles Test Content -->
+                    <div id="thinking-tab" class="tab-content">
+                        <div id="thinking-start" class="text-center py-8">
+                            <div class="max-w-md mx-auto">
+                                <div class="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <i class="ri-lightbulb-flash-line text-3xl text-primary"></i>
+                                </div>
+                                <h2 class="text-2xl font-bold mb-4">تحليل أنماط التفكير</h2>
+                                <p class="text-gray-400 mb-6">20 سؤالًا لتحديد نمط تفكيرك الأساسي</p>
+                                <button id="start-thinking" class="px-8 py-3 rounded-full bg-primary text-white hover:bg-primary/90 transition flex items-center mx-auto">
+                                    <i class="ri-play-line ml-2"></i> ابدأ الاختبار
+                                </button>
+                            </div>
+                        </div>
+                        <div id="thinking-questions" class="hidden">
+                            <div class="flex items-center mb-6">
+                                <span id="thinking-progress-text" class="text-sm text-gray-400">السؤال 1 من 20</span>
+                                <div class="flex-1 mx-4 progress-container rounded-full">
+                                    <div id="thinking-progress" class="progress-bar rounded-full" style="width: 5%"></div>
+                                </div>
+                            </div>
+                            <div id="thinking-question-container" class="neu-card p-6 rounded-xl"></div>
+                        </div>
+                        <div id="thinking-results" class="hidden">
+                            <div class="neu-card p-6 rounded-xl">
+                                <h2 class="text-2xl font-bold mb-4 gradient-text">نتائج تحليل نمط التفكير</h2>
+                                <p id="thinking-summary" class="text-gray-300 mb-6"></p>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="trait-card neu-card p-4 rounded-lg text-center">
+                                        <div class="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <i class="ri-line-chart-line text-blue-500 text-2xl"></i>
+                                        </div>
+                                        <h3 class="font-bold mb-2">التفكير التحليلي</h3>
+                                        <div class="progress-container rounded-full mb-2 mx-auto w-3/4">
+                                            <div id="analytical-bar" class="progress-bar rounded-full" style="width: 0%; background: #3B82F6"></div>
+                                        </div>
+                                        <p id="analytical-desc" class="text-sm text-gray-400"></p>
+                                    </div>
+                                    
+                                    <div class="trait-card neu-card p-4 rounded-lg text-center">
+                                        <div class="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <i class="ri-magic-line text-green-500 text-2xl"></i>
+                                        </div>
+                                        <h3 class="font-bold mb-2">التفكير الإبداعي</h3>
+                                        <div class="progress-container rounded-full mb-2 mx-auto w-3/4">
+                                            <div id="creative-bar" class="progress-bar rounded-full" style="width: 0%; background: #10B981"></div>
+                                        </div>
+                                        <p id="creative-desc" class="text-sm text-gray-400"></p>
+                                    </div>
+                                    
+                                    <div class="trait-card neu-card p-4 rounded-lg text-center">
+                                        <div class="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <i class="ri-heart-line text-yellow-500 text-2xl"></i>
+                                        </div>
+                                        <h3 class="font-bold mb-2">التفكير العاطفي</h3>
+                                        <div class="progress-container rounded-full mb-2 mx-auto w-3/4">
+                                            <div id="emotional-bar" class="progress-bar rounded-full" style="width: 0%; background: #F59E0B"></div>
+                                        </div>
+                                        <p id="emotional-desc" class="text-sm text-gray-400"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonials -->
+                <div class="glass-card p-8 rounded-2xl mb-8">
+                    <h2 class="text-2xl font-bold mb-6 text-center gradient-text">آراء المستخدمين</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="neu-card p-6 rounded-xl">
+                            <div class="flex items-center mb-4">
+                                <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="User" class="w-12 h-12 rounded-full mr-3">
+                                <div>
+                                    <h4 class="font-bold">سارة أحمد</h4>
+                                    <div class="flex text-yellow-400">
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-fill"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-400">"التحليل كان دقيقًا جدًا وساعدني في فهم شخصيتي بشكل أفضل. النصائح المقدمة كانت مفيدة جدًا في تطوير ذاتي."</p>
+                        </div>
+                        
+                        <div class="neu-card p-6 rounded-xl">
+                            <div class="flex items-center mb-4">
+                                <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="User" class="w-12 h-12 rounded-full mr-3">
+                                <div>
+                                    <h4 class="font-bold">محمد خالد</h4>
+                                    <div class="flex text-yellow-400">
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-half-fill"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-400">"اختبار أنماط التفكير كان ممتعًا ومفيدًا. اكتشفت جوانب في تفكيري لم أكن أعرفها من قبل."</p>
+                        </div>
+                        
+                        <div class="neu-card p-6 rounded-xl">
+                            <div class="flex items-center mb-4">
+                                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User" class="w-12 h-12 rounded-full mr-3">
+                                <div>
+                                    <h4 class="font-bold">نورا سعيد</h4>
+                                    <div class="flex text-yellow-400">
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-400">"تحليل أسلوب اتخاذ القرار ساعدني في فهم سبب ترددي في بعض المواقف. التوصيات كانت عملية وقابلة للتطبيق."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark/90 backdrop-blur-md border-t border-dark-700 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <a href="/" class="flex items-center space-x-2 space-x-reverse">
+                        <div class="p-1 rounded-lg bg-primary/10">
+                            <i class="ri-ai-generate text-xl text-primary"></i>
+                        </div>
+                        <span class="text-xl font-bold gradient-text">SmartTextAI</span>
+                    </a>
+                </div>
+                <div class="flex space-x-6 space-x-reverse">
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="ri-facebook-fill text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="ri-twitter-fill text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="ri-linkedin-fill text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="mt-6 text-center text-gray-400 text-sm">
+                © 2025 SmartTextAI. جميع الحقوق محفوظة.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Questions Data
+        const personalityQuestions = [
+            { question: "كيف تصف نفسك في ثلاث كلمات؟", options: ["واثق، اجتماعي، طموح", "هادئ، متأمل، دقيق", "مبدع، متفائل، عاطفي", "منظم، منطقي، حذر"] },
+            { question: "ما هي القيم الأساسية التي تؤمن بها؟", options: ["الحرية", "العدالة", "الأمان", "الإبداع"] },
+            { question: "كيف تتعامل مع النقد؟", options: ["محفز", "محبط", "حسب الموقف", "أتجاهله"] },
+            { question: "ما الذي يجعلك تشعر بالسعادة؟", options: ["النجاح", "العلاقات", "الهدوء", "الإبداع"] },
+            { question: "كيف تتعامل مع التحديات؟", options: ["أواجهها", "أتجنبها", "أحللها", "أطلب المساعدة"] },
+            { question: "هل تعتبر نفسك اجتماعيًا؟", options: ["نعم دائمًا", "أحيانًا", "لا أحب الاختلاط", "حسب المزاج"] },
+            { question: "ما الصفات التي تبحث عنها في الأصدقاء؟", options: ["الصدق", "المرح", "الذكاء", "الدعم"] },
+            { question: "كيف تتعامل مع الفشل؟", options: ["فرصة للتعلم", "مصدر إحباط", "أتجاهله", "أحلله"] },
+            { question: "هل تجد صعوبة في التعبير عن مشاعرك؟", options: ["لا", "أحيانًا", "نعم", "حسب الموقف"] },
+            { question: "كيف تؤثر تجاربك السابقة على سلوكك؟", options: ["بشكل كبير", "قليلاً", "لا تؤثر", "حسب"] },
+            { question: "هل تميل إلى التخطيط أم العفوية؟", options: ["تخطيط", "عفوية", "مزيج", "حسب"] },
+            { question: "ما أكبر إنجاز تفخر به؟", options: ["عملي", "شخصي", "تعليمي", "عاطفي"] },
+            { question: "كيف تتعامل مع التغيير؟", options: ["أرحب به", "أتأقلم", "أقاومه", "حسب"] },
+            { question: "هل تفضل العمل ضمن فريق أم بمفردك؟", options: ["فريق", "بمفردي", "مزيج", "حسب"] },
+            { question: "كيف تعبر عن محبتك؟", options: ["كلمات", "أفعال", "هدايا", "وقت"] },
+            { question: "ما نقاط قوتك؟", options: ["التنظيم", "الإبداع", "التحليل", "التواصل"] },
+            { question: "ما أكبر خوف لديك؟", options: ["الفشل", "الوحدة", "المجهول", "النقد"] },
+            { question: "هل أنت متفائل أم متشائم؟", options: ["متفائل", "متشائم", "واقعي", "حسب"] },
+            { question: "ما أكبر تحدٍ واجهته؟", options: ["عملي", "شخصي", "عاطفي", "مالي"] },
+            { question: "كيف تحفز نفسك؟", options: ["أهداف", "مكافآت", "دعم الآخرين", "التحدي"] }
+        ];
+
+        const decisionQuestions = [
+            { question: "كيف تتعامل مع القرارات تحت الضغط؟", options: ["أتصرف بسرعة", "أحلل بسرعة", "أطلب المساعدة", "أتردد"] },
+            { question: "هل تعتمد على الحدس أم التحليل؟", options: ["الحدس", "التحليل", "مزيج", "حسب الموقف"] },
+            { question: "كيف تؤثر مشاعرك على قراراتك؟", options: ["بشكل كبير", "قليلاً", "لا تؤثر", "حسب الحالة"] },
+            { question: "هل تفضل القرارات السريعة أم التأني؟", options: ["سريعة", "تأني", "مزيج", "حسب"] },
+            { question: "كيف تتعامل مع المخاطرة؟", options: ["أجازف", "أتجنبها", "أحللها", "أستشير"] },
+            { question: "ما استراتيجيتك لجمع المعلومات؟", options: ["بحث سريع", "تحليل عميق", "آراء الآخرين", "حدسي"] },
+            { question: "كيف تتعامل مع خيارات صعبة؟", options: ["أختار بسرعة", "أحللها", "أستشير", "أؤجل"] },
+            { question: "هل ندمت على قرار بناءً على رأي الآخرين؟", options: ["نعم", "لا", "أحيانًا", "لم يحدث"] },
+            { question: "كيف تؤثر خبراتك على قراراتك؟", options: ["كثيرًا", "قليلاً", "لا تؤثر", "حسب"] },
+            { question: "هل تفضل القرارات المستقلة؟", options: ["نعم", "لا", "مزيج", "حسب"] },
+            { question: "كيف تتعامل مع قرار خاطئ؟", options: ["أعترف وأصلح", "أتجاهل", "أحلل السبب", "ألوم الظروف"] },
+            { question: "هل تجد صعوبة في الاعتراف بالخطأ؟", options: ["لا", "نعم", "أحيانًا", "حسب"] },
+            { question: "ما أكبر قرار اتخذته؟", options: ["عملي", "شخصي", "مالي", "عاطفي"] },
+            { question: "كيف تقيم نجاح قراراتك؟", options: ["نتائج", "شعوري", "آراء الآخرين", "تحليل"] },
+            { question: "هل تعتقد العاطفة ضرورية؟", options: ["لا", "نعم", "أحيانًا", "حسب"] },
+            { question: "كيف تفرق بين القرارات القصيرة والطويلة؟", options: ["مدة التأثير", "الأهمية", "التحليل", "حدسي"] },
+            { question: "كيف تتعامل مع التوقعات الاجتماعية؟", options: ["أتأثر", "أتجاهل", "أوازن", "حسب"] },
+            { question: "هل تفضل الالتزام أم المرونة؟", options: ["التزام", "مرونة", "مزيج", "حسب"] },
+            { question: "كيف تؤثر الضغوط على قراراتك؟", options: ["كثيرًا", "قليلاً", "لا تؤثر", "حسب"] },
+            { question: "هل لديك آلية للقرارات؟", options: ["نعم", "لا", "أحيانًا", "حسب"] }
+        ];
+
+        const thinkingQuestions = [
+            { question: "هل تميل إلى التفكير التحليلي أم الإبداعي؟", options: ["تحليلي", "إبداعي", "مزيج", "حسب"] },
+            { question: "كيف تتعامل مع المعلومات المتناقضة؟", options: ["أحللها", "أتجاهلها", "حل وسط", "حدس"] },
+            { question: "هل تفضل الصورة الكبيرة أم التفاصيل؟", options: ["الكبيرة", "التفاصيل", "مزيج", "حسب"] },
+            { question: "كيف تؤثر مشاعرك على تفكيرك؟", options: ["كثيرًا", "قليلاً", "لا تؤثر", "حسب"] },
+            { question: "هل تركز على الأسباب أم الحلول؟", options: ["الأسباب", "الحلول", "مزيج", "حسب"] },
+            { question: "هل تفكر في الماضي أم المستقبل؟", options: ["الماضي", "المستقبل", "مزيج", "حسب"] },
+            { question: "هل تتبع المنطق أم الحدس؟", options: ["منطق", "حدس", "مزيج", "حسب"] },
+            { question: "كيف تتعامل مع التفكير خارج الصندوق؟", options: ["أحبه", "أجده صعبًا", "أحيانًا", "حسب"] },
+            { question: "هل لكل مشكلة حل واحد؟", options: ["نعم", "لا", "أحيانًا", "حسب"] },
+            { question: "كيف تتفاعل مع أفكار جديدة؟", options: ["أرحب", "أرفض", "أحللها", "حسب"] },
+            { question: "هل تجد صعوبة في تغيير رأيك؟", options: ["لا", "نعم", "أحيانًا", "حسب"] },
+            { question: "هل تستشير الآخرين في القرارات؟", options: ["نعم", "لا", "أحيانًا", "حسب"] },
+            { question: "كيف تتعامل مع الأفكار السلبية؟", options: ["أحللها", "أتجاهلها", "أحولها", "أتأثر"] },
+            { question: "هل أنت سريع الاستجابة أم بطيء؟", options: ["سريع", "بطيء", "مزيج", "حسب"] },
+            { question: "كيف توازن بين العقل والعاطفة؟", options: ["عقل", "عاطفة", "مزيج", "حسب"] },
+            { question: "هل تفرط في التفكير؟", options: ["نعم", "لا", "أحيانًا", "حسب"] },
+            { question: "هل تفكيرك خطي أم عشوائي؟", options: ["خطي", "عشوائي", "مزيج", "حسب"] },
+            { question: "كيف تتعامل مع مشكلات غامضة؟", options: ["أحللها", "أتجاهلها", "أبدع حلًا", "أستشير"] },
+            { question: "هل التفكير عملية ثابتة أم متطورة؟", options: ["ثابتة", "متطورة", "مزيج", "حسب"] },
+            { question: "كيف تقيم قدرتك على التفكير؟", options: ["نقدي", "إبداعي", "مزيج", "حسب"] }
+        ];
+
+        // Global Variables
+        let currentTab = 'personality';
+        let currentQuestion = 0;
+        let responses = { personality: [], decision: [], thinking: [] };
+        let decisionChart;
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Tab Switching
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    document.getElementById(`${btn.dataset.tab}-tab`).classList.add('active');
+                    currentTab = btn.dataset.tab;
+                });
+            });
+
+            // Start Test Buttons
+            document.getElementById('start-personality').addEventListener('click', () => startTest('personality'));
+            document.getElementById('start-decision').addEventListener('click', () => startTest('decision'));
+            document.getElementById('start-thinking').addEventListener('click', () => startTest('thinking'));
+
+            // Save Results Button
+            document.getElementById('save-results').addEventListener('click', saveResults);
+
+            // Share Results Button
+            document.getElementById('share-results').addEventListener('click', shareResults);
+        });
+
+        // Start a test
+        function startTest(type) {
+            document.getElementById(`${type}-start`).classList.add('hidden');
+            document.getElementById(`${type}-questions`).classList.remove('hidden');
+            currentQuestion = 0;
+            responses[type] = [];
+            loadQuestion(type);
+        }
+
+        // Load a question
+        function loadQuestion(type) {
+            const questions = getQuestionsByType(type);
+            const container = document.getElementById(`${type}-question-container`);
+            
+            document.getElementById(`${type}-progress`).style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            document.getElementById(`${type}-progress-text`).textContent = `السؤال ${currentQuestion + 1} من ${questions.length}`;
+            
+            container.innerHTML = `
+                <h3 class="text-xl font-medium mb-6">${questions[currentQuestion].question}</h3>
+                <div class="space-y-4">
+                    ${questions[currentQuestion].options.map((opt, i) => `
+                        <div class="option-card p-4 rounded-lg" data-option="${i}">
+                            <div class="flex items-center">
+                                <div class="w-6 h-6 rounded-full border border-gray-500 mr-3 flex-shrink-0"></div>
+                                <span>${opt}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            container.querySelectorAll('.option-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    responses[type][currentQuestion] = parseInt(this.dataset.option);
+                    this.classList.add('selected');
+                    this.querySelector('div').innerHTML = '<i class="ri-check-line text-primary"></i>';
+                    setTimeout(() => {
+                        currentQuestion++;
+                        if (currentQuestion < questions.length) {
+                            loadQuestion(type);
+                        } else {
+                            submitTest(type);
+                        }
+                    }, 500);
+                });
+            });
+        }
+
+        // Submit test and get results from server
+        async function submitTest(type) {
+            try {
+                document.getElementById(`${type}-questions`).classList.add('hidden');
+                document.getElementById(`${type}-results`).classList.remove('hidden');
+
+                const response = await fetch('/personality-analysis/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type, responses: responses[type] })
+                });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'فشل في تحليل النتائج');
+                }
+
+                displayResults(type, result);
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: error.message,
+                    confirmButtonText: 'حسنًا'
+                });
+                document.getElementById(`${type}-results`).classList.add('hidden');
+                document.getElementById(`${type}-start`).classList.remove('hidden');
+            }
+        }
+
+        // Display results
+        function displayResults(type, result) {
+            if (type === 'personality') {
+                document.getElementById('personality-summary').textContent = result.summary;
+                document.getElementById('extroversion-bar').style.width = `${result.traits.extroversion}%`;
+                document.getElementById('neuroticism-bar').style.width = `${result.traits.neuroticism}%`;
+                document.getElementById('openness-bar').style.width = `${result.traits.openness}%`;
+                document.getElementById('agreeableness-bar').style.width = `${result.traits.agreeableness}%`;
+                document.getElementById('conscientiousness-bar').style.width = `${result.traits.conscientiousness}%`;
+                document.getElementById('extroversion-desc').textContent = getTraitDescription('extroversion', result.traits.extroversion);
+                document.getElementById('neuroticism-desc').textContent = getTraitDescription('neuroticism', result.traits.neuroticism);
+                document.getElementById('openness-desc').textContent = getTraitDescription('openness', result.traits.openness);
+                document.getElementById('agreeableness-desc').textContent = getTraitDescription('agreeableness', result.traits.agreeableness);
+                document.getElementById('conscientiousness-desc').textContent = getTraitDescription('conscientiousness', result.traits.conscientiousness);
+            } else if (type === 'decision') {
+                document.getElementById('decision-summary').textContent = result.summary;
+                const ctx = document.getElementById('decision-chart').getContext('2d');
+                if (decisionChart) decisionChart.destroy();
+                decisionChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['السرعة', 'التحليل', 'الحدس', 'التعاون'],
+                        datasets: [{
+                            label: 'أسلوب اتخاذ القرار',
+                            data: [
+                                result.traits.speed || 0,
+                                result.traits.analysis || 0,
+                                result.traits.intuition || 0,
+                                result.traits.collaboration || 0
+                            ],
+                            backgroundColor: 'rgba(124, 58, 237, 0.2)',
+                            borderColor: 'rgba(124, 58, 237, 1)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgba(124, 58, 237, 1)'
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            r: {
+                                angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                suggestedMin: 0,
+                                suggestedMax: 100,
+                                pointLabels: { color: '#E2E8F0' }
+                            }
+                        },
+                        plugins: {
+                            legend: { labels: { color: '#E2E8F0' } }
+                        }
+                    }
+                });
+            } else if (type === 'thinking') {
+                document.getElementById('thinking-summary').textContent = result.summary;
+                document.getElementById('analytical-bar').style.width = `${result.traits.analytical || 0}%`;
+                document.getElementById('creative-bar').style.width = `${result.traits.creative || 0}%`;
+                document.getElementById('emotional-bar').style.width = `${result.traits.emotional || 0}%`;
+                document.getElementById('analytical-desc').textContent = getTraitDescription('analytical', result.traits.analytical || 0);
+                document.getElementById('creative-desc').textContent = getTraitDescription('creative', result.traits.creative || 0);
+                document.getElementById('emotional-desc').textContent = getTraitDescription('emotional', result.traits.emotional || 0);
+            }
+        }
+
+        // Helper function to get trait description
+        function getTraitDescription(trait, value) {
+            const descriptions = {
+                extroversion: {
+                    high: "اجتماعي، يحب الاختلاط بالناس، مفعم بالطاقة",
+                    medium: "متوازن بين الاجتماعي والانطوائي",
+                    low: "انطوائي، يفضل الوقت بمفرده"
+                },
+                neuroticism: {
+                    high: "حساس عاطفيًا، يميل للقلق والتوتر",
+                    medium: "متوازن عاطفيًا، يتعامل مع الضغوط بشكل معقول",
+                    low: "هادئ، مستقر عاطفيًا، لا يتأثر بسهولة"
+                },
+                openness: {
+                    high: "مبدع، يحب التجارب الجديدة، مفكر خارج الصندوق",
+                    medium: "متوازن بين التقليدية والإبداع",
+                    low: "عملي، يفضل الروتين، واقعي"
+                },
+                agreeableness: {
+                    high: "ودود، متعاون، يهتم بالآخرين",
+                    medium: "متوازن بين احتياجاته واحتياجات الآخرين",
+                    low: "عملي، يضع احتياجاته أولاً، مباشر"
+                },
+                conscientiousness: {
+                    high: "منظم، موثوق، يهتم بالتفاصيل",
+                    medium: "متوازن بين التنظيم والمرونة",
+                    low: "مرن، عفوي، لا يحب القيود"
+                },
+                analytical: {
+                    high: "تفكير تحليلي قوي، يركز على المنطق والتفاصيل",
+                    medium: "متوازن بين التحليل والحدس",
+                    low: "لا يعتمد كثيرًا على التحليل، يميل للحدس"
+                },
+                creative: {
+                    high: "مبدع، يحب التجديد، يفكر خارج الصندوق",
+                    medium: "متوازن بين الإبداع والواقعية",
+                    low: "عملي، يفضل الحلول المثبتة"
+                },
+                emotional: {
+                    high: "يتأثر بالمشاعر، يراعي الجانب العاطفي",
+                    medium: "متوازن بين العقل والعاطفة",
+                    low: "عملي، يركز على المنطق أكثر من المشاعر"
+                }
+            };
+            
+            if (value >= 70) return descriptions[trait].high;
+            if (value >= 30) return descriptions[trait].medium;
+            return descriptions[trait].low;
+        }
+
+        // Save results (placeholder)
+        function saveResults() {
+            Swal.fire({
+                icon: 'success',
+                title: 'تم الحفظ',
+                text: 'تم حفظ نتائج تحليل شخصيتك بنجاح',
+                confirmButtonText: 'حسنًا'
+            });
+        }
+
+        // Share results
+        function shareResults() {
+            Swal.fire({
+                title: 'مشاركة النتائج',
+                html: `
+                    <p class="mb-4">اختر طريقة المشاركة:</p>
+                    <div class="flex justify-center space-x-4">
+                        <button class="p-3 bg-blue-500 text-white rounded-full">
+                            <i class="ri-facebook-fill text-xl"></i>
+                        </button>
+                        <button class="p-3 bg-blue-400 text-white rounded-full">
+                            <i class="ri-twitter-fill text-xl"></i>
+                        </button>
+                        <button class="p-3 bg-green-500 text-white rounded-full">
+                            <i class="ri-whatsapp-fill text-xl"></i>
+                        </button>
+                    </div>
+                `,
+                showConfirmButton: false,
+                showCloseButton: true
+            });
+        }
+
+        // Helper function to get questions by type
+        function getQuestionsByType(type) {
+            switch(type) {
+                case 'personality': return personalityQuestions;
+                case 'decision': return decisionQuestions;
+                case 'thinking': return thinkingQuestions;
+                default: return [];
+            }
+        }
+    </script>
+</body>
+</html>

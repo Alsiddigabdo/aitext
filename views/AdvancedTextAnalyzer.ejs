@@ -5,49 +5,231 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>التحليل المتقدم للنصوص | محلل النصوص الذكي</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: "#8B5CF6",
-                        secondary: "#6366F1",
+                        primary: {
+                            50: '#F5F3FF',
+                            100: '#EDE9FE',
+                            200: '#DDD6FE',
+                            300: '#C4B5FD',
+                            400: '#A78BFA',
+                            500: '#8B5CF6',
+                            600: '#7C3AED',
+                            700: '#6D28D9',
+                            800: '#5B21B6',
+                            900: '#4C1D95'
+                        },
+                        accent: {
+                            50: '#FFFBEB',
+                            100: '#FEF3C7',
+                            200: '#FDE68A',
+                            300: '#FCD34D',
+                            400: '#FBBF24',
+                            500: '#F59E0B',
+                            600: '#D97706',
+                            700: '#B45309',
+                            800: '#92400E',
+                            900: '#78350F'
+                        },
+                        dark: {
+                            50: '#F8FAFC',
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            300: '#CBD5E1',
+                            400: '#94A3B8',
+                            500: '#64748B',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1E293B',
+                            900: '#0F172A'
+                        }
                     },
                     borderRadius: {
-                        button: "8px",
+                        '4xl': '2rem',
+                        '5xl': '3rem'
+                    },
+                    boxShadow: {
+                        '3d': '0 15px 30px -5px rgba(0, 0, 0, 0.3)',
+                        'neumorphic': '8px 8px 16px #0d1321, -8px -8px 16px #131d31',
+                        'neumorphic-inset': 'inset 5px 5px 10px #0d1321, inset -5px -5px 10px #131d31',
+                        'glow': '0 0 15px rgba(139, 92, 246, 0.5)',
+                        'glow-accent': '0 0 15px rgba(245, 158, 11, 0.5)'
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 6s infinite',
+                        'wave': 'wave 2.5s infinite'
                     }
+                },
+                fontFamily: {
+                    'cairo': ['Cairo', 'sans-serif'],
+                    'tajawal': ['Tajawal', 'sans-serif']
                 }
             }
-        };
+        }
     </script>
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #111827; color: #f3f4f6; }
-        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
-        .glass-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); }
-        .btn-primary { background-color: #8B5CF6; color: white; padding: 12px 24px; border-radius: 8px; transition: background-color 0.3s ease; }
-        .btn-primary:hover:not(:disabled) { background-color: #6366F1; }
-        .btn-secondary { background-color: rgba(255, 255, 255, 0.1); color: white; padding: 12px 24px; border-radius: 8px; transition: background-color 0.3s ease; }
-        .btn-secondary:hover { background-color: rgba(255, 255, 255, 0.2); }
-        .animate-spin { animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .animate-fade-in { animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        :root {
+            --primary: #7C3AED;
+            --primary-light: #8B5CF6;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --darker: #0A1120;
+        }
+        
+        body {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: #E2E8F0;
+            scroll-behavior: smooth;
+        }
+        
+        .neu-card {
+            background: linear-gradient(145deg, #0e1424, #101829);
+            border-radius: 20px;
+            box-shadow: 8px 8px 16px #0a0f1a, -8px -8px 16px #121f3a;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .neu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 12px 12px 24px #0a0f1a, -12px -12px 24px #121f3a;
+        }
+        
+        .neu-btn {
+            background: linear-gradient(145deg, #101829, #0e1424);
+            box-shadow: 5px 5px 10px #0a0f1a, -5px -5px 10px #121f3a;
+            transition: all 0.3s ease;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary-light), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(145deg, #101829, #0e1424);
+            box-shadow: 5px 5px 10px #0a0f1a, -5px -5px 10px #121f3a;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--primary-light);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-hover-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-hover-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 45%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 55%
+            );
+            transform: rotate(30deg);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-hover-effect:hover::after {
+            left: 100%;
+            top: 100%;
+        }
+        
+        .animate-fade-up {
+            animation: fadeUp 0.8s ease-out forwards;
+        }
+        
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-delay-100 {
+            animation-delay: 0.1s;
+        }
+        
+        .animate-delay-200 {
+            animation-delay: 0.2s;
+        }
+        
+        .animate-delay-300 {
+            animation-delay: 0.3s;
+        }
+        
+        .tool-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(145deg, #101829, #0e1424);
+            box-shadow: 5px 5px 10px #0a0f1a, -5px -5px 10px #121f3a;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary-light);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100">
     <%- include('partials/navbar') %>
+    
     <!-- Main Content -->
     <main class="pt-24 pb-16">
         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h1 class="text-4xl lg:text-5xl font-bold mb-6 animate-fade-in">التحليل المتقدم للنصوص</h1>
-                <p class="text-xl text-gray-400 max-w-2xl mx-auto animate-fade-in">استخدم أدواتنا المتقدمة لتحليل نصوصك بشكل شامل واحصل على تقرير تفصيلي</p>
+            <div class="text-center mb-16 animate-fade-up">
+                <h1 class="text-4xl lg:text-5xl font-bold mb-6 gradient-text">التحليل المتقدم للنصوص</h1>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">استخدم أدواتنا المتقدمة لتحليل نصوصك بشكل شامل واحصل على تقرير تفصيلي</p>
             </div>
 
             <!-- Analyzer Section -->
-            <div class="glass-card p-8 rounded-lg max-w-4xl mx-auto animate-fade-in">
+            <div class="neu-card p-8 rounded-xl max-w-4xl mx-auto animate-fade-up animate-delay-100">
                 <div class="flex flex-col md:flex-row items-center gap-6 mb-6">
                     <div class="w-full md:w-2/3">
                         <h2 class="text-xl font-bold mb-2 flex items-center gap-2">
@@ -57,7 +239,7 @@
                         <p class="text-sm text-gray-400 mb-4">ندعم ملفات PDF وDOCX وTXT</p>
                     </div>
                     <div class="w-full md:w-1/3 flex justify-end">
-                        <label class="relative cursor-pointer px-4 py-2 rounded-button bg-primary text-white hover:bg-secondary transition-colors flex items-center gap-2">
+                        <label class="relative cursor-pointer px-4 py-2 rounded-lg gradient-bg text-white hover:shadow-glow transition-colors flex items-center gap-2">
                             <i class="ri-upload-cloud-line"></i>
                             تحميل ملف
                             <input id="file-upload" type="file" class="hidden" accept=".pdf,.docx,.txt">
@@ -74,10 +256,10 @@
                 <div class="mt-4 flex items-center justify-between">
                     <div id="char-count" class="text-sm text-gray-400">0 حرف</div>
                     <div class="flex gap-2">
-                        <button id="reset-btn" class="btn-secondary font-medium flex items-center gap-2 hidden">
+                        <button id="reset-btn" class="px-4 py-2 rounded-lg bg-gray-800 text-white font-medium flex items-center gap-2 hidden hover:bg-gray-700 transition">
                             <i class="ri-refresh-line"></i> إعادة ضبط
                         </button>
-                        <button id="analyze-btn" class="btn-primary font-medium flex items-center gap-2 disabled:bg-gray-600">
+                        <button id="analyze-btn" class="px-4 py-2 rounded-lg gradient-bg text-white font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-glow transition">
                             <i class="ri-search-line"></i> تحليل النص
                         </button>
                     </div>
@@ -86,62 +268,62 @@
                 <!-- Tabs -->
                 <div class="mt-6">
                     <div class="flex overflow-x-auto border-b border-gray-700 gap-2 pb-2">
-                        <button data-tab="grammar" class="tab-btn px-4 py-2 whitespace-nowrap rounded-button flex items-center gap-2 bg-primary text-white">
+                        <button data-tab="grammar" class="tab-btn px-4 py-2 whitespace-nowrap rounded-lg flex items-center gap-2 gradient-bg text-white">
                             <i class="ri-check-line"></i> <span>التدقيق اللغوي</span>
                         </button>
-                        <button data-tab="language" class="tab-btn px-4 py-2 whitespace-nowrap rounded-button flex items-center gap-2 hover:bg-gray-700 text-gray-300">
+                        <button data-tab="language" class="tab-btn px-4 py-2 whitespace-nowrap rounded-lg flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
                             <i class="ri-text"></i> <span>تحليل اللغة</span>
                         </button>
-                        <button data-tab="sentiment" class="tab-btn px-4 py-2 whitespace-nowrap rounded-button flex items-center gap-2 hover:bg-gray-700 text-gray-300">
+                        <button data-tab="sentiment" class="tab-btn px-4 py-2 whitespace-nowrap rounded-lg flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
                             <i class="ri-emotion-line"></i> <span>تحليل المشاعر</span>
                         </button>
-                        <button data-tab="seo" class="tab-btn px-4 py-2 whitespace-nowrap rounded-button flex items-center gap-2 hover:bg-gray-700 text-gray-300">
+                        <button data-tab="seo" class="tab-btn px-4 py-2 whitespace-nowrap rounded-lg flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
                             <i class="ri-search-line"></i> <span>تحسين SEO</span>
                         </button>
-                        <button data-tab="style" class="tab-btn px-4 py-2 whitespace-nowrap rounded-button flex items-center gap-2 hover:bg-gray-700 text-gray-300">
+                        <button data-tab="style" class="tab-btn px-4 py-2 whitespace-nowrap rounded-lg flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
                             <i class="ri-edit-line"></i> <span>تحسين الأسلوب</span>
                         </button>
-                        <button data-tab="classification" class="tab-btn px-4 py-2 whitespace-nowrap rounded-button flex items-center gap-2 hover:bg-gray-700 text-gray-300">
+                        <button data-tab="classification" class="tab-btn px-4 py-2 whitespace-nowrap rounded-lg flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
                             <i class="ri-file-list-line"></i> <span>تصنيف النص</span>
                         </button>
-                        <button data-tab="plagiarism" class="tab-btn px-4 py-2 whitespace-nowrap rounded-button flex items-center gap-2 hover:bg-gray-700 text-gray-300">
+                        <button data-tab="plagiarism" class="tab-btn px-4 py-2 whitespace-nowrap rounded-lg flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
                             <i class="ri-file-warning-line"></i> <span>كشف الانتحال</span>
                         </button>
                     </div>
 
                     <!-- Tab Content -->
                     <div id="tab-content" class="mt-8">
-                        <div id="grammar" class="tab-content animate-fade-in">
+                        <div id="grammar" class="tab-content animate-fade-up animate-delay-200">
                             <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="ri-check-line text-primary"></i> التدقيق النحوي والإملائي</h3>
                             <p class="text-gray-400 mb-4">تحقق من الأخطاء النحوية والإملائية في نصك</p>
                             <div id="grammar-results" class="hidden mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700"></div>
                         </div>
-                        <div id="language" class="tab-content hidden animate-fade-in">
+                        <div id="language" class="tab-content hidden animate-fade-up animate-delay-200">
                             <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="ri-text text-primary"></i> تحليل اللغة واللهجة</h3>
                             <p class="text-gray-400 mb-4">تعرف على اللغة واللهجة المستخدمة</p>
                             <div id="language-results" class="hidden mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700"></div>
                         </div>
-                        <div id="sentiment" class="tab-content hidden animate-fade-in">
+                        <div id="sentiment" class="tab-content hidden animate-fade-up animate-delay-200">
                             <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="ri-emotion-line text-primary"></i> تحليل المشاعر</h3>
                             <p class="text-gray-400 mb-4">تحليل نغمة النص وتأثيره العاطفي</p>
                             <div id="sentiment-results" class="hidden mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700"></div>
                         </div>
-                        <div id="seo" class="tab-content hidden animate-fade-in">
+                        <div id="seo" class="tab-content hidden animate-fade-up animate-delay-200">
                             <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="ri-search-line text-primary"></i> تحسين محركات البحث (SEO)</h3>
                             <p class="text-gray-400 mb-4">تحسين النص لمحركات البحث</p>
                             <div id="seo-results" class="hidden mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700"></div>
                         </div>
-                        <div id="style" class="tab-content hidden animate-fade-in">
+                        <div id="style" class="tab-content hidden animate-fade-up animate-delay-200">
                             <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="ri-edit-line text-primary"></i> تحسين الأسلوب</h3>
                             <p class="text-gray-400 mb-4">اقتراحات لتحسين أسلوب الكتابة</p>
                             <div id="style-results" class="hidden mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700"></div>
                         </div>
-                        <div id="classification" class="tab-content hidden animate-fade-in">
+                        <div id="classification" class="tab-content hidden animate-fade-up animate-delay-200">
                             <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="ri-file-list-line text-primary"></i> تصنيف النص</h3>
                             <p class="text-gray-400 mb-4">تعرف على نوع النص</p>
                             <div id="classification-results" class="hidden mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700"></div>
                         </div>
-                        <div id="plagiarism" class="tab-content hidden animate-fade-in">
+                        <div id="plagiarism" class="tab-content hidden animate-fade-up animate-delay-200">
                             <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="ri-file-warning-line text-primary"></i> كشف الانتحال</h3>
                             <p class="text-gray-400 mb-4">التحقق من تفرد المحتوى</p>
                             <div id="plagiarism-results" class="hidden mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700"></div>
@@ -151,19 +333,61 @@
 
                 <!-- Features Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-                    <div class="glass-card p-6">
+                    <div class="neu-card p-6 hover:border-primary/50 transition">
                         <div class="flex items-center gap-2 mb-2"><i class="ri-global-line text-primary text-xl"></i><h3 class="text-lg font-bold">دعم متعدد اللغات</h3></div>
                         <p class="text-gray-400">ندعم أكثر من 20 لغة عالمية بما فيها العربية والإنجليزية.</p>
                     </div>
-                    <div class="glass-card p-6">
+                    <div class="neu-card p-6 hover:border-primary/50 transition">
                         <div class="flex items-center gap-2 mb-2"><i class="ri-file-text-line text-primary text-xl"></i><h3 class="text-lg font-bold">تحليل وثائق كاملة</h3></div>
                         <p class="text-gray-400">تحميل مستندات (PDF، DOCX، TXT) لتحليل شامل.</p>
                     </div>
-                    <div class="glass-card p-6">
+                    <div class="neu-card p-6 hover:border-primary/50 transition">
                         <div class="flex items-center gap-2 mb-2"><i class="ri-bar-chart-line text-primary text-xl"></i><h3 class="text-lg font-bold">تقارير تفصيلية</h3></div>
                         <p class="text-gray-400">تقارير بيانية توضح نقاط القوة والضعف.</p>
                     </div>
                 </div>
+            </div>
+        </section>
+        
+        <!-- Additional Tools Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4 gradient-text">أدوات إضافية قد تهمك</h2>
+                <p class="text-lg text-gray-300 max-w-2xl mx-auto">استكشف أدواتنا الأخرى لتحسين تجربة تحليل النصوص</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="/compare-texts" class="neu-card p-6 rounded-xl hover:border-primary/50 transition flex flex-col items-center text-center">
+                    <div class="tool-icon">
+                        <i class="ri-file-copy-line"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">مقارنة النصوص</h3>
+                    <p class="text-gray-400">اكتشف الفروقات بين النصوص وتحليل التشابه</p>
+                </a>
+                
+                <a href="/smart-translation" class="neu-card p-6 rounded-xl hover:border-primary/50 transition flex flex-col items-center text-center">
+                    <div class="tool-icon">
+                        <i class="ri-translate-2"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">الترجمة الذكية</h3>
+                    <p class="text-gray-400">ترجمة احترافية بأسلوب طبيعي وحفظ السياق</p>
+                </a>
+                
+                <a href="/text-summarization" class="neu-card p-6 rounded-xl hover:border-primary/50 transition flex flex-col items-center text-center">
+                    <div class="tool-icon">
+                        <i class="ri-file-reduce-line"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">تلخيص النصوص</h3>
+                    <p class="text-gray-400">استخلاص أهم المعلومات والتفاصيل الرئيسية</p>
+                </a>
+                
+                <a href="/suggest-titles" class="neu-card p-6 rounded-xl hover:border-primary/50 transition flex flex-col items-center text-center">
+                    <div class="tool-icon">
+                        <i class="ri-text"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">اقتراح العناوين</h3>
+                    <p class="text-gray-400">عناوين جذابة لمحتواك تزيد من التفاعل</p>
+                </a>
             </div>
         </section>
     </main>
@@ -171,59 +395,41 @@
     <%- include('partials/footer') %>
 
     <script>
-        // دالة لإرسال الطلب إلى الخلفية
         const analyzeText = async (text, analysisType) => {
             try {
                 const response = await fetch('/analyzer/analyze', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify({ text, analysisType })
                 });
-                if (!response.ok) throw new Error('فشل في التحليل');
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    if (response.status === 429) {
+                        throw new Error('تم تجاوز حد الطلبات. يرجى المحاولة مجدداً بعد 20 ثانية.');
+                    }
+                    throw new Error(errorData.error || `فشل في التحليل: ${response.status}`);
+                }
                 return await response.json();
             } catch (error) {
                 console.error('Error analyzing text:', error);
-                return { error: 'حدث خطأ أثناء تحليل النص' };
+                return { error: error.message };
             }
         };
 
-        // عرض النتائج
         const displayResults = (result, analysisType) => {
             const resultsContainer = document.getElementById(`${analysisType}-results`);
             let html = '';
             if (result.error) {
                 html = `<p class="text-red-400">${result.error}</p>`;
             } else {
-                const response = result.result; // نتيجة التحليل من الخلفية
-                switch (analysisType) {
-                    case 'grammar':
-                        html = `<h4 class="mb-2 font-medium">نتائج التحليل:</h4><p>${response}</p>`;
-                        break;
-                    case 'language':
-                        html = `<h4 class="mb-2 font-medium">نتائج التحليل:</h4><p>${response}</p>`;
-                        break;
-                    case 'sentiment':
-                        html = `<h4 class="mb-2 font-medium">نتائج التحليل:</h4><p>${response}</p>`;
-                        break;
-                    case 'seo':
-                        html = `<h4 class="mb-2 font-medium">نتائج التحليل:</h4><p>${response}</p>`;
-                        break;
-                    case 'style':
-                        html = `<h4 class="mb-2 font-medium">نتائج التحليل:</h4><p>${response}</p>`;
-                        break;
-                    case 'classification':
-                        html = `<h4 class="mb-2 font-medium">نتائج التحليل:</h4><p>${response}</p>`;
-                        break;
-                    case 'plagiarism':
-                        html = `<h4 class="mb-2 font-medium">نتائج التحليل:</h4><p>${response}</p>`;
-                        break;
-                }
+                const response = result.result;
+                html = `<h4 class="mb-2 font-medium">نتائج التحليل:</h4><p class="whitespace-pre-wrap">${response}</p>`;
             }
             resultsContainer.innerHTML = html;
             resultsContainer.classList.remove('hidden');
         };
 
-        // إعدادات التفاعل
         const textInput = document.getElementById('text-input');
         const charCount = document.getElementById('char-count');
         const resetBtn = document.getElementById('reset-btn');
@@ -242,19 +448,35 @@
             const file = e.target.files[0];
             if (file) {
                 const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
-                if (validTypes.includes(file.type)) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
+                if (!validTypes.includes(file.type)) {
+                    alert('نوع ملف غير مدعوم. يرجى تحميل ملف PDF أو DOCX أو TXT');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    if (file.type === 'application/pdf') {
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        fetch('/analyzer/analyze', {
+                            method: 'POST',
+                            body: formData
+                        }).then(response => response.json())
+                          .then(result => displayResults(result, document.querySelector('.tab-btn.gradient-bg').dataset.tab))
+                          .catch(error => displayResults({ error: 'فشل في معالجة الملف' }, document.querySelector('.tab-btn.gradient-bg').dataset.tab));
+                    } else {
                         textInput.value = event.target.result;
                         charCount.textContent = `${textInput.value.length} حرف`;
                         resetBtn.classList.remove('hidden');
                         analyzeBtn.disabled = false;
-                    };
-                    reader.readAsText(file);
-                    alert(`تم استلام الملف: ${file.name}`);
+                    }
+                };
+                if (file.type === 'application/pdf') {
+                    reader.readAsArrayBuffer(file);
                 } else {
-                    alert('نوع ملف غير مدعوم. يرجى تحميل ملف PDF أو DOCX أو TXT');
+                    reader.readAsText(file);
                 }
+                alert(`تم استلام الملف: ${file.name}`);
             }
         });
 
@@ -268,32 +490,60 @@
 
         analyzeBtn.addEventListener('click', async () => {
             if (!textInput.value.trim()) return;
+
             analyzeBtn.disabled = true;
             analyzeBtn.innerHTML = '<span class="inline-block h-4 w-4 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2"></span>جاري التحليل...';
-            const activeTab = document.querySelector('.tab-btn.bg-primary').dataset.tab;
+
+            const activeTab = document.querySelector('.tab-btn.gradient-bg').dataset.tab;
             const result = await analyzeText(textInput.value, activeTab);
             displayResults(result, activeTab);
-            analyzeBtn.disabled = false;
-            analyzeBtn.innerHTML = '<i class="ri-search-line"></i> تحليل النص';
+
+            if (!result.error) {
+                let timeLeft = 20;
+                analyzeBtn.innerHTML = `الرجاء الانتظار (${timeLeft} ث)`;
+                analyzeBtn.classList.add('disabled:opacity-50');
+
+                const countdown = setInterval(() => {
+                    timeLeft--;
+                    analyzeBtn.innerHTML = `الرجاء الانتظار (${timeLeft} ث)`;
+                    if (timeLeft <= 0) {
+                        clearInterval(countdown);
+                        analyzeBtn.disabled = false;
+                        analyzeBtn.innerHTML = '<i class="ri-search-line"></i> تحليل النص';
+                        analyzeBtn.classList.remove('disabled:opacity-50');
+                    }
+                }, 1000);
+            } else {
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = '<i class="ri-search-line"></i> تحليل النص';
+            }
         });
 
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 tabButtons.forEach(btn => {
-                    btn.classList.remove('bg-primary', 'text-white');
-                    btn.classList.add('text-gray-300', 'hover:bg-gray-700');
+                    btn.classList.remove('gradient-bg', 'text-white');
+                    btn.classList.add('bg-gray-800', 'text-gray-300', 'hover:bg-gray-700');
                 });
-                button.classList.add('bg-primary', 'text-white');
-                button.classList.remove('text-gray-300', 'hover:bg-gray-700');
+                button.classList.add('gradient-bg', 'text-white');
+                button.classList.remove('bg-gray-800', 'text-gray-300', 'hover:bg-gray-700');
                 tabContents.forEach(content => content.classList.add('hidden'));
                 document.getElementById(button.dataset.tab).classList.remove('hidden');
             });
         });
+        
+        // Add animation to elements when they come into view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-up');
+                }
+            });
+        }, { threshold: 0.1 });
 
-        function toggleMobileMenu() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
-        }
+        document.querySelectorAll('.neu-card, .tab-content').forEach(card => {
+            observer.observe(card);
+        });
     </script>
 </body>
 </html>

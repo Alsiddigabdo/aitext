@@ -5,68 +5,135 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل الدخول | محلل النصوص الذكي</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { primary: "#8B5CF6", secondary: "#6366F1" },
-                    borderRadius: { button: "8px" }
+                    colors: {
+                        primary: "#8B5CF6",
+                        secondary: "#6366F1",
+                        dark: "#1E293B",
+                        darker: "#0F172A"
+                    },
+                    borderRadius: {
+                        button: "8px",
+                        card: "12px"
+                    },
+                    boxShadow: {
+                        modern: "0 10px 25px -5px rgba(0, 0, 0, 0.2)",
+                        glow: "0 0 15px rgba(139, 92, 246, 0.5)"
+                    }
                 }
             }
         };
     </script>
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #111827; color: #f3f4f6; }
-        .glass-card { background: rgba(26, 36, 61, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15); }
-        .animate-spin { animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .animate-fade-in { animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+        .glass-card {
+            background: rgba(26, 36, 61, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #8B5CF6, #6366F1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #8B5CF6, #6366F1);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px -3px rgba(123, 92, 237, 0.4);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center bg-gray-900">
-    <div class="glass-card p-8 rounded-lg shadow-lg w-full max-w-md animate-fade-in">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-['Pacifico'] text-primary mb-2">محلل النصوص</h1>
-            <h2 class="text-xl font-bold">تسجيل الدخول</h2>
-            <p class="text-gray-400 mt-2">أدخل بياناتك للوصول إلى حسابك</p>
-        </div>
+<body class="min-h-screen flex flex-col">
+    <nav style="width:100%; margin-bottom:8vh;">
+        <%- include('partials/navbar') %>
+    </nav>
 
-        <form id="login-form" method="POST" action="/auth/login" class="space-y-6">
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-300 mb-2">البريد الإلكتروني</label>
-                <div class="relative">
-                    <input type="email" id="email" name="email" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="أدخل بريدك الإلكتروني" required>
-                    <i class="ri-mail-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                </div>
+    <main class="flex-grow flex items-center justify-center pb-16">
+        <div class="glass-card p-8 rounded-card shadow-modern w-full max-w-md animate-fade-in">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold gradient-text mb-2">محلل النصوص</h1>
+                <h2 class="text-xl font-bold text-white">تسجيل الدخول</h2>
+                <p class="text-gray-400 mt-2">أدخل بياناتك للوصول إلى حسابك</p>
             </div>
-            <div>
-                <label for="password" class="block text-sm font-medium text-gray-300 mb-2">كلمة المرور</label>
-                <div class="relative">
-                    <input type="password" id="password" name="password" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary text-white" placeholder="أدخل كلمة المرور" required>
-                    <i class="ri-lock-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                </div>
-            </div>
-            <div class="flex justify-between items-center">
-                <label class="flex items-center space-x-2 space-x-reverse">
-                    <input type="checkbox" name="remember" class="text-primary">
-                    <span class="text-sm text-gray-300">تذكرني</span>
-                </label>
-                <a href="/auth/forgot-password" class="text-sm text-primary hover:underline">نسيت كلمة المرور؟</a>
-            </div>
-            <button type="submit" id="login-btn" class="w-full py-3 rounded-button bg-primary text-white hover:bg-secondary transition flex items-center justify-center disabled:bg-gray-600">
-                <i class="ri-login-box-line ml-2"></i> تسجيل الدخول
-            </button>
-        </form>
 
-        <div id="error-message" class="text-center text-red-500 mt-4 <%= typeof message !== 'undefined' ? '' : 'hidden' %>">
-            <%= typeof message !== 'undefined' ? message : '' %>
+            <form id="login-form" method="POST" action="/auth/login" class="space-y-6">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">البريد الإلكتروني</label>
+                    <div class="relative">
+                        <input type="email" id="email" name="email"
+                            class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary text-white"
+                            placeholder="أدخل بريدك الإلكتروني" required>
+                        <i class="ri-mail-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">كلمة المرور</label>
+                    <div class="relative">
+                        <input type="password" id="password" name="password"
+                            class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary text-white"
+                            placeholder="أدخل كلمة المرور" required>
+                        <i class="ri-lock-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <label class="flex items-center space-x-2 space-x-reverse">
+                        <input type="checkbox" name="remember" class="rounded text-primary focus:ring-primary border-gray-600">
+                        <span class="text-sm text-gray-300">تذكرني</span>
+                    </label>
+                    <a href="/auth/forgot-password" class="text-sm text-primary hover:underline">نسيت كلمة المرور؟</a>
+                </div>
+                <button type="submit" id="login-btn"
+                    class="w-full py-3 rounded-button btn-primary text-white hover:shadow-glow transition flex items-center justify-center">
+                    <i class="ri-login-box-line ml-2"></i> تسجيل الدخول
+                    <span id="loading-spinner" class="hidden ml-2">
+                        <i class="ri-loader-4-line animate-spin"></i>
+                    </span>
+                </button>
+            </form>
+
+            <div id="error-message" class="text-center text-red-500 mt-4 <%= typeof message !== 'undefined' ? '' : 'hidden' %>">
+                <%= typeof message !== 'undefined' ? message : '' %>
+            </div>
+            
+            <div class="text-center mt-6">
+                <p class="text-gray-400">ليس لديك حساب؟ <a href="/auth/register" class="text-primary hover:underline">إنشاء حساب جديد</a></p>
+            </div>
         </div>
-        <div class="text-center mt-6">
-            <p class="text-gray-400">ليس لديك حساب؟ <a href="/auth/register" class="text-primary hover:underline">إنشاء حساب جديد</a></p>
-        </div>
-    </div>
+    </main>
+
+    <footer style="width:100%; margin-top:8vh;">
+        <%- include('partials/footer') %>
+    </footer>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            const btn = document.getElementById('login-btn');
+            const spinner = document.getElementById('loading-spinner');
+            
+            btn.disabled = true;
+            spinner.classList.remove('hidden');
+            btn.innerHTML = '<i class="ri-login-box-line ml-2"></i> جاري تسجيل الدخول';
+        });
+    </script>
 </body>
 </html>

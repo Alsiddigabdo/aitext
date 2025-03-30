@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سجل التحليلات | محلل النصوص الذكي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#F5F3FF',
+                            100: '#EDE9FE',
+                            200: '#DDD6FE',
+                            300: '#C4B5FD',
+                            400: '#A78BFA',
+                            500: '#8B5CF6',
+                            600: '#7C3AED',
+                            700: '#6D28D9',
+                            800: '#5B21B6',
+                            900: '#4C1D95'
+                        },
+                        accent: {
+                            50: '#FFFBEB',
+                            100: '#FEF3C7',
+                            200: '#FDE68A',
+                            300: '#FCD34D',
+                            400: '#FBBF24',
+                            500: '#F59E0B',
+                            600: '#D97706',
+                            700: '#B45309',
+                            800: '#92400E',
+                            900: '#78350F'
+                        },
+                        dark: {
+                            50: '#F8FAFC',
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            300: '#CBD5E1',
+                            400: '#94A3B8',
+                            500: '#64748B',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1E293B',
+                            900: '#0F172A'
+                        }
+                    },
+                    borderRadius: {
+                        '4xl': '2rem',
+                        '5xl': '3rem'
+                    },
+                    boxShadow: {
+                        '3d': '0 15px 30px -5px rgba(0, 0, 0, 0.3)',
+                        'neumorphic': '8px 8px 16px #0d1321, -8px -8px 16px #131d31',
+                        'neumorphic-inset': 'inset 5px 5px 10px #0d1321, inset -5px -5px 10px #131d31',
+                        'glow': '0 0 15px rgba(139, 92, 246, 0.5)',
+                        'glow-accent': '0 0 15px rgba(245, 158, 11, 0.5)'
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 6s infinite',
+                        'wave': 'wave 2.5s infinite'
+                    }
+                },
+                fontFamily: {
+                    'cairo': ['Cairo', 'sans-serif'],
+                    'tajawal': ['Tajawal', 'sans-serif']
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --primary: #7C3AED;
+            --primary-light: #8B5CF6;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --darker: #0A1120;
+        }
+        
+        body {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: #E2E8F0;
+            scroll-behavior: smooth;
+        }
+        
+        .neu-card {
+            background: linear-gradient(145deg, #0e1424, #101829);
+            border-radius: 20px;
+            box-shadow: 8px 8px 16px #0a0f1a, -8px -8px 16px #121f3a;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .neu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 12px 12px 24px #0a0f1a, -12px -12px 24px #121f3a;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary-light), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        }
+        
+        .btn-hover-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-hover-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 45%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 55%
+            );
+            transform: rotate(30deg);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-hover-effect:hover::after {
+            left: 100%;
+            top: 100%;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .badge-grammar {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: #8B5CF6;
+        }
+        
+        .badge-style {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: #F59E0B;
+        }
+        
+        .badge-sentiment {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10B981;
+        }
+        
+        .history-item {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .history-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+        
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-delay-100 {
+            animation-delay: 100ms;
+        }
+        
+        .animate-delay-200 {
+            animation-delay: 200ms;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- شريط التنقل -->
+    <header class="fixed w-full z-50 bg-dark/90 backdrop-blur-md border-b border-dark-700 shadow-lg">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- الشعار -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="/" class="flex items-center space-x-2 space-x-reverse">
+                        <div class="p-2 rounded-lg bg-primary/10 transition">
+                            <i class="ri-ai-generate text-2xl text-primary"></i>
+                        </div>
+                        <span class="text-2xl font-bold logo-text">SmartTextAI</span>
+                    </a>
+                </div>
+                
+                <!-- روابط سطح المكتب -->
+                <div class="hidden md:flex items-center space-x-1 space-x-reverse">
+                    <a href="/" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">الرئيسية</a>
+                    <a href="/analyzer" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">محلل النصوص</a>
+                    <a href="/analysis-history" class="px-4 py-2 rounded-lg text-white bg-primary/10 transition duration-300">سجل التحليلات</a>
+                    <a href="/profile" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">حسابي</a>
+                </div>
+                
+                <!-- زر القائمة المتنقلة -->
+                <div class="md:hidden">
+                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-dark-700 focus:outline-none transition duration-300" aria-controls="mobile-menu" aria-expanded="false" id="mobile-menu-button">
+                        <span class="sr-only">فتح القائمة الرئيسية</span>
+                        <i class="ri-menu-line text-2xl" id="menu-icon"></i>
+                        <i class="ri-close-line text-2xl hidden" id="close-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="mt-20 flex-grow">
+        <section class="py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h1 class="text-3xl md:text-4xl font-bold mb-4 gradient-text animate-fade-up">التحليلات المحفوظة</h1>
+                    <p class="text-lg text-gray-300 max-w-2xl mx-auto animate-fade-up animate-delay-100">
+                        راجع جميع تحليلاتك السابقة واستكشف النتائج المحفوظة
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-fade-up animate-delay-200">
+                    <!-- Filters Sidebar -->
+                    <div class="lg:col-span-3">
+                        <div class="neu-card p-6 rounded-xl sticky top-24">
+                            <div class="flex items-center mb-6">
+                                <div class="bg-primary/10 p-3 rounded-xl mr-4">
+                                    <i class="ri-filter-line text-primary"></i>
+                                </div>
+                                <h2 class="text-xl font-bold text-primary-300">تصفية النتائج</h2>
+                            </div>
+                            <form action="/analysis-history" method="GET" class="space-y-6">
+                                <div>
+                                    <h3 class="font-medium mb-3 text-gray-300">بحث</h3>
+                                    <div class="relative">
+                                        <input 
+                                            type="text" 
+                                            name="search" 
+                                            value="<%= filters.search || '' %>" 
+                                            placeholder="ابحث في التحليلات..." 
+                                            class="w-full px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-primary focus:outline-none"
+                                        >
+                                        <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h3 class="font-medium mb-3 text-gray-300">التاريخ</h3>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="radio" name="dateFilter" value="all" <%= filters.dateFilter === 'all' ? 'checked' : '' %> 
+                                                   class="text-primary focus:ring-primary">
+                                            <span class="text-gray-300">جميع التواريخ</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="radio" name="dateFilter" value="last7days" <%= filters.dateFilter === 'last7days' ? 'checked' : '' %> 
+                                                   class="text-primary focus:ring-primary">
+                                            <span class="text-gray-300">آخر 7 أيام</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="radio" name="dateFilter" value="thisMonth" <%= filters.dateFilter === 'thisMonth' ? 'checked' : '' %> 
+                                                   class="text-primary focus:ring-primary">
+                                            <span class="text-gray-300">هذا الشهر</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input type="radio" name="dateFilter" value="custom" <%= filters.dateFilter === 'custom' ? 'checked' : '' %> 
+                                                   class="text-primary focus:ring-primary">
+                                            <span class="text-gray-300">نطاق مخصص</span>
+                                        </label>
+                                        <div class="grid grid-cols-2 gap-2 mt-2">
+                                            <div class="relative">
+                                                <input 
+                                                    type="date" 
+                                                    name="startDate" 
+                                                    value="<%= filters.startDate || '' %>" 
+                                                    class="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white text-sm focus:ring-primary focus:outline-none"
+                                                >
+                                                <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">من</span>
+                                            </div>
+                                            <div class="relative">
+                                                <input 
+                                                    type="date" 
+                                                    name="endDate" 
+                                                    value="<%= filters.endDate || '' %>" 
+                                                    class="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white text-sm focus:ring-primary focus:outline-none"
+                                                >
+                                                <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">إلى</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h3 class="font-medium mb-3 text-gray-300">نوع التحليل</h3>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input 
+                                                type="checkbox" 
+                                                name="analysisTypes" 
+                                                value="grammar" 
+                                                <%= filters.analysisTypes.includes('grammar') ? 'checked' : '' %> 
+                                                class="rounded text-primary focus:ring-primary"
+                                            >
+                                            <span class="text-gray-300">تحليل قواعدي</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input 
+                                                type="checkbox" 
+                                                name="analysisTypes" 
+                                                value="style" 
+                                                <%= filters.analysisTypes.includes('style') ? 'checked' : '' %> 
+                                                class="rounded text-primary focus:ring-primary"
+                                            >
+                                            <span class="text-gray-300">تحليل الأسلوب</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 space-x-reverse cursor-pointer">
+                                            <input 
+                                                type="checkbox" 
+                                                name="analysisTypes" 
+                                                value="sentiment" 
+                                                <%= filters.analysisTypes.includes('sentiment') ? 'checked' : '' %> 
+                                                class="rounded text-primary focus:ring-primary"
+                                            >
+                                            <span class="text-gray-300">تحليل المشاعر</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="pt-2">
+                                    <button 
+                                        type="submit" 
+                                        class="w-full py-3 rounded-lg btn-hover-effect gradient-bg text-white font-medium shadow-glow hover:shadow-glow-accent transition-all duration-300 flex items-center justify-center"
+                                    >
+                                        <i class="ri-filter-line ml-2"></i> تطبيق الفلتر
+                                    </button>
+                                    <button 
+                                        type="reset" 
+                                        class="w-full mt-2 py-3 rounded-lg bg-slate-800 text-gray-300 hover:text-white transition duration-300"
+                                    >
+                                        إعادة تعيين
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- History Content -->
+                    <div class="lg:col-span-9">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                            <div>
+                                <h2 class="text-xl font-bold text-primary-300 flex items-center">
+                                    <i class="ri-history-line ml-2"></i> التحليلات السابقة
+                                </h2>
+                                <p class="text-sm text-gray-400 mt-1">إدارة وتحليل النتائج المحفوظة</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm text-gray-400 bg-slate-800 px-3 py-1 rounded-full">
+                                    <i class="ri-file-list-2-line ml-1"></i> <%= analyses.length %> تحليل
+                                </span>
+                                <a 
+                                    href="/analyzer" 
+                                    class="px-4 py-2 rounded-lg gradient-bg text-white text-sm font-medium shadow-glow hover:shadow-glow-accent transition flex items-center"
+                                >
+                                    <i class="ri-add-line ml-1"></i> تحليل جديد
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <% if (!analyses || analyses.length === 0) { %>
+                            <div class="neu-card p-8 rounded-xl text-center">
+                                <div class="bg-primary/10 p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                                    <i class="ri-file-search-line text-3xl text-primary"></i>
+                                </div>
+                                <h3 class="text-xl font-bold mb-2 text-gray-300">لا توجد تحليلات مسجلة</h3>
+                                <p class="text-gray-400 mb-6">قم بإجراء بعض التحليلات لتظهر هنا</p>
+                                <a 
+                                    href="/analyzer" 
+                                    class="inline-flex items-center px-6 py-2 rounded-lg gradient-bg text-white hover:shadow-glow transition"
+                                >
+                                    <i class="ri-arrow-left-line ml-1"></i> ابدأ تحليل جديد
+                                </a>
+                            </div>
+                        <% } else { %>
+                            <div class="space-y-4">
+                                <% analyses.forEach(analysis => { %>
+                                    <div class="neu-card p-6 rounded-xl history-item animate-fade-up" data-id="<%= analysis.id %>">
+                                        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                                            <div class="flex-grow">
+                                                <div class="flex flex-wrap items-center gap-2 mb-3">
+                                                    <% if (analysis.analysisType === 'grammar') { %>
+                                                        <span class="badge badge-grammar">
+                                                            <i class="ri-checkbox-multiple-line ml-1"></i>
+                                                            تدقيق لغوي
+                                                        </span>
+                                                    <% } else if (analysis.analysisType === 'style') { %>
+                                                        <span class="badge badge-style">
+                                                            <i class="ri-artboard-2-line ml-1"></i>
+                                                            تحسين الأسلوب
+                                                        </span>
+                                                    <% } else { %>
+                                                        <span class="badge badge-sentiment">
+                                                            <i class="ri-emotion-line ml-1"></i>
+                                                            تحليل المشاعر
+                                                        </span>
+                                                    <% } %>
+                                                    <span class="text-sm text-gray-400 flex items-center">
+                                                        <i class="ri-calendar-line ml-1"></i>
+                                                        <%= new Date(analysis.createdAt).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                                                    </span>
+                                                </div>
+                                                <h3 class="font-medium mb-1 text-gray-200">
+                                                    <%= analysis.sourceText.substring(0, 80) %><%= analysis.sourceText.length > 80 ? '...' : '' %>
+                                                </h3>
+                                                <p class="text-sm text-gray-400 line-clamp-2 mb-3">
+                                                    <%= analysis.analysisResult.result || 'غير متوفر' %>
+                                                </p>
+                                                <a 
+                                                    href="/analysis/<%= analysis.id %>" 
+                                                    class="inline-flex items-center text-sm text-primary-300 hover:text-primary-200 transition"
+                                                >
+                                                    <i class="ri-eye-line ml-1"></i> عرض التفاصيل
+                                                </a>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <button 
+                                                    class="p-2 rounded-lg bg-slate-800 download-btn hover:bg-slate-700 hover:text-primary-300 transition flex items-center justify-center"
+                                                    data-id="<%= analysis.id %>"
+                                                    title="تنزيل التحليل"
+                                                >
+                                                    <i class="ri-download-line"></i>
+                                                </button>
+                                                <button 
+                                                    class="p-2 rounded-lg bg-slate-800 delete-btn hover:bg-slate-700 hover:text-red-400 transition flex items-center justify-center"
+                                                    data-id="<%= analysis.id %>"
+                                                    title="حذف التحليل"
+                                                >
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            </div>
+                            
+                            <!-- Pagination -->
+                            <div class="mt-8 flex justify-center">
+                                <nav class="flex items-center gap-1">
+                                    <a href="#" class="px-3 py-1 rounded-lg bg-slate-800 text-gray-300 hover:bg-primary hover:text-white transition">
+                                        <i class="ri-arrow-right-line"></i>
+                                    </a>
+                                    <a href="#" class="px-3 py-1 rounded-lg bg-primary text-white">1</a>
+                                    <a href="#" class="px-3 py-1 rounded-lg bg-slate-800 text-gray-300 hover:bg-primary hover:text-white transition">2</a>
+                                    <a href="#" class="px-3 py-1 rounded-lg bg-slate-800 text-gray-300 hover:bg-primary hover:text-white transition">3</a>
+                                    <span class="px-3 py-1 text-gray-400">...</span>
+                                    <a href="#" class="px-3 py-1 rounded-lg bg-slate-800 text-gray-300 hover:bg-primary hover:text-white transition">10</a>
+                                    <a href="#" class="px-3 py-1 rounded-lg bg-slate-800 text-gray-300 hover:bg-primary hover:text-white transition">
+                                        <i class="ri-arrow-left-line"></i>
+                                    </a>
+                                </nav>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- تذييل الصفحة -->
+    <footer class="bg-darker border-t border-dark-700 pt-12 pb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <!-- معلومات الشركة -->
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center text-white shadow-glow">
+                            <i class="ri-ai-generate text-xl"></i>
+                        </div>
+                        <span class="mr-3 text-xl font-bold text-white">محلل النصوص الذكي</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        منصة ذكية لتحليل النصوص وتحسينها باستخدام أحدث تقنيات الذكاء الاصطناعي.
+                    </p>
+                </div>
+                
+                <!-- روابط سريعة -->
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-4">روابط سريعة</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/" class="text-gray-400 hover:text-primary transition duration-300">الرئيسية</a></li>
+                        <li><a href="/analyzer" class="text-gray-400 hover:text-primary transition duration-300">محلل النصوص</a></li>
+                        <li><a href="/analysis-history" class="text-gray-400 hover:text-primary transition duration-300">سجل التحليلات</a></li>
+                        <li><a href="/profile" class="text-gray-400 hover:text-primary transition duration-300">حسابي</a></li>
+                    </ul>
+                </div>
+                
+                <!-- الأدوات -->
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-4">الأدوات</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/analyzer" class="text-gray-400 hover:text-primary transition duration-300">تحليل النصوص</a></li>
+                        <li><a href="/compare-texts" class="text-gray-400 hover:text-primary transition duration-300">مقارنة النصوص</a></li>
+                        <li><a href="/smart-translation" class="text-gray-400 hover:text-primary transition duration-300">الترجمة الذكية</a></li>
+                        <li><a href="/text-summarization" class="text-gray-400 hover:text-primary transition duration-300">تلخيص النصوص</a></li>
+                    </ul>
+                </div>
+                
+                <!-- معلومات التواصل -->
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-4">تواصل معنا</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="ri-mail-line text-primary mt-1 mr-2"></i>
+                            <span class="text-gray-400">info@smartanalyzer.com</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="ri-phone-line text-primary mt-1 mr-2"></i>
+                            <span class="text-gray-400">+966 12 345 6789</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- حقوق النشر -->
+            <div class="border-t border-dark-700 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm mb-4 md:mb-0">
+                    &copy; 2023 محلل النصوص الذكي. جميع الحقوق محفوظة.
+                </p>
+                <div class="flex space-x-6 space-x-reverse">
+                    <a href="#" class="text-gray-400 hover:text-primary text-sm transition duration-300">شروط الخدمة</a>
+                    <a href="#" class="text-gray-400 hover:text-primary text-sm transition duration-300">سياسة الخصوصية</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- زر العودة للأعلى -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 w-12 h-12 rounded-full gradient-bg text-white shadow-glow flex items-center justify-center transition-all duration-300 opacity-0 invisible">
+        <i class="ri-arrow-up-line text-xl"></i>
+    </button>
+
+    <script>
+        // منطق الحذف
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', async () => {
+                const id = button.getAttribute('data-id');
+                const historyItem = button.closest('.history-item');
+
+                const { value: confirmDelete } = await Swal.fire({
+                    title: 'هل أنت متأكد؟',
+                    text: "لن تتمكن من استعادة هذا السجل!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#7c3aed',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'نعم، احذفه!',
+                    cancelButtonText: 'إلغاء',
+                    customClass: {
+                        title: 'font-bold',
+                        confirmButton: 'btn-hover-effect',
+                        cancelButton: 'hover:bg-slate-700'
+                    }
+                });
+
+                if (confirmDelete) {
+                    try {
+                        const response = await fetch(`/analysis-history/${id}`, {
+                            method: 'DELETE',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.error || 'فشل في الحذف');
+                        }
+
+                        const data = await response.json();
+                        if (data.success) {
+                            historyItem.classList.add('animate__animated', 'animate__fadeOut');
+                            setTimeout(() => historyItem.remove(), 500);
+                            
+                            Swal.fire({
+                                title: 'تم الحذف!',
+                                text: 'تم حذف سجل التحليل بنجاح.',
+                                icon: 'success',
+                                confirmButtonText: 'حسناً',
+                                customClass: {
+                                    confirmButton: 'btn-hover-effect'
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error deleting analysis:', error);
+                        Swal.fire({
+                            title: 'خطأ!',
+                            text: error.message || 'حدث خطأ أثناء الحذف',
+                            icon: 'error',
+                            confirmButtonText: 'حسناً',
+                            customClass: {
+                                confirmButton: 'btn-hover-effect'
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
+        // منطق التنزيل
+        document.querySelectorAll('.download-btn').forEach(button => {
+            button.addEventListener('click', async () => {
+                const id = button.getAttribute('data-id');
+                
+                // عرض رسالة تحميل
+                Swal.fire({
+                    title: 'جاري التحميل',
+                    html: 'يتم تحضير ملف التحليل للتنزيل...',
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    customClass: {
+                        popup: 'bg-slate-800 text-white',
+                        title: 'text-white',
+                        confirmButton: 'btn-hover-effect'
+                    }
+                });
+                
+                try {
+                    const response = await fetch(`/analysis-history/download/${id}`);
+                    if (!response.ok) throw new Error('فشل في التنزيل');
+                    
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `analysis_${id}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                    
+                    Swal.fire({
+                        title: 'تم التنزيل!',
+                        text: 'تم تنزيل ملف التحليل بنجاح.',
+                        icon: 'success',
+                        confirmButtonText: 'حسناً',
+                        customClass: {
+                            confirmButton: 'btn-hover-effect'
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error downloading analysis:', error);
+                    Swal.fire({
+                        title: 'خطأ!',
+                        text: 'حدث خطأ أثناء التنزيل',
+                        icon: 'error',
+                        confirmButtonText: 'حسناً',
+                        customClass: {
+                            confirmButton: 'btn-hover-effect'
+                        }
+                    });
+                }
+            });
+        });
+
+        // زر العودة للأعلى
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+                backToTopButton.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopButton.classList.remove('opacity-100', 'visible');
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // إضافة تأثيرات عند التمرير
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.history-item').forEach(item => {
+            observer.observe(item);
+        });
+        
+        // تفعيل القائمة المتنقلة
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+        
+        mobileMenuButton.addEventListener('click', function() {
+            menuIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

@@ -19,10 +19,27 @@ class SuggestTitlesModel {
     EMOTIONAL: 'emotional'
   };
 
-  static async generateTitles({ content, tone, types }) {
+  static async getUserApiKey(userId) {
     try {
-      // التحقق من أن types مصفوفة، إذا لم تكن كذلك، استخدم مصفوفة فارغة
+      const [rows] = await db.query('SELECT api_key FROM api_keys WHERE user_id = ?', [userId]);
+      console.log('API key query result:', rows);
+      if (Array.isArray(rows) && rows.length > 0) {
+        return rows[0].api_key;
+      }
+      console.log('No user-specific API key found, using default:', this.API_KEY);
+      return this.API_KEY;
+    } catch (error) {
+      console.error('Error in getUserApiKey:', error.message || error);
+      console.log('Falling back to default API key:', this.API_KEY);
+      return this.API_KEY;
+    }
+  }
+
+  static async generateTitles({ content, tone, types, userId }) {
+    try {
+      console.log('Generating titles with:', { content, tone, types, userId });
       const safeTypes = Array.isArray(types) ? types : [];
+      const apiKey = await this.getUserApiKey(userId);
 
       const prompt = `
         أنت أداة لاقتراح عناوين تسويقية جذابة باللغة العربية. بناءً على وصف المحتوى التالي، النبرة، وأنواع العناوين المطلوبة، أنشئ 5 عناوين دقيقة ومبتكرة:
@@ -31,9 +48,9 @@ class SuggestTitlesModel {
         أعد النتيجة في صيغة JSON تحتوي على:
         - titles: مصفوفة تحتوي على العناوين الخمسة
         - feedback: ملاحظات موجزة بالعربية عن جودة العناوين المقترحة
-        لا تضف أي معلومات إضافية خارج هذا الهيكل.
       `;
 
+      console.log('Sending request to API with:', { content, tone, safeTypes, userId, apiKey: apiKey.substring(0, 5) + '...' });
       const response = await axios.post('https://api.openai.com/v1/chat/completions', {
         model: "gpt-4o-mini",
         messages: [
@@ -45,63 +62,48 @@ class SuggestTitlesModel {
       }, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.API_KEY}`
+          'Authorization': `Bearer ${apiKey}`
         }
+      }).catch(error => {
+        console.error('API request failed:', error.response ? error.response.data : error.message);
+        throw error;
       });
 
-      const result = JSON.parse(response.data.choices[0].message.content);
-      await this.saveSuggestion({ content, tone, types: safeTypes, result });
+      let resultText = response.data.choices[0].message.content;
+      console.log('Raw API response:', resultText);
+
+      // تنظيف الاستجابة من علامات Markdown
+      resultText = resultText.replace(/```json\n|```/g, '').trim();
+      console.log('Cleaned API response:', resultText);
+
+      let result;
+      try {
+        result = JSON.parse(resultText);
+      } catch (e) {
+        console.error('Failed to parse API response:', e);
+        throw new Error('استجابة API غير صالحة');
+      }
+
+      if (!result.titles || !Array.isArray(result.titles) || result.titles.length === 0) {
+        throw new Error('لم يتم إرجاع عناوين صالحة من API');
+      }
+      if (!result.feedback) {
+        result.feedback = 'لا توجد ملاحظات';
+      }
+
+      await this.saveSuggestion({ content, tone, types: safeTypes, result, userId });
       return result;
     } catch (error) {
       console.error('❌ خطأ في generateTitles:', error.message || error);
-      throw new Error('فشل في اقتراح العناوين.');
+      throw new Error('فشل في اقتراح العناوين: ' + (error.message || 'خطأ غير معروف'));
     }
   }
 
-  static async improveTitles({ content, currentTitles, tone, types }) {
+  static async saveSuggestion({ content, tone, types, result, userId, improved = false }) {
     try {
-      const safeTypes = Array.isArray(types) ? types : [];
-
-      const prompt = `
-        أنت أداة لاقتراح عناوين تسويقية جذابة باللغة العربية. قم بتحسين العناوين التالية بناءً على وصف المحتوى، النبرة، وأنواع العناوين المطلوبة:
-        - النبرة: "${tone || this.TONES.PROFESSIONAL}"
-        - أنواع العناوين: "${safeTypes.join(', ') || 'غير محدد'}"
-        وصف المحتوى: "${content || 'لا يوجد وصف'}"
-        العناوين الحالية: "${Array.isArray(currentTitles) ? currentTitles.join(', ') : 'لا توجد عناوين'}"
-        أعد النتيجة في صيغة JSON تحتوي على:
-        - titles: مصفوفة تحتوي على العناوين الخمسة المحسنة
-        - feedback: ملاحظات موجزة بالعربية عن جودة العناوين المحسنة
-        لا تضف أي معلومات إضافية خارج هذا الهيكل.
-      `;
-
-      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: prompt },
-          { role: "user", content: "حسّن العناوين" }
-        ],
-        temperature: 0.7,
-        max_tokens: 500
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.API_KEY}`
-        }
-      });
-
-      const result = JSON.parse(response.data.choices[0].message.content);
-      await this.saveSuggestion({ content, tone, types: safeTypes, result, improved: true });
-      return result;
-    } catch (error) {
-      console.error('❌ خطأ في improveTitles:', error.message || error);
-      throw new Error('فشل في تحسين العناوين.');
-    }
-  }
-
-  static async saveSuggestion({ content, tone, types, result, improved = false }) {
-    try {
-      const sql = 'INSERT INTO title_suggestions (content, tone, types, titles, feedback, improved, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())';
+      const sql = 'INSERT INTO title_suggestions (user_id, content, tone, types, titles, feedback, improved, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())';
       await db.query(sql, [
+        userId,
         content || 'لا يوجد وصف',
         tone || this.TONES.PROFESSIONAL,
         JSON.stringify(types),

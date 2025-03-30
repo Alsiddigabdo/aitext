@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منشئ برومبتات الذكاء الاصطناعي | أداة متقدمة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#8B5CF6",
+                        secondary: "#6366F1",
+                        success: "#10B981",
+                        warning: "#F59E0B",
+                        danger: "#EF4444"
+                    },
+                    borderRadius: {
+                        none: "0px",
+                        sm: "4px",
+                        DEFAULT: "8px",
+                        md: "12px",
+                        lg: "16px",
+                        xl: "20px",
+                        "2xl": "24px",
+                        "3xl": "32px",
+                        full: "9999px",
+                        button: "8px",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+        .glass-card {
+            background: rgba(26, 36, 61, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        textarea {
+            min-height: 200px;
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .prompt-item {
+            transition: all 0.3s ease;
+        }
+        .prompt-item:hover {
+            transform: translateX(-5px);
+            background: rgba(139, 92, 246, 0.1);
+        }
+        .prompt-type-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .prompt-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            background-color: rgba(99, 102, 241, 0.2);
+            color: #A5B4FC;
+            margin-left: 0.5rem;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <%- include('partials/navbar') %>
+
+    <!-- Main Content -->
+    <main class="mt-20 flex-grow">
+        <section class="py-12 md:py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">أدوات الذكاء الاصطناعي</span>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-4">منشئ برومبتات الذكاء الاصطناعي</h1>
+                    <p class="text-lg text-gray-400 max-w-2xl mx-auto">أنشئ برومبتات فعالة ومحسنة لتحصل على أفضل النتائج من نماذج الذكاء الاصطناعي</p>
+                </div>
+
+                <!-- شرح الأداة -->
+                <div class="glass-card p-6 rounded-lg mb-8">
+                    <h2 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="ri-information-line ml-2 text-primary"></i>
+                        عن الأداة
+                    </h2>
+                    
+                    <div class="mb-6">
+                        <h3 class="font-medium text-lg mb-2 text-primary">الغرض الرئيسي:</h3>
+                        <p class="text-gray-300 mb-4">
+                            هذه الأداة تُساعدك على صياغة أوامر (برومبتات) دقيقة وفعّالة لأنظمة الذكاء الاصطناعي مثل:
+                        </p>
+                        <ul class="list-disc list-inside text-gray-400 space-y-2 mb-6">
+                            <li>ChatGPT (نصوص، أكواد، تحليل بيانات)</li>
+                            <li>MidJourney / DALL-E (إنشاء صور)</li>
+                            <li>Runway / Sora (إنشاء فيديو)</li>
+                            <li>وغيرها من النماذج الذكية</li>
+                        </ul>
+                    </div>
+
+                    <h3 class="font-medium text-lg mb-2 text-primary">✨ الميزات الرئيسية:</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="feature-box bg-gray-800/50 p-4 rounded-lg">
+                            <h4 class="font-medium mb-2 flex items-center">
+                                <i class="ri-layout-masonry-line text-secondary mr-2"></i>
+                                واجهة ذكية متعددة الألسنة
+                            </h4>
+                            <p class="text-sm text-gray-400">
+                                تبويبات منظمة لأنواع البرومبتات: نصوص، صور، أكواد، فيديو، بيانات
+                            </p>
+                        </div>
+                        <div class="feature-box bg-gray-800/50 p-4 rounded-lg">
+                            <h4 class="font-medium mb-2 flex items-center">
+                                <i class="ri-settings-3-line text-secondary mr-2"></i>
+                                تخصيص متقدم
+                            </h4>
+                            <p class="text-sm text-gray-400">
+                                اختيار نبرة الصوت، الطول، إضافة سياق، وخيارات خاصة بكل نوع
+                            </p>
+                        </div>
+                        <div class="feature-box bg-gray-800/50 p-4 rounded-lg">
+                            <h4 class="font-medium mb-2 flex items-center">
+                                <i class="ri-bookmark-line text-secondary mr-2"></i>
+                                أمثلة جاهزة
+                            </h4>
+                            <p class="text-sm text-gray-400">
+                                مكتبة تحتوي على برومبتات مُجرّبة لاستخدامها مباشرة
+                            </p>
+                        </div>
+                        <div class="feature-box bg-gray-800/50 p-4 rounded-lg">
+                            <h4 class="font-medium mb-2 flex items-center">
+                                <i class="ri-bar-chart-line text-secondary mr-2"></i>
+                                تحليل الجودة
+                            </h4>
+                            <p class="text-sm text-gray-400">
+                                تقييم البرومبت تلقائيًا مع اقتراحات للتحسين
+                            </p>
+                        </div>
+                    </div>
+
+                    <h3 class="font-medium text-lg mb-2 text-primary">📌 كيف تعمل؟</h3>
+                    <ol class="list-decimal list-inside text-gray-400 space-y-2 mb-6">
+                        <li>اختر نوع البرومبت (نص، صورة، كود، إلخ)</li>
+                        <li>أدخل فكرتك الأساسية</li>
+                        <li>خصّص الإعدادات حسب احتياجك</li>
+                        <li>انقر على "إنشاء البرومبت"</li>
+                        <li>نسخ/حفظ/تحليل البرومبت النهائي</li>
+                    </ol>
+
+                    <h3 class="font-medium text-lg mb-2 text-primary">💡 لماذا هذه الأداة مفيدة؟</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gray-800/30 p-3 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="ri-time-line text-success mr-2"></i>
+                                <span class="text-sm">توفير الوقت</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">لا حاجة للتجربة والخطأ في صياغة البرومبتات</p>
+                        </div>
+                        <div class="bg-gray-800/30 p-3 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="ri-checkbox-circle-line text-success mr-2"></i>
+                                <span class="text-sm">نتائج أفضل</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">برومبتات واضحة تُقلّل من سوء الفهم</p>
+                        </div>
+                        <div class="bg-gray-800/30 p-3 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="ri-graduation-cap-line text-success mr-2"></i>
+                                <span class="text-sm">تعلم البرومبتينج</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">من خلال الأمثلة وتحليل الجودة</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-lg mb-8">
+                    <!-- Navigation Tabs -->
+                    <div class="flex overflow-x-auto border-b border-gray-700 mb-6">
+                        <button data-tab="text" class="tab-btn px-4 py-2 font-medium text-primary border-b-2 border-primary">
+                            <i class="ri-text ml-2"></i> نصوص
+                        </button>
+                        <button data-tab="image" class="tab-btn px-4 py-2 font-medium text-gray-400 hover:text-white">
+                            <i class="ri-image-line ml-2"></i> صور
+                        </button>
+                        <button data-tab="code" class="tab-btn px-4 py-2 font-medium text-gray-400 hover:text-white">
+                            <i class="ri-code-line ml-2"></i> أكواد
+                        </button>
+                        <button data-tab="video" class="tab-btn px-4 py-2 font-medium text-gray-400 hover:text-white">
+                            <i class="ri-video-line ml-2"></i> فيديو
+                        </button>
+                        <button data-tab="data" class="tab-btn px-4 py-2 font-medium text-gray-400 hover:text-white">
+                            <i class="ri-database-2-line ml-2"></i> بيانات
+                        </button>
+                    </div>
+
+                    <!-- Text Prompt Tab Content -->
+                    <div id="text-tab" class="tab-content active">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Prompt Input -->
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="font-medium text-lg flex items-center">
+                                        <i class="ri-ai-generate ml-2 text-primary"></i>
+                                        الفكرة الأساسية
+                                    </h2>
+                                    <div class="flex items-center space-x-2 space-x-reverse">
+                                        <button id="clear-btn" class="text-sm text-gray-400 hover:text-primary transition flex items-center">
+                                            <i class="ri-eraser-line ml-1"></i> مسح
+                                        </button>
+                                        <button id="suggest-btn" class="text-sm text-gray-400 hover:text-primary transition flex items-center">
+                                            <i class="ri-lightbulb-flash-line ml-1"></i> اقتراح
+                                        </button>
+                                    </div>
+                                </div>
+                                <textarea id="prompt-input" class="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary text-white" placeholder="أدخل الفكرة الأساسية للبرومبت هنا..."></textarea>
+                                <div class="text-sm text-gray-400 mt-2">عدد الكلمات: <span id="word-count" class="text-white">0</span></div>
+                            </div>
+                            
+                            <!-- Prompt Settings -->
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="font-medium text-lg flex items-center">
+                                        <i class="ri-settings-3-line ml-2 text-primary"></i>
+                                        إعدادات البرومبت
+                                    </h2>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <!-- Text Type -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">نوع النص</label>
+                                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                            <button data-type="article" class="text-type-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm flex items-center justify-center hover:border-primary hover:text-primary">
+                                                <i class="ri-article-line ml-2"></i> مقال
+                                            </button>
+                                            <button data-type="story" class="text-type-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm flex items-center justify-center hover:border-primary hover:text-primary">
+                                                <i class="ri-book-2-line ml-2"></i> قصة
+                                            </button>
+                                            <button data-type="script" class="text-type-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm flex items-center justify-center hover:border-primary hover:text-primary">
+                                                <i class="ri-movie-line ml-2"></i> سيناريو
+                                            </button>
+                                            <button data-type="poem" class="text-type-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm flex items-center justify-center hover:border-primary hover:text-primary">
+                                                <i class="ri-pencil-ruler-line ml-2"></i> شعر
+                                            </button>
+                                            <button data-type="summary" class="text-type-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm flex items-center justify-center hover:border-primary hover:text-primary">
+                                                <i class="ri-file-reduce-line ml-2"></i> ملخص
+                                            </button>
+                                            <button data-type="custom" class="text-type-btn active px-3 py-2 rounded-lg bg-gray-800 border border-primary text-sm flex items-center justify-center text-primary">
+                                                <i class="ri-tools-line ml-2"></i> مخصص
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Tone -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">نبرة الصوت</label>
+                                        <select id="tone-select" class="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary text-white">
+                                            <option value="professional">احترافي</option>
+                                            <option value="friendly">ودود</option>
+                                            <option value="academic">أكاديمي</option>
+                                            <option value="casual">عادي</option>
+                                            <option value="persuasive">إقناعي</option>
+                                            <option value="humorous">فكاهي</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Language -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">اللغة</label>
+                                        <select id="language-select" class="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary text-white">
+                                            <option value="ar">العربية</option>
+                                            <option value="en">الإنجليزية</option>
+                                            <option value="fr">الفرنسية</option>
+                                            <option value="es">الإسبانية</option>
+                                            <option value="de">الألمانية</option>
+                                            <option value="other">أخرى</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Length -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">الطول المطلوب</label>
+                                        <div class="flex items-center space-x-4 space-x-reverse">
+                                            <span class="text-xs text-gray-400">قصير</span>
+                                            <input type="range" id="length-slider" min="1" max="5" value="3" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                                            <span class="text-xs text-gray-400">طويل</span>
+                                        </div>
+                                        <div class="text-xs text-gray-400 mt-1 text-center" id="length-value">متوسط</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image Prompt Tab Content -->
+                    <div id="image-tab" class="tab-content">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Image Prompt Input -->
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="font-medium text-lg flex items-center">
+                                        <i class="ri-image-line ml-2 text-primary"></i>
+                                        وصف الصورة
+                                    </h2>
+                                    <button id="clear-image-btn" class="text-sm text-gray-400 hover:text-primary transition flex items-center">
+                                        <i class="ri-eraser-line ml-1"></i> مسح
+                                    </button>
+                                </div>
+                                <textarea id="image-prompt-input" class="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary text-white" placeholder="أدخل وصفًا دقيقًا للصورة التي تريد إنشاءها..."></textarea>
+                            </div>
+                            
+                            <!-- Image Settings -->
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="font-medium text-lg flex items-center">
+                                        <i class="ri-settings-3-line ml-2 text-primary"></i>
+                                        إعدادات الصورة
+                                    </h2>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <!-- Image Style -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">النمط الفني</label>
+                                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                            <button data-style="realistic" class="image-style-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm flex items-center justify-center hover:border-primary hover:text-primary">
+                                                <i class="ri-landscape-line ml-2"></i> واقعي
+                                            </button>
+                                            <button data-style="cartoon" class="image-style-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm flex items-center justify-center hover:border-primary hover:text-primary">
+                                                <i class="ri-palette-line ml-2"></i> كرتوني
+                                            </button>
+                                            <button data-style="anime" class="image-style-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm flex items-center justify-center hover:border-primary hover:text-primary">
+                                                <i class="ri-emotion-happy-line ml-2"></i> أنمي
+                                            </button>
+                                            <button data-style="fantasy" class="image-style-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm flex items-center justify-center hover:border-primary hover:text-primary">
+                                                <i class="ri-magic-line ml-2"></i> خيال
+                                            </button>
+                                            <button data-style="minimal" class="image-style-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm flex items-center justify-center hover:border-primary hover:text-primary">
+                                                <i class="ri-artboard-line ml-2"></i> بسيط
+                                            </button>
+                                            <button data-style="custom" class="image-style-btn active px-3 py-2 rounded-lg bg-gray-800 border border-primary text-sm flex items-center justify-center text-primary">
+                                                <i class="ri-tools-line ml-2"></i> مخصص
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Image Size -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">حجم الصورة</label>
+                                        <select id="image-size-select" class="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary text-white">
+                                            <option value="square">مربع (1:1)</option>
+                                            <option value="portrait">عمودي (4:5)</option>
+                                            <option value="landscape">أفقي (16:9)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Quality -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">جودة الصورة</label>
+                                        <div class="flex items-center space-x-4 space-x-reverse">
+                                            <span class="text-xs text-gray-400">منخفضة</span>
+                                            <input type="range" id="quality-slider" min="1" max="3" value="2" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                                            <span class="text-xs text-gray-400">عالية</span>
+                                        </div>
+                                        <div class="text-xs text-gray-400 mt-1 text-center" id="quality-value">متوسطة</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Code Prompt Tab Content -->
+                    <div id="code-tab" class="tab-content">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Code Prompt Input -->
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="font-medium text-lg flex items-center">
+                                        <i class="ri-code-line ml-2 text-primary"></i>
+                                        وصف الكود
+                                    </h2>
+                                    <button id="clear-code-btn" class="text-sm text-gray-400 hover:text-primary transition flex items-center">
+                                        <i class="ri-eraser-line ml-1"></i> مسح
+                                    </button>
+                                </div>
+                                <textarea id="code-prompt-input" class="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary text-white" placeholder="أدخل وصفًا دقيقًا للكود الذي تريد إنشاءه..."></textarea>
+                            </div>
+                            
+                            <!-- Code Settings -->
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="font-medium text-lg flex items-center">
+                                        <i class="ri-settings-3-line ml-2 text-primary"></i>
+                                        إعدادات الكود
+                                    </h2>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <!-- Programming Language -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">لغة البرمجة</label>
+                                        <select id="language-select" class="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary text-white">
+                                            <option value="python">Python</option>
+                                            <option value="javascript">JavaScript</option>
+                                            <option value="java">Java</option>
+                                            <option value="csharp">C#</option>
+                                            <option value="php">PHP</option>
+                                            <option value="other">أخرى</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Code Complexity -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">مستوى التعقيد</label>
+                                        <div class="flex items-center space-x-4 space-x-reverse">
+                                            <span class="text-xs text-gray-400">بسيط</span>
+                                            <input type="range" id="code-complexity-slider" min="1" max="5" value="3" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                                            <span class="text-xs text-gray-400">متقدم</span>
+                                        </div>
+                                        <div class="text-xs text-gray-400 mt-1 text-center" id="code-complexity-value">متوسط</div>
+                                    </div>
+                                    
+                                    <!-- Additional Options -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">خيارات إضافية</label>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <div class="flex items-center space-x-2 space-x-reverse">
+                                                <input type="checkbox" id="comments-check" class="text-primary rounded">
+                                                <label for="comments-check" class="text-sm">إضافة تعليقات</label>
+                                            </div>
+                                            <div class="flex items-center space-x-2 space-x-reverse">
+                                                <input type="checkbox" id="tests-check" class="text-primary rounded">
+                                                <label for="tests-check" class="text-sm">إضافة اختبارات</label>
+                                            </div>
+                                            <div class="flex items-center space-x-2 space-x-reverse">
+                                                <input type="checkbox" id="docs-check" class="text-primary rounded">
+                                                <label for="docs-check" class="text-sm">إضافة توثيق</label>
+                                            </div>
+                                            <div class="flex items-center space-x-2 space-x-reverse">
+                                                <input type="checkbox" id="optimize-check" class="text-primary rounded" checked>
+                                                <label for="optimize-check" class="text-sm">تحسين الكود</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video Prompt Tab Content -->
+                    <div id="video-tab" class="tab-content">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="font-medium text-lg flex items-center">
+                                        <i class="ri-video-line ml-2 text-primary"></i>
+                                        وصف الفيديو
+                                    </h2>
+                                    <button id="clear-video-btn" class="text-sm text-gray-400 hover:text-primary transition flex items-center">
+                                        <i class="ri-eraser-line ml-1"></i> مسح
+                                    </button>
+                                </div>
+                                <textarea id="video-prompt-input" class="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary text-white" placeholder="أدخل وصفًا دقيقًا للفيديو..."></textarea>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="font-medium text-lg flex items-center">
+                                        <i class="ri-settings-3-line ml-2 text-primary"></i>
+                                        إعدادات الفيديو
+                                    </h2>
+                                </div>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">النمط</label>
+                                        <select id="video-style-select" class="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary text-white">
+                                            <option value="realistic">واقعي</option>
+                                            <option value="cartoon">كرتوني</option>
+                                            <option value="cinematic">سينمائي</option>
+                                            <option value="abstract">تجريدي</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">المدة (ثوانٍ)</label>
+                                        <input type="number" id="video-duration-input" min="10" max="300" value="30" class="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary text-white">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">الجودة</label>
+                                        <div class="flex items-center space-x-4 space-x-reverse">
+                                            <span class="text-xs text-gray-400">منخفضة</span>
+                                            <input type="range" id="video-quality-slider" min="1" max="3" value="2" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                                            <span class="text-xs text-gray-400">عالية</span>
+                                        </div>
+                                        <div class="text-xs text-gray-400 mt-1 text-center" id="video-quality-value">متوسطة</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Prompt Tab Content -->
+                    <div id="data-tab" class="tab-content">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="font-medium text-lg flex items-center">
+                                        <i class="ri-database-2-line ml-2 text-primary"></i>
+                                        وصف البيانات
+                                    </h2>
+                                    <button id="clear-data-btn" class="text-sm text-gray-400 hover:text-primary transition flex items-center">
+                                        <i class="ri-eraser-line ml-1"></i> مسح
+                                    </button>
+                                </div>
+                                <textarea id="data-prompt-input" class="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary text-white" placeholder="أدخل البيانات أو وصف التحليل المطلوب..."></textarea>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="font-medium text-lg flex items-center">
+                                        <i class="ri-settings-3-line ml-2 text-primary"></i>
+                                        إعدادات البيانات
+                                    </h2>
+                                </div>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">نوع التحليل</label>
+                                        <select id="data-analysis-type-select" class="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary text-white">
+                                            <option value="statistical">إحصائي</option>
+                                            <option value="predictive">تنبؤي</option>
+                                            <option value="descriptive">وصفي</option>
+                                            <option value="diagnostic">تشخيصي</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">التنسيق</label>
+                                        <select id="data-format-select" class="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary text-white">
+                                            <option value="table">جدول</option>
+                                            <option value="chart">رسم بياني</option>
+                                            <option value="text">نص</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">عمق التحليل</label>
+                                        <div class="flex items-center space-x-4 space-x-reverse">
+                                            <span class="text-xs text-gray-400">سطحي</span>
+                                            <input type="range" id="data-depth-slider" min="1" max="5" value="3" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                                            <span class="text-xs text-gray-400">عميق</span>
+                                        </div>
+                                        <div class="text-xs text-gray-400 mt-1 text-center" id="data-depth-value">متوسط</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+                        <button id="generate-btn" class="px-6 py-3 rounded-button bg-primary text-white hover:bg-secondary transition flex items-center justify-center">
+                            <i class="ri-ai-generate ml-2"></i> إنشاء البرومبت
+                        </button>
+                        <button id="optimize-btn" class="px-6 py-3 rounded-button bg-gray-700 text-white hover:bg-gray-600 transition flex items-center justify-center" disabled>
+                            <i class="ri-flashlight-line ml-2"></i> تحسين البرومبت
+                        </button>
+                        <button id="analyze-btn" class="px-6 py-3 rounded-button bg-gray-700 text-white hover:bg-gray-600 transition flex items-center justify-center" disabled>
+                            <i class="ri-search-eye-line ml-2"></i> تحليل البرومبت
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Generated Prompt -->
+                <div id="generated-prompt-container" class="glass-card p-6 rounded-lg mb-8 hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-bold flex items-center">
+                            <i class="ri-file-text-line ml-2"></i> البرومبت المُنشأ
+                        </h2>
+                        <div class="flex items-center space-x-2 space-x-reverse">
+                            <button id="copy-btn" class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="نسخ">
+                                <i class="ri-file-copy-line text-gray-300"></i>
+                            </button>
+                            <button id="save-btn" class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="حفظ">
+                                <i class="ri-save-line text-gray-300"></i>
+                            </button>
+                            <button id="export-btn" class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition" title="تصدير">
+                                <i class="ri-download-line text-gray-300"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-900/50 p-4 rounded-lg">
+                        <div id="generated-prompt" class="whitespace-pre-wrap text-gray-300">
+                            سيظهر البرومبت المُحسّن هنا بعد الإنشاء...
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mt-4">
+                        <div class="flex items-center space-x-2 space-x-reverse">
+                            <span id="prompt-type-badge" class="prompt-type-badge bg-primary/10 text-primary">مخصص</span>
+                            <span id="prompt-tone-badge" class="prompt-type-badge bg-secondary/10 text-secondary">احترافي</span>
+                            <span id="prompt-complexity-badge" class="prompt-type-badge bg-success/10 text-success">متوسط</span>
+                        </div>
+                        <div class="text-sm text-gray-400">
+                            <span id="prompt-length">0</span> كلمة | 
+                            <span id="prompt-score">--</span> جودة
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Prompt Examples -->
+                <div class="glass-card p-6 rounded-lg mb-8">
+                    <h2 class="text-xl font-bold mb-6 flex items-center">
+                        <i class="ri-lightbulb-flash-line ml-2 text-primary"></i> أمثلة على برومبتات جاهزة
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Example 1 -->
+                        <div class="prompt-item p-4 rounded-lg bg-gray-800 hover:border-primary cursor-pointer" onclick="loadExample(1)">
+                            <div class="flex items-start justify-between">
+                                <h3 class="font-medium mb-2">إنشاء صورة كرتونية</h3>
+                                <span class="prompt-type-badge bg-purple-400/10 text-purple-400">صورة</span>
+                            </div>
+                            <p class="text-sm text-gray-400 line-clamp-2 mb-3">"إنشاء صورة كرتونية بأسلوب بيكسار لشخصية طفل بشعر بني مموج وعينين زرقاوين، في خلفية ليلية ساحرة مع تأثيرات ضوئية جميلة"</p>
+                        </div>
+                        
+                        <!-- Example 2 -->
+                        <div class="prompt-item p-4 rounded-lg bg-gray-800 hover:border-primary cursor-pointer" onclick="loadExample(2)">
+                            <div class="flex items-start justify-between">
+                                <h3 class="font-medium mb-2">إنشاء كود بايثون</h3>
+                                <span class="prompt-type-badge bg-blue-400/10 text-blue-400">كود</span>
+                            </div>
+                            <p class="text-sm text-gray-400 line-clamp-2 mb-3">"كتابة كود بلغة Python لإنشاء تطبيق ويب بسيط باستخدام Flask يتضمن صفحة تسجيل دخول وصفحة رئيسية"</p>
+                        </div>
+                        
+                        <!-- Example 3 -->
+                        <div class="prompt-item p-4 rounded-lg bg-gray-800 hover:border-primary cursor-pointer" onclick="loadExample(3)">
+                            <div class="flex items-start justify-between">
+                                <h3 class="font-medium mb-2">تحليل المشاعر</h3>
+                                <span class="prompt-type-badge bg-green-400/10 text-green-400">نص</span>
+                            </div>
+                            <p class="text-sm text-gray-400 line-clamp-2 mb-3">"تحليل النص التالي وتحديد ما إذا كان إيجابيًا أو سلبيًا أو محايدًا: 'اليوم كان رائعًا ومليئًا بالمغامرات المثيرة'"</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Prompt Library -->
+                <div class="glass-card p-6 rounded-lg">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                        <h2 class="text-xl font-bold flex items-center">
+                            <i class="ri-bookmark-line ml-2"></i> مكتبة البرومبتات المحفوظة
+                        </h2>
+                        <div class="flex items-center space-x-3 space-x-reverse mt-3 md:mt-0">
+                            <button id="new-prompt-btn" class="px-4 py-2 rounded-button bg-primary text-white hover:bg-secondary transition flex items-center">
+                                <i class="ri-add-line ml-2"></i> جديد
+                            </button>
+                            <button id="filter-btn" class="px-4 py-2 rounded-button bg-gray-700 text-white hover:bg-gray-600 transition flex items-center">
+                                <i class="ri-filter-line ml-2"></i> تصفية
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="prompt-library">
+                        <!-- Prompt items will be added dynamically here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const promptInput = document.getElementById('prompt-input');
+            const generateBtn = document.getElementById('generate-btn');
+            const optimizeBtn = document.getElementById('optimize-btn');
+            const analyzeBtn = document.getElementById('analyze-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const suggestBtn = document.getElementById('suggest-btn');
+            const copyBtn = document.getElementById('copy-btn');
+            const saveBtn = document.getElementById('save-btn');
+            const exportBtn = document.getElementById('export-btn');
+            const wordCount = document.getElementById('word-count');
+            const generatedPromptContainer = document.getElementById('generated-prompt-container');
+            const generatedPrompt = document.getElementById('generated-prompt');
+            const lengthSlider = document.getElementById('length-slider');
+            const lengthValue = document.getElementById('length-value');
+            const promptTypeBadge = document.getElementById('prompt-type-badge');
+            const promptToneBadge = document.getElementById('prompt-tone-badge');
+            const promptComplexityBadge = document.getElementById('prompt-complexity-badge');
+            const promptLength = document.getElementById('prompt-length');
+            const promptScore = document.getElementById('prompt-score');
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const textTypeBtns = document.querySelectorAll('.text-type-btn');
+            const imageStyleBtns = document.querySelectorAll('.image-style-btn');
+            const promptLibrary = document.getElementById('prompt-library');
+
+            // Current state
+            let currentTab = 'text';
+            let currentTextType = 'custom';
+            let currentImageStyle = 'custom';
+
+            // Update word count
+            promptInput.addEventListener('input', () => {
+                const text = promptInput.value.trim();
+                const count = text ? text.split(/\s+/).length : 0;
+                wordCount.textContent = count;
+                optimizeBtn.disabled = !text;
+                analyzeBtn.disabled = !text;
+            });
+
+            // Update length value display
+            lengthSlider.addEventListener('input', () => {
+                const lengthNames = ['قصير جدًا', 'قصير', 'متوسط', 'طويل', 'طويل جدًا'];
+                lengthValue.textContent = lengthNames[lengthSlider.value - 1];
+            });
+
+            // Dynamic slider updates
+            const sliders = {
+                'quality': ['منخفضة', 'متوسطة', 'عالية'],
+                'code-complexity': ['بسيط جدًا', 'بسيط', 'متوسط', 'معقد', 'معقد جدًا'],
+                'video-quality': ['منخفضة', 'متوسطة', 'عالية'],
+                'data-depth': ['سطحي', 'سطحي نسبيًا', 'متوسط', 'عميق نسبيًا', 'عميق']
+            };
+            Object.keys(sliders).forEach(id => {
+                const slider = document.getElementById(`${id}-slider`);
+                const valueDisplay = document.getElementById(`${id}-value`);
+                if (slider && valueDisplay) {
+                    slider.addEventListener('input', () => {
+                        valueDisplay.textContent = sliders[id][slider.value - 1];
+                    });
+                }
+            });
+
+            // Tab switching
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.dataset.tab;
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+                        btn.classList.add('text-gray-400', 'hover:text-white');
+                    });
+                    button.classList.add('text-primary', 'border-b-2', 'border-primary');
+                    button.classList.remove('text-gray-400', 'hover:text-white');
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                    currentTab = tabId;
+                });
+            });
+
+            // Set text type
+            textTypeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    textTypeBtns.forEach(b => b.classList.remove('active', 'border-primary', 'text-primary'));
+                    btn.classList.add('active', 'border-primary', 'text-primary');
+                    currentTextType = btn.dataset.type;
+                });
+            });
+
+            // Set image style
+            imageStyleBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    imageStyleBtns.forEach(b => b.classList.remove('active', 'border-primary', 'text-primary'));
+                    btn.classList.add('active', 'border-primary', 'text-primary');
+                    currentImageStyle = btn.dataset.style;
+                });
+            });
+
+            // Clear buttons for other tabs
+            ['image', 'code', 'video', 'data'].forEach(type => {
+                const btn = document.getElementById(`clear-${type}-btn`);
+                const input = document.getElementById(`${type}-prompt-input`);
+                if (btn && input) {
+                    btn.addEventListener('click', () => input.value = '');
+                }
+            });
+
+            // Generate prompt
+            generateBtn.addEventListener('click', async () => {
+                const input = currentTab === 'text' ? promptInput.value :
+                              currentTab === 'image' ? document.getElementById('image-prompt-input').value :
+                              currentTab === 'code' ? document.getElementById('code-prompt-input').value :
+                              currentTab === 'video' ? document.getElementById('video-prompt-input').value :
+                              document.getElementById('data-prompt-input').value;
+
+                if (!input.trim()) {
+                    alert('يرجى إدخال الفكرة الأساسية للبرومبت');
+                    return;
+                }
+
+                generateBtn.disabled = true;
+                generateBtn.innerHTML = '<i class="ri-loader-4-line animate-spin ml-2"></i> جاري الإنشاء...';
+
+                try {
+                    const settings = {
+                        textType: currentTextType,
+                        tone: document.getElementById('tone-select')?.value,
+                        length: lengthSlider.value,
+                        language: document.getElementById('language-select')?.value,
+                        imageStyle: currentImageStyle,
+                        imageSize: document.getElementById('image-size-select')?.value,
+                        quality: document.getElementById('quality-slider')?.value,
+                        language: document.getElementById('language-select')?.value,
+                        complexity: document.getElementById('code-complexity-slider')?.value,
+                        comments: document.getElementById('comments-check')?.checked,
+                        tests: document.getElementById('tests-check')?.checked,
+                        docs: document.getElementById('docs-check')?.checked,
+                        style: document.getElementById('video-style-select')?.value,
+                        duration: document.getElementById('video-duration-input')?.value,
+                        quality: document.getElementById('video-quality-slider')?.value,
+                        analysisType: document.getElementById('data-analysis-type-select')?.value,
+                        format: document.getElementById('data-format-select')?.value,
+                        depth: document.getElementById('data-depth-slider')?.value
+                    };
+
+                    const response = await fetch('/prompt-generator/generate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type: currentTab, input, settings })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'فشل في إنشاء البرومبت');
+                    }
+
+                    const result = await response.json();
+                    generatedPrompt.textContent = result.prompt;
+                    generatedPromptContainer.classList.remove('hidden');
+                    promptLength.textContent = result.prompt.split(/\s+/).length;
+                    promptScore.textContent = `${result.qualityScore}%`;
+                    promptTypeBadge.textContent = getTypeName(currentTab);
+                    promptToneBadge.textContent = currentTab === 'text' ? getToneName(settings.tone) :
+                                                  currentTab === 'image' ? getImageStyleName(settings.imageStyle) :
+                                                  currentTab === 'code' ? settings.language :
+                                                  currentTab === 'video' ? settings.style :
+                                                  settings.analysisType;
+                    promptComplexityBadge.textContent = currentTab === 'text' ? getLengthName(settings.length) :
+                                                        currentTab === 'code' ? getComplexityName(settings.complexity) :
+                                                        currentTab === 'data' ? getDepthName(settings.depth) : '--';
+
+                    let timeLeft = 20;
+                    generateBtn.innerHTML = `الرجاء الانتظار (${timeLeft} ث)`;
+                    const countdown = setInterval(() => {
+                        timeLeft--;
+                        generateBtn.innerHTML = `الرجاء الانتظار (${timeLeft} ث)`;
+                        if (timeLeft <= 0) {
+                            clearInterval(countdown);
+                            generateBtn.disabled = false;
+                            generateBtn.innerHTML = '<i class="ri-ai-generate ml-2"></i> إنشاء البرومبت';
+                        }
+                    }, 1000);
+                } catch (error) {
+                    console.error('Error generating prompt:', error);
+                    alert(error.message);
+                    generateBtn.disabled = false;
+                    generateBtn.innerHTML = '<i class="ri-ai-generate ml-2"></i> إنشاء البرومبت';
+                }
+            });
+
+            // Save prompt
+            saveBtn.addEventListener('click', async () => {
+                const input = currentTab === 'text' ? promptInput.value :
+                              currentTab === 'image' ? document.getElementById('image-prompt-input').value :
+                              currentTab === 'code' ? document.getElementById('code-prompt-input').value :
+                              currentTab === 'video' ? document.getElementById('video-prompt-input').value :
+                              document.getElementById('data-prompt-input').value;
+
+                const settings = {
+                    textType: currentTextType,
+                    tone: document.getElementById('tone-select')?.value,
+                    length: lengthSlider.value,
+                    language: document.getElementById('language-select')?.value,
+                    imageStyle: currentImageStyle,
+                    imageSize: document.getElementById('image-size-select')?.value,
+                    quality: document.getElementById('quality-slider')?.value,
+                    language: document.getElementById('language-select')?.value,
+                    complexity: document.getElementById('code-complexity-slider')?.value,
+                    comments: document.getElementById('comments-check')?.checked,
+                    tests: document.getElementById('tests-check')?.checked,
+                    docs: document.getElementById('docs-check')?.checked,
+                    style: document.getElementById('video-style-select')?.value,
+                    duration: document.getElementById('video-duration-input')?.value,
+                    quality: document.getElementById('video-quality-slider')?.value,
+                    analysisType: document.getElementById('data-analysis-type-select')?.value,
+                    format: document.getElementById('data-format-select')?.value,
+                    depth: document.getElementById('data-depth-slider')?.value
+                };
+
+                const result = {
+                    prompt: generatedPrompt.textContent,
+                    qualityScore: parseInt(promptScore.textContent),
+                    feedback: 'تم إنشاؤه بنجاح'
+                };
+
+                try {
+                    const response = await fetch('/prompt-generator/save', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type: currentTab, input, settings, result })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'فشل في حفظ البرومبت');
+                    }
+
+                    const data = await response.json();
+                    alert(data.message);
+                    loadSavedPrompts();
+                } catch (error) {
+                    console.error('Error saving prompt:', error);
+                    alert(error.message);
+                }
+            });
+
+            // Copy prompt
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(generatedPrompt.textContent);
+                alert('تم نسخ البرومبت إلى الحافظة');
+            });
+
+            // Clear input
+            clearBtn.addEventListener('click', () => {
+                promptInput.value = '';
+                const event = new Event('input');
+                promptInput.dispatchEvent(event);
+            });
+
+            // Load saved prompts
+            async function loadSavedPrompts() {
+                try {
+                    const response = await fetch('/prompt-generator/saved');
+                    if (!response.ok) throw new Error('فشل في استرجاع البرومبتات');
+                    const data = await response.json();
+                    promptLibrary.innerHTML = data.prompts.map(p => `
+                        <div class="prompt-item p-4 rounded-lg bg-gray-800 hover:border-primary cursor-pointer">
+                            <div class="flex items-start justify-between">
+                                <h3 class="font-medium mb-2">${p.input.slice(0, 20)}...</h3>
+                                <span class="prompt-type-badge bg-blue-400/10 text-blue-400">${getTypeName(p.type)}</span>
+                            </div>
+                            <p class="text-sm text-gray-400 line-clamp-2 mb-3">${p.prompt.slice(0, 50)}...</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2 space-x-reverse">
+                                    <span class="text-xs text-gray-400">${new Date(p.createdAt).toLocaleDateString('ar')}</span>
+                                    <span class="text-xs px-2 py-1 rounded-full bg-green-400/10 text-green-400">${p.qualityScore}%</span>
+                                </div>
+                                <div class="flex items-center space-x-2 space-x-reverse">
+                                    <button class="text-gray-400 hover:text-primary" onclick="alert('تحرير غير مدعوم حاليًا')">
+                                        <i class="ri-edit-line"></i>
+                                    </button>
+                                    <button class="text-gray-400 hover:text-danger" onclick="deletePrompt(${p.id})">
+                                        <i class="ri-delete-bin-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('') || '<p class="text-gray-400">لا توجد برومبتات محفوظة بعد</p>';
+                } catch (error) {
+                    promptLibrary.innerHTML = `<p class="text-danger">${error.message}</p>`;
+                }
+            }
+
+            // Delete prompt
+            async function deletePrompt(promptId) {
+                if (confirm('هل أنت متأكد من حذف هذا البرومبت؟')) {
+                    try {
+                        const response = await fetch('/prompt-generator/delete', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ promptId })
+                        });
+                        if (!response.ok) throw new Error((await response.json()).error || 'فشل في الحذف');
+                        loadSavedPrompts();
+                    } catch (error) {
+                        alert(error.message);
+                    }
+                }
+            }
+
+            // Helper functions
+            function getTypeName(type) {
+                const types = { text: 'نص', image: 'صورة', code: 'كود', video: 'فيديو', data: 'بيانات' };
+                return types[type] || type;
+            }
+            function getToneName(tone) {
+                const tones = { 'professional': 'احترافي', 'friendly': 'ودود', 'academic': 'أكاديمي', 'casual': 'عادي', 'persuasive': 'إقناعي', 'humorous': 'فكاهي' };
+                return tones[tone] || tone;
+            }
+            function getLengthName(length) {
+                const lengths = ['قصير جدًا', 'قصير', 'متوسط', 'طويل', 'طويل جدًا'];
+                return lengths[length - 1] || length;
+            }
+            function getImageStyleName(style) {
+                const styles = { 'realistic': 'واقعي', 'cartoon': 'كرتوني', 'anime': 'أنمي', 'fantasy': 'خيال', 'minimal': 'بسيط', 'custom': 'مخصص' };
+                return styles[style] || style;
+            }
+            function getComplexityName(complexity) {
+                return sliders['code-complexity'][complexity - 1] || complexity;
+            }
+            function getDepthName(depth) {
+                return sliders['data-depth'][depth - 1] || depth;
+            }
+
+            function loadExample(exampleNum) {
+                const examples = {
+                    1: { text: 'إنشاء صورة كرتونية بأسلوب بيكسار لشخصية طفل بشعر بني مموج وعينين زرقاوين، في خلفية ليلية ساحرة مع تأثيرات ضوئية جميلة', tab: 'image', style: 'cartoon' },
+                    2: { text: 'كتابة كود بلغة Python لإنشاء تطبيق ويب بسيط باستخدام Flask يتضمن صفحة تسجيل دخول وصفحة رئيسية', tab: 'code', lang: 'python' },
+                    3: { text: 'تحليل النص التالي وتحديد ما إذا كان إيجابيًا أو سلبيًا أو محايدًا: "اليوم كان رائعًا ومليئًا بالمغامرات المثيرة"', tab: 'text', type: 'summary' }
+                };
+
+                const example = examples[exampleNum];
+                if (!example) return;
+
+                document.querySelector(`.tab-btn[data-tab="${example.tab}"]`).click();
+                if (example.tab === 'text') {
+                    promptInput.value = example.text;
+                    document.querySelector(`.text-type-btn[data-type="${example.type}"]`)?.click();
+                } else if (example.tab === 'image') {
+                    document.getElementById('image-prompt-input').value = example.text;
+                    document.querySelector(`.image-style-btn[data-style="${example.style}"]`)?.click();
+                } else if (example.tab === 'code') {
+                    document.getElementById('code-prompt-input').value = example.text;
+                    document.getElementById('language-select').value = example.lang;
+                }
+
+                const event = new Event('input');
+                promptInput.dispatchEvent(event);
+            }
+
+            // Initial load
+            loadSavedPrompts();
+        });
+    </script>
+</body>
+</html>

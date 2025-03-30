@@ -301,10 +301,26 @@
                 originalLengthEl.textContent = originalWordCount.toLocaleString();
                 summaryLengthEl.textContent = summaryWordCount.toLocaleString();
                 reductionPercentEl.textContent = Math.floor(100 - (summaryWordCount / originalWordCount * 100));
+
+                // إضافة المؤقت بعد النجاح
+                let timeLeft = 20;
+                summarizeBtn.innerHTML = `الرجاء الانتظار (${timeLeft} ث)`;
+                summarizeBtn.classList.add('disabled:bg-gray-600');
+
+                const countdown = setInterval(() => {
+                    timeLeft--;
+                    summarizeBtn.innerHTML = `الرجاء الانتظار (${timeLeft} ث)`;
+                    if (timeLeft <= 0) {
+                        clearInterval(countdown);
+                        summarizeBtn.disabled = false;
+                        summarizeBtn.innerHTML = '<i class="ri-file-list-line"></i> تلخيص النص';
+                        summarizeBtn.classList.remove('disabled:bg-gray-600');
+                        updateInputStats();
+                    }
+                }, 1000);
             } catch (error) {
                 console.error('Error in summarizeText:', error);
                 alert(`خطأ: ${error.message}`);
-            } finally {
                 summarizeBtn.disabled = false;
                 summarizeBtn.innerHTML = '<i class="ri-file-list-line"></i> تلخيص النص';
             }

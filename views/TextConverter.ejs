@@ -45,21 +45,8 @@
 </head>
 <body class="min-h-screen flex flex-col">
     <!-- Navbar -->
-    <nav class="fixed w-full z-50 py-4 bg-gray-800 shadow-sm transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between">
-                <a href="/" class="flex items-center space-x-2 space-x-reverse">
-                    <span class="text-2xl font-['Pacifico'] text-primary">محلل النصوص</span>
-                </a>
-                <div class="hidden md:flex items-center space-x-4 space-x-reverse">
-                    <a href="/" class="px-4 py-2 rounded-button bg-primary text-white hover:bg-secondary transition">العودة للرئيسية</a>
-                </div>
-                <button class="md:hidden flex items-center justify-center w-10 h-10">
-                    <i class="ri-menu-line text-2xl text-gray-300"></i>
-                </button>
-            </div>
-        </div>
-    </nav>
+    <%- include('partials/navbar') %>
+
 
     <!-- Main Content -->
     <main class="mt-20 flex-grow">
@@ -238,19 +225,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="py-8 bg-gray-800 border-t border-gray-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <p class="text-sm text-gray-400 mb-4 md:mb-0">© 2025 محلل النصوص الذكي. جميع الحقوق محفوظة.</p>
-                <div class="flex space-x-4 space-x-reverse">
-                    <a href="#terms" class="text-sm text-gray-400 hover:text-primary">الشروط والأحكام</a>
-                    <a href="#privacy" class="text-sm text-gray-400 hover:text-primary">سياسة الخصوصية</a>
-                    <a href="#contact" class="text-sm text-gray-400 hover:text-primary">اتصل بنا</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
+    <%- include('partials/footer') %>
     <script>
         // DOM Elements
         const inputText = document.getElementById('input-text');
@@ -343,10 +318,26 @@
                 const words = data.convertedText.trim().split(/\s+/).length;
                 wordCount.textContent = `عدد الكلمات: ${words.toLocaleString()}`;
                 conversionTime.textContent = `وقت التحويل: ${timeTaken} ثانية`;
+
+                // إضافة المؤقت بعد النجاح
+                let timeLeft = 20;
+                convertBtn.innerHTML = `الرجاء الانتظار (${timeLeft} ث)`;
+                convertBtn.classList.add('disabled:bg-gray-600');
+
+                const countdown = setInterval(() => {
+                    timeLeft--;
+                    convertBtn.innerHTML = `الرجاء الانتظار (${timeLeft} ث)`;
+                    if (timeLeft <= 0) {
+                        clearInterval(countdown);
+                        convertBtn.disabled = false;
+                        convertBtn.innerHTML = '<i class="ri-play-line ml-2"></i> بدء التحويل';
+                        convertBtn.classList.remove('disabled:bg-gray-600');
+                        updateButtonStates();
+                    }
+                }, 1000);
             } catch (error) {
                 console.error('Error in convertText:', error);
                 alert(`خطأ: ${error.message}`);
-            } finally {
                 convertBtn.disabled = false;
                 convertBtn.innerHTML = '<i class="ri-play-line ml-2"></i> بدء التحويل';
             }

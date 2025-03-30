@@ -5,219 +5,442 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تقييمات المستخدمين | محلل النصوص الذكي</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;700;900&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { primary: "#8B5CF6", secondary: "#6366F1" },
-                    borderRadius: { button: "8px" }
+                    colors: {
+                        primary: {
+                            50: '#F5F3FF',
+                            100: '#EDE9FE',
+                            200: '#DDD6FE',
+                            300: '#C4B5FD',
+                            400: '#A78BFA',
+                            500: '#8B5CF6',
+                            600: '#7C3AED',
+                            700: '#6D28D9',
+                            800: '#5B21B6',
+                            900: '#4C1D95'
+                        },
+                        accent: {
+                            50: '#FFFBEB',
+                            100: '#FEF3C7',
+                            200: '#FDE68A',
+                            300: '#FCD34D',
+                            400: '#FBBF24',
+                            500: '#F59E0B',
+                            600: '#D97706',
+                            700: '#B45309',
+                            800: '#92400E',
+                            900: '#78350F'
+                        },
+                        dark: {
+                            50: '#F8FAFC',
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            300: '#CBD5E1',
+                            400: '#94A3B8',
+                            500: '#64748B',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1E293B',
+                            900: '#0F172A'
+                        }
+                    },
+                    borderRadius: {
+                        '4xl': '2rem',
+                        '5xl': '3rem'
+                    },
+                    boxShadow: {
+                        '3d': '0 15px 30px -5px rgba(0, 0, 0, 0.3)',
+                        'neumorphic': '8px 8px 16px #0d1321, -8px -8px 16px #131d31',
+                        'neumorphic-inset': 'inset 5px 5px 10px #0d1321, inset -5px -5px 10px #131d31',
+                        'glow': '0 0 15px rgba(139, 92, 246, 0.5)',
+                        'glow-accent': '0 0 15px rgba(245, 158, 11, 0.5)'
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 6s infinite',
+                        'wave': 'wave 2.5s infinite'
+                    }
+                },
+                fontFamily: {
+                    'cairo': ['Cairo', 'sans-serif'],
+                    'tajawal': ['Tajawal', 'sans-serif']
                 }
             }
-        };
+        }
     </script>
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #111827; color: #f3f4f6; }
-        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
-        .glass-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); }
-        .btn-primary { background-color: #8B5CF6; color: white; padding: 12px 24px; border-radius: 8px; transition: background-color 0.3s ease; }
-        .btn-primary:hover:not(:disabled) { background-color: #6366F1; }
-        .btn-secondary { background-color: rgba(255, 255, 255, 0.1); color: white; padding: 12px 24px; border-radius: 8px; transition: background-color 0.3s ease; }
-        .btn-secondary:hover { background-color: rgba(255, 255, 255, 0.2); }
-        .animate-spin { animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .animate-fade-in { animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .review-card { transition: all 0.3s ease; }
-        .review-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
-        .star-rating { color: #FBBF24; }
-        .empty-star { color: #4B5563; }
-        .feature-request { border-left: 3px solid #8B5CF6; }
-        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #8B5CF6; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        :root {
+            --primary: #7C3AED;
+            --primary-light: #8B5CF6;
+            --accent: #F59E0B;
+            --dark: #0F172A;
+            --darker: #0A1120;
+        }
+        
+        body {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: #E2E8F0;
+            scroll-behavior: smooth;
+        }
+        
+        .neu-card {
+            background: linear-gradient(145deg, #0e1424, #101829);
+            border-radius: 20px;
+            box-shadow: 8px 8px 16px #0a0f1a, -8px -8px 16px #121f3a;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .neu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 12px 12px 24px #0a0f1a, -12px -12px 24px #121f3a;
+        }
+        
+        .review-item {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            border-right: 3px solid transparent;
+        }
+        
+        .review-item:hover {
+            transform: translateY(-2px);
+            background: rgba(124, 58, 237, 0.05);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+        }
+        
+        .feature-request {
+            border-right-color: var(--primary);
+        }
+        
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .badge-feature {
+            background: rgba(124, 58, 237, 0.15);
+            color: #a78bfa;
+        }
+        
+        .badge-review {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary-light), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        }
+        
+        .btn-hover-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-hover-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 45%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 55%
+            );
+            transform: rotate(30deg);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-hover-effect:hover::after {
+            left: 100%;
+            top: 100%;
+        }
+        
+        .animate-fade-up {
+            animation: fadeUp 0.8s ease-out forwards;
+        }
+        
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-delay-100 {
+            animation-delay: 0.1s;
+        }
+        
+        .animate-delay-200 {
+            animation-delay: 0.2s;
+        }
+        
+        .animate-delay-300 {
+            animation-delay: 0.3s;
+        }
+        
+        .star-rating { 
+            color: #F59E0B;
+        }
+        
+        .empty-star { 
+            color: #4b5563;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: #334155;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #F59E0B, #FBBF24);
+            border-radius: 3px;
+        }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col">
     <%- include('partials/navbar') %>
 
-    <main class="flex-1 pt-24 pb-16">
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h1 class="text-4xl lg:text-5xl font-bold mb-6 animate-fade-in">آراء وتقييمات المستخدمين</h1>
-                <p class="text-xl text-gray-400 max-w-2xl mx-auto animate-fade-in">شاركنا رأيك وساعدنا في تحسين الخدمة</p>
-            </div>
+    <main class="mt-20 flex-grow">
+        <section class="py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold text-center mb-12 gradient-text animate-fade-up">آراء وتقييمات المستخدمين</h1>
 
-            <div class="glass-card p-8 rounded-lg mb-12">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="text-center">
-                        <div class="text-5xl font-bold text-primary mb-2">4.8</div>
-                        <div class="flex justify-center mb-2">
-                            <i class="ri-star-fill text-2xl star-rating"></i>
-                            <i class="ri-star-fill text-2xl star-rating"></i>
-                            <i class="ri-star-fill text-2xl star-rating"></i>
-                            <i class="ri-star-fill text-2xl star-rating"></i>
-                            <i class="ri-star-half-fill text-2xl star-rating"></i>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-fade-up animate-delay-100">
+                    <!-- Stats and Filters Sidebar -->
+                    <div class="lg:col-span-3">
+                        <div class="neu-card p-6 rounded-xl sticky top-24">
+                            <h2 class="text-xl font-bold mb-6 text-primary-300">إحصائيات التقييمات</h2>
+                            
+                            <!-- Average Rating -->
+                            <div class="text-center mb-8">
+                                <div class="text-5xl font-bold text-primary mb-2">4.8</div>
+                                <div class="flex justify-center mb-2">
+                                    <i class="ri-star-fill text-2xl star-rating"></i>
+                                    <i class="ri-star-fill text-2xl star-rating"></i>
+                                    <i class="ri-star-fill text-2xl star-rating"></i>
+                                    <i class="ri-star-fill text-2xl star-rating"></i>
+                                    <i class="ri-star-half-fill text-2xl star-rating"></i>
+                                </div>
+                                <p class="text-gray-400">متوسط التقييم من 1,245 مستخدم</p>
+                            </div>
+                            
+                            <!-- Rating Distribution -->
+                            <div class="space-y-3 mb-8">
+                                <div class="flex items-center">
+                                    <span class="w-12 text-gray-300">5 نجوم</span>
+                                    <div class="flex-1 mx-3">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 85%"></div>
+                                        </div>
+                                    </div>
+                                    <span class="w-12 text-gray-300 text-left">85%</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-12 text-gray-300">4 نجوم</span>
+                                    <div class="flex-1 mx-3">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 12%"></div>
+                                        </div>
+                                    </div>
+                                    <span class="w-12 text-gray-300 text-left">12%</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-12 text-gray-300">3 نجوم</span>
+                                    <div class="flex-1 mx-3">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 2%"></div>
+                                        </div>
+                                    </div>
+                                    <span class="w-12 text-gray-300 text-left">2%</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-12 text-gray-300">1-2 نجوم</span>
+                                    <div class="flex-1 mx-3">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 1%"></div>
+                                        </div>
+                                    </div>
+                                    <span class="w-12 text-gray-300 text-left">1%</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Add Review Button -->
+                            <button id="show-feedback-form" class="w-full py-3 rounded-lg btn-hover-effect gradient-bg text-white font-medium shadow-glow hover:shadow-glow-accent transition-all duration-300 mb-4">
+                                <i class="ri-pencil-line ml-2"></i> اكتب تقييمك
+                            </button>
+                            
+                            <!-- Add Feature Button -->
+                            <button id="show-feature-form" class="w-full py-3 rounded-lg neu-btn text-white hover:text-primary-300 transition-all duration-300">
+                                <i class="ri-lightbulb-line ml-2"></i> اقترح فكرة جديدة
+                            </button>
                         </div>
-                        <p class="text-gray-400">متوسط التقييم من 1,245 مستخدم</p>
                     </div>
-                    <div>
-                        <div class="flex items-center mb-2">
-                            <span class="w-20">5 نجوم</span>
-                            <div class="flex-1 bg-gray-700 rounded-full h-3 mx-2">
-                                <div class="bg-yellow-500 h-3 rounded-full" style="width: 85%"></div>
-                            </div>
-                            <span>85%</span>
-                        </div>
-                        <div class="flex items-center mb-2">
-                            <span class="w-20">4 نجوم</span>
-                            <div class="flex-1 bg-gray-700 rounded-full h-3 mx-2">
-                                <div class="bg-yellow-500 h-3 rounded-full" style="width: 12%"></div>
-                            </div>
-                            <span>12%</span>
-                        </div>
-                        <div class="flex items-center mb-2">
-                            <span class="w-20">3 نجوم</span>
-                            <div class="flex-1 bg-gray-700 rounded-full h-3 mx-2">
-                                <div class="bg-yellow-500 h-3 rounded-full" style="width: 2%"></div>
-                            </div>
-                            <span>2%</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-20">1-2 نجوم</span>
-                            <div class="flex-1 bg-gray-700 rounded-full h-3 mx-2">
-                                <div class="bg-yellow-500 h-3 rounded-full" style="width: 1%"></div>
-                            </div>
-                            <span>1%</span>
-                        </div>
-                    </div>
-                    <div class="flex flex-col justify-center">
-                        <button id="show-feedback-form" class="btn-primary font-medium flex items-center justify-center gap-2 mb-3">
-                            <i class="ri-pencil-line"></i>
-                            اكتب تقييمك
-                        </button>
-                        <button id="show-feature-form" class="btn-secondary font-medium flex items-center justify-center gap-2">
-                            <i class="ri-lightbulb-line"></i>
-                            اقترح فكرة جديدة
-                        </button>
-                    </div>
-                </div>
-            </div>
 
-            <div id="feedback-form" class="glass-card p-8 rounded-lg mb-12 hidden">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                    <i class="ri-feedback-line text-primary"></i>
-                    شاركنا رأيك
-                </h2>
-                <form id="submit-feedback">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <label class="block mb-2">اسمك</label>
-                            <input type="text" name="name" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-white" required>
+                    <!-- Reviews Content -->
+                    <div class="lg:col-span-9">
+                        <!-- Feedback Form (Hidden by default) -->
+                        <div id="feedback-form-container" class="neu-card p-6 rounded-xl mb-6 hidden">
+                            <h2 class="text-xl font-bold mb-6 text-primary-300 flex items-center gap-2">
+                                <i class="ri-feedback-line"></i>
+                                شاركنا رأيك
+                            </h2>
+                            <form id="submit-feedback">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                    <div>
+                                        <label class="block mb-2 text-gray-300">اسمك</label>
+                                        <input type="text" name="name" class="w-full px-4 py-2 rounded-lg neu-btn text-white focus:outline-none" required>
+                                    </div>
+                                    <div>
+                                        <label class="block mb-2 text-gray-300">البريد الإلكتروني (اختياري)</label>
+                                        <input type="email" name="email" class="w-full px-4 py-2 rounded-lg neu-btn text-white focus:outline-none">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label class="block mb-2 text-gray-300">تقييمك</label>
+                                    <div class="flex space-x-2 space-x-reverse">
+                                        <i class="ri-star-fill text-3xl empty-star cursor-pointer hover:text-yellow-500 transition-colors" data-rating="1"></i>
+                                        <i class="ri-star-fill text-3xl empty-star cursor-pointer hover:text-yellow-500 transition-colors" data-rating="2"></i>
+                                        <i class="ri-star-fill text-3xl empty-star cursor-pointer hover:text-yellow-500 transition-colors" data-rating="3"></i>
+                                        <i class="ri-star-fill text-3xl empty-star cursor-pointer hover:text-yellow-500 transition-colors" data-rating="4"></i>
+                                        <i class="ri-star-fill text-3xl empty-star cursor-pointer hover:text-yellow-500 transition-colors" data-rating="5"></i>
+                                    </div>
+                                    <input type="hidden" name="rating" id="rating-value">
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label class="block mb-2 text-gray-300">عنوان التقييم</label>
+                                    <input type="text" name="title" class="w-full px-4 py-2 rounded-lg neu-btn text-white focus:outline-none" placeholder="مثال: تجربتي الرائعة مع المحلل" required>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label class="block mb-2 text-gray-300">التعليق</label>
+                                    <textarea name="comment" class="w-full h-32 px-4 py-2 rounded-lg neu-btn text-white focus:outline-none resize-none" placeholder="أخبرنا عن تجربتك مع الخدمة..." required></textarea>
+                                </div>
+                                
+                                <div class="flex justify-end gap-3">
+                                    <button type="button" id="cancel-feedback" class="neu-btn font-medium px-6 py-2 rounded-lg transition-all text-white hover:text-primary-300">
+                                        إلغاء
+                                    </button>
+                                    <button type="submit" id="submit-feedback-btn" class="btn-hover-effect font-medium px-6 py-2 rounded-lg flex items-center gap-2 transition-all gradient-bg text-white shadow-glow hover:shadow-glow-accent">
+                                        <i class="ri-send-plane-line"></i>
+                                        إرسال التقييم
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                        <div>
-                            <label class="block mb-2">البريد الإلكتروني (اختياري)</label>
-                            <input type="email" name="email" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-white">
-                        </div>
-                    </div>
-                    <div class="mb-6">
-                        <label class="block mb-2">تقييمك</label>
-                        <div class="flex space-x-2 space-x-reverse">
-                            <i class="ri-star-fill text-3xl empty-star cursor-pointer hover:text-yellow-500" data-rating="1"></i>
-                            <i class="ri-star-fill text-3xl empty-star cursor-pointer hover:text-yellow-500" data-rating="2"></i>
-                            <i class="ri-star-fill text-3xl empty-star cursor-pointer hover:text-yellow-500" data-rating="3"></i>
-                            <i class="ri-star-fill text-3xl empty-star cursor-pointer hover:text-yellow-500" data-rating="4"></i>
-                            <i class="ri-star-fill text-3xl empty-star cursor-pointer hover:text-yellow-500" data-rating="5"></i>
-                        </div>
-                        <input type="hidden" name="rating" id="rating-value">
-                    </div>
-                    <div class="mb-6">
-                        <label class="block mb-2">عنوان التقييم</label>
-                        <input type="text" name="title" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-white" placeholder="مثال: تجربتي الرائعة مع المحلل" required>
-                    </div>
-                    <div class="mb-6">
-                        <label class="block mb-2">التعليق</label>
-                        <textarea name="comment" class="w-full h-32 p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none text-white" placeholder="أخبرنا عن تجربتك مع الخدمة..." required></textarea>
-                    </div>
-                    <div class="flex justify-end gap-3">
-                        <button type="button" id="cancel-feedback" class="btn-secondary font-medium px-6 py-3">
-                            إلغاء
-                        </button>
-                        <button type="submit" id="submit-feedback-btn" class="btn-primary font-medium px-6 py-3 flex items-center gap-2">
-                            <i class="ri-send-plane-line"></i>
-                            إرسال التقييم
-                        </button>
-                    </div>
-                </form>
-            </div>
 
-            <div id="feature-form" class="glass-card p-8 rounded-lg mb-12 hidden">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                    <i class="ri-lightbulb-flash-line text-primary"></i>
-                    اقترح ميزة جديدة
-                </h2>
-                <form id="submit-feature">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <label class="block mb-2">اسمك</label>
-                            <input type="text" name="name" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-white" required>
+                        <!-- Feature Request Form (Hidden by default) -->
+                        <div id="feature-form-container" class="neu-card p-6 rounded-xl mb-6 hidden">
+                            <h2 class="text-xl font-bold mb-6 text-primary-300 flex items-center gap-2">
+                                <i class="ri-lightbulb-flash-line"></i>
+                                اقترح ميزة جديدة
+                            </h2>
+                            <form id="submit-feature">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                    <div>
+                                        <label class="block mb-2 text-gray-300">اسمك</label>
+                                        <input type="text" name="name" class="w-full px-4 py-2 rounded-lg neu-btn text-white focus:outline-none" required>
+                                    </div>
+                                    <div>
+                                        <label class="block mb-2 text-gray-300">البريد الإلكتروني (اختياري)</label>
+                                        <input type="email" name="email" class="w-full px-4 py-2 rounded-lg neu-btn text-white focus:outline-none">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label class="block mb-2 text-gray-300">عنوان المقترح</label>
+                                    <input type="text" name="title" class="w-full px-4 py-2 rounded-lg neu-btn text-white focus:outline-none" placeholder="مثال: إضافة خاصية تحليل الصور" required>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label class="block mb-2 text-gray-300">وصف المقترح</label>
+                                    <textarea name="comment" class="w-full h-32 px-4 py-2 rounded-lg neu-btn text-white focus:outline-none resize-none" placeholder="صف الميزة التي تقترحها بالتفصيل..." required></textarea>
+                                </div>
+                                
+                                <div class="flex justify-end gap-3">
+                                    <button type="button" id="cancel-feature" class="neu-btn font-medium px-6 py-2 rounded-lg transition-all text-white hover:text-primary-300">
+                                        إلغاء
+                                    </button>
+                                    <button type="submit" id="submit-feature-btn" class="btn-hover-effect font-medium px-6 py-2 rounded-lg flex items-center gap-2 transition-all gradient-bg text-white shadow-glow hover:shadow-glow-accent">
+                                        <i class="ri-send-plane-line"></i>
+                                        إرسال المقترح
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                        <div>
-                            <label class="block mb-2">البريد الإلكتروني (اختياري)</label>
-                            <input type="email" name="email" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-white">
-                        </div>
-                    </div>
-                    <div class="mb-6">
-                        <label class="block mb-2">عنوان المقترح</label>
-                        <input type="text" name="title" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-white" placeholder="مثال: إضافة خاصية تحليل الصور" required>
-                    </div>
-                    <div class="mb-6">
-                        <label class="block mb-2">وصف المقترح</label>
-                        <textarea name="comment" class="w-full h-32 p-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none text-white" placeholder="صف الميزة التي تقترحها بالتفصيل..." required></textarea>
-                    </div>
-                    <div class="flex justify-end gap-3">
-                        <button type="button" id="cancel-feature" class="btn-secondary font-medium px-6 py-3">
-                            إلغاء
-                        </button>
-                        <button type="submit" id="submit-feature-btn" class="btn-primary font-medium px-6 py-3 flex items-center gap-2">
-                            <i class="ri-send-plane-line"></i>
-                            إرسال المقترح
-                        </button>
-                    </div>
-                </form>
-            </div>
 
-            <div class="mb-8">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-                    <h2 class="text-xl font-bold flex items-center gap-2">
-                        <i class="ri-discuss-line text-primary"></i>
-                        أحدث التقييمات
-                    </h2>
-                    <div class="mt-3 md:mt-0">
-                        <select id="sort-feedback" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary">
-                            <option value="latest">الأحدث أولاً</option>
-                            <option value="highest">الأعلى تقييمًا</option>
-                        </select>
-                    </div>
-                </div>
-                <div id="reviews-container" class="space-y-6"></div>
-                <div id="pagination" class="glass-card mt-6 p-4 rounded-lg">
-                    <div class="flex justify-center items-center space-x-2 space-x-reverse" id="pagination-buttons">
-                        <span id="loading-indicator" class="hidden animate-spin inline-block w-6 h-6 border-2 border-white rounded-full border-t-transparent"></span>
+                        <!-- Reviews List -->
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold text-primary-300">أحدث التقييمات</h2>
+                            <div class="flex items-center gap-2">
+                                <select id="sort-feedback" class="neu-btn rounded-lg px-3 py-1 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all">
+                                    <option value="latest">الأحدث أولاً</option>
+                                    <option value="highest">الأعلى تقييمًا</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div id="reviews-container" class="space-y-4">
+                            <!-- Reviews will be loaded here dynamically -->
+                        </div>
+                        
+                        <div id="pagination" class="neu-card mt-6 p-4 rounded-xl">
+                            <div class="flex justify-center items-center space-x-2 space-x-reverse" id="pagination-buttons">
+                                <span id="loading-indicator" class="hidden animate-spin inline-block w-6 h-6 border-2 border-white rounded-full border-t-transparent"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
+
     <%- include('partials/footer') %>
 
     <script>
-        function toggleMobileMenu() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
-        }
-
-        const feedbackForm = document.getElementById('feedback-form');
-        const featureForm = document.getElementById('feature-form');
+        // DOM Elements
+        const feedbackFormContainer = document.getElementById('feedback-form-container');
+        const featureFormContainer = document.getElementById('feature-form-container');
         const cancelFeedback = document.getElementById('cancel-feedback');
         const cancelFeature = document.getElementById('cancel-feature');
         const submitFeedbackBtn = document.getElementById('submit-feedback-btn');
@@ -230,26 +453,30 @@
         let currentRating = 0;
         let currentPage = 1;
 
+        // Event Listeners
         document.getElementById('show-feedback-form').addEventListener('click', () => {
-            feedbackForm.classList.remove('hidden');
-            featureForm.classList.add('hidden');
+            feedbackFormContainer.classList.remove('hidden');
+            featureFormContainer.classList.add('hidden');
+            feedbackFormContainer.scrollIntoView({ behavior: 'smooth' });
         });
 
         document.getElementById('show-feature-form').addEventListener('click', () => {
-            featureForm.classList.remove('hidden');
-            feedbackForm.classList.add('hidden');
+            featureFormContainer.classList.remove('hidden');
+            feedbackFormContainer.classList.add('hidden');
+            featureFormContainer.scrollIntoView({ behavior: 'smooth' });
         });
 
         cancelFeedback.addEventListener('click', () => {
-            feedbackForm.classList.add('hidden');
+            feedbackFormContainer.classList.add('hidden');
             resetFeedbackForm();
         });
 
         cancelFeature.addEventListener('click', () => {
-            featureForm.classList.add('hidden');
+            featureFormContainer.classList.add('hidden');
             resetFeatureForm();
         });
 
+        // Star Rating System
         stars.forEach(star => {
             star.addEventListener('click', () => {
                 const rating = parseInt(star.dataset.rating);
@@ -278,6 +505,7 @@
             });
         });
 
+        // Form Submission
         document.getElementById('submit-feedback').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
@@ -295,12 +523,25 @@
                 });
                 const result = await response.json();
                 if (!result.success) throw new Error(result.message || 'فشل في إرسال التقييم');
-                alert('شكرًا لك على مشاركة رأيك! تم استلام تقييمك بنجاح.');
+                
+                // Show success message
+                Swal.fire({
+                    icon: 'success',
+                    title: 'شكرًا لك!',
+                    text: 'تم استلام تقييمك بنجاح.',
+                    confirmButtonColor: '#7c3aed'
+                });
+                
                 resetFeedbackForm();
-                feedbackForm.classList.add('hidden');
+                feedbackFormContainer.classList.add('hidden');
                 fetchFeedback(currentPage);
             } catch (error) {
-                alert(`خطأ: ${error.message}`);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ!',
+                    text: error.message || 'حدث خطأ أثناء إرسال التقييم',
+                    confirmButtonColor: '#7c3aed'
+                });
             } finally {
                 submitFeedbackBtn.disabled = false;
                 submitFeedbackBtn.innerHTML = '<i class="ri-send-plane-line"></i> إرسال التقييم';
@@ -324,18 +565,32 @@
                 });
                 const result = await response.json();
                 if (!result.success) throw new Error(result.message || 'فشل في إرسال المقترح');
-                alert('شكرًا لك على اقتراحك! تم استلامه بنجاح.');
+                
+                // Show success message
+                Swal.fire({
+                    icon: 'success',
+                    title: 'شكرًا لك!',
+                    text: 'تم استلام اقتراحك بنجاح.',
+                    confirmButtonColor: '#7c3aed'
+                });
+                
                 resetFeatureForm();
-                featureForm.classList.add('hidden');
+                featureFormContainer.classList.add('hidden');
                 fetchFeedback(currentPage);
             } catch (error) {
-                alert(`خطأ: ${error.message}`);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ!',
+                    text: error.message || 'حدث خطأ أثناء إرسال المقترح',
+                    confirmButtonColor: '#7c3aed'
+                });
             } finally {
                 submitFeatureBtn.disabled = false;
                 submitFeatureBtn.innerHTML = '<i class="ri-send-plane-line"></i> إرسال المقترح';
             }
         });
 
+        // Helper Functions
         function resetFeedbackForm() {
             document.getElementById('submit-feedback').reset();
             stars.forEach(star => {
@@ -350,9 +605,12 @@
             document.getElementById('submit-feature').reset();
         }
 
+        // Fetch and Display Reviews
         async function fetchFeedback(page = 1) {
             try {
                 loadingIndicator.classList.remove('hidden');
+                reviewsContainer.innerHTML = '<div class="text-center py-8"><span class="animate-spin inline-block w-8 h-8 border-2 border-white rounded-full border-t-transparent"></span></div>';
+                
                 const response = await fetch(`/feedback/list?page=${page}`);
                 if (!response.ok) throw new Error('فشل في جلب التقييمات');
                 const data = await response.json();
@@ -361,7 +619,12 @@
                 renderPagination(data.totalPages, data.currentPage);
             } catch (error) {
                 console.error('Error fetching feedback:', error);
-                reviewsContainer.innerHTML = '<p class="text-red-500">خطأ في تحميل التقييمات</p>';
+                reviewsContainer.innerHTML = `
+                    <div class="neu-card p-6 rounded-xl text-center text-red-400">
+                        <i class="ri-error-warning-line text-2xl mb-2"></i>
+                        <p>حدث خطأ أثناء تحميل التقييمات</p>
+                    </div>
+                `;
             } finally {
                 loadingIndicator.classList.add('hidden');
             }
@@ -370,9 +633,15 @@
         function renderFeedback(feedback) {
             reviewsContainer.innerHTML = '';
             if (feedback.length === 0) {
-                reviewsContainer.innerHTML = '<p class="text-gray-400">لا توجد تقييمات بعد.</p>';
+                reviewsContainer.innerHTML = `
+                    <div class="neu-card p-6 rounded-xl text-center text-gray-400">
+                        <i class="ri-emotion-sad-line text-2xl mb-2"></i>
+                        <p>لا توجد تقييمات بعد. كن أول من يشارك رأيه!</p>
+                    </div>
+                `;
                 return;
             }
+            
             feedback.forEach(item => {
                 const date = new Date(item.created_at);
                 const timeAgo = Math.floor((Date.now() - date) / (1000 * 60 * 60 * 24));
@@ -383,34 +652,42 @@
                 ).join('') : '';
 
                 reviewsContainer.innerHTML += `
-                    <div class="glass-card p-6 rounded-lg review-card ${item.is_feature_request ? 'feature-request' : ''}" data-feedback-id="${item.id}">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="flex items-center space-x-3 space-x-reverse">
-                                <div class="user-avatar">${item.name[0]}</div>
-                                <div>
-                                    <h4 class="font-medium">${item.name}</h4>
-                                    <div class="flex items-center space-x-1 space-x-reverse">
-                                        <div class="flex">${starsHtml}</div>
-                                        <span class="text-sm text-gray-400">${timeText}</span>
-                                    </div>
+                    <div class="neu-card p-6 rounded-xl review-item ${item.is_feature_request ? 'feature-request' : ''}" data-feedback-id="${item.id}">
+                        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                            <div class="flex-grow">
+                                <div class="flex flex-wrap items-center gap-2 mb-3">
+                                    ${item.is_feature_request ? 
+                                        '<span class="badge badge-feature"><i class="ri-lightbulb-line ml-1"></i> مقترح</span>' : 
+                                        '<span class="badge badge-review"><i class="ri-star-line ml-1"></i> تقييم</span>'
+                                    }
+                                    ${starsHtml}
+                                    <span class="text-sm text-gray-400">
+                                        <i class="ri-calendar-line ml-1"></i>
+                                        ${timeText}
+                                    </span>
                                 </div>
+                                <div class="flex items-center space-x-3 space-x-reverse mb-3">
+                                    <div class="user-avatar">${item.name[0]}</div>
+                                    <h4 class="font-medium">${item.name}</h4>
+                                </div>
+                                <h3 class="font-medium mb-1 text-gray-200">${item.title}</h3>
+                                <p class="text-gray-300 mb-3">${item.comment}</p>
                             </div>
-                            <button class="text-gray-400 hover:text-primary">
-                                <i class="ri-share-fill"></i>
-                            </button>
-                        </div>
-                        <h5 class="font-medium mb-2">${item.is_feature_request ? '[مقترح] ' : ''}${item.title}</h5>
-                        <p class="text-gray-300 mb-4">${item.comment}</p>
-                        <div class="flex items-center space-x-4 space-x-reverse text-sm">
-                            <button class="like-btn flex items-center space-x-1 space-x-reverse text-gray-400 hover:text-primary" data-feedback-id="${item.id}">
-                                <i class="ri-thumb-up-line"></i>
-                                <span>${item.is_feature_request ? 'أوافق' : 'مفيد'} (${item.likes})</span>
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <button class="like-btn p-2 rounded-lg neu-btn hover:text-primary-300 transition" data-feedback-id="${item.id}">
+                                    <i class="ri-thumb-up-line"></i>
+                                    <span class="text-xs">${item.is_feature_request ? 'أوافق' : 'مفيد'} (${item.likes})</span>
+                                </button>
+                                <button class="p-2 rounded-lg neu-btn hover:text-primary-300 transition">
+                                    <i class="ri-share-fill"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
             });
 
+            // Add event listeners to like buttons
             document.querySelectorAll('.like-btn').forEach(btn => {
                 btn.addEventListener('click', async () => {
                     const feedbackId = btn.dataset.feedbackId;
@@ -422,10 +699,22 @@
                         });
                         const data = await response.json();
                         if (!data.success) throw new Error(data.message || 'فشل في إضافة الإعجاب');
-                        btn.querySelector('span').textContent = `${btn.textContent.includes('أوافق') ? 'أوافق' : 'مفيد'} (${data.likes})`;
+                        
+                        // Update like count
+                        const likeText = btn.querySelector('span');
+                        likeText.textContent = `${likeText.textContent.includes('أوافق') ? 'أوافق' : 'مفيد'} (${data.likes})`;
+                        
+                        // Add visual feedback
+                        btn.classList.add('text-primary-300');
+                        setTimeout(() => btn.classList.remove('text-primary-300'), 1000);
                     } catch (error) {
                         console.error('Error liking feedback:', error);
-                        alert(`خطأ: ${error.message}`);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطأ!',
+                            text: error.message || 'حدث خطأ أثناء إضافة الإعجاب',
+                            confirmButtonColor: '#7c3aed'
+                        });
                     }
                 });
             });
@@ -435,29 +724,98 @@
             paginationButtons.innerHTML = '';
 
             const prevButton = document.createElement('button');
-            prevButton.className = `w-10 h-10 flex items-center justify-center rounded-lg ${currentPage === 1 ? 'bg-gray-800 cursor-not-allowed' : 'bg-gray-700 hover:bg-gray-600 transition'}`;
+            prevButton.className = `w-10 h-10 flex items-center justify-center rounded-lg neu-btn ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`;
             prevButton.innerHTML = '<i class="ri-arrow-right-s-line"></i>';
             prevButton.disabled = currentPage === 1;
-            prevButton.onclick = () => fetchFeedback(currentPage - 1);
+            prevButton.onclick = () => {
+                fetchFeedback(currentPage - 1);
+                window.scrollTo({ top: reviewsContainer.offsetTop - 100, behavior: 'smooth' });
+            };
             paginationButtons.appendChild(prevButton);
 
-            for (let i = 1; i <= Math.max(1, totalPages); i++) {
+            // Always show first page
+            if (currentPage > 2) {
+                const firstPage = document.createElement('button');
+                firstPage.className = `w-10 h-10 flex items-center justify-center rounded-lg neu-btn ${1 === currentPage ? 'gradient-bg text-white' : ''}`;
+                firstPage.textContent = '1';
+                firstPage.onclick = () => {
+                    fetchFeedback(1);
+                    window.scrollTo({ top: reviewsContainer.offsetTop - 100, behavior: 'smooth' });
+                };
+                paginationButtons.appendChild(firstPage);
+                
+                if (currentPage > 3) {
+                    const dots = document.createElement('span');
+                    dots.className = 'w-10 h-10 flex items-center justify-center text-gray-400';
+                    dots.textContent = '...';
+                    paginationButtons.appendChild(dots);
+                }
+            }
+
+            // Show current page and neighbors
+            for (let i = Math.max(1, currentPage - 1); i <= Math.min(totalPages, currentPage + 1); i++) {
                 const pageButton = document.createElement('button');
-                pageButton.className = `w-10 h-10 flex items-center justify-center rounded-lg ${i === currentPage ? 'bg-primary text-white' : 'bg-gray-700 hover:bg-gray-600 transition'}`;
+                pageButton.className = `w-10 h-10 flex items-center justify-center rounded-lg neu-btn ${i === currentPage ? 'gradient-bg text-white' : ''}`;
                 pageButton.textContent = i;
-                pageButton.onclick = () => fetchFeedback(i);
+                pageButton.onclick = () => {
+                    fetchFeedback(i);
+                    window.scrollTo({ top: reviewsContainer.offsetTop - 100, behavior: 'smooth' });
+                };
                 paginationButtons.appendChild(pageButton);
             }
 
+            // Always show last page
+            if (currentPage < totalPages - 1) {
+                if (currentPage < totalPages - 2) {
+                    const dots = document.createElement('span');
+                    dots.className = 'w-10 h-10 flex items-center justify-center text-gray-400';
+                    dots.textContent = '...';
+                    paginationButtons.appendChild(dots);
+                }
+                
+                const lastPage = document.createElement('button');
+                lastPage.className = `w-10 h-10 flex items-center justify-center rounded-lg neu-btn ${totalPages === currentPage ? 'gradient-bg text-white' : ''}`;
+                lastPage.textContent = totalPages;
+                lastPage.onclick = () => {
+                    fetchFeedback(totalPages);
+                    window.scrollTo({ top: reviewsContainer.offsetTop - 100, behavior: 'smooth' });
+                };
+                paginationButtons.appendChild(lastPage);
+            }
+
             const nextButton = document.createElement('button');
-            nextButton.className = `w-10 h-10 flex items-center justify-center rounded-lg ${currentPage === totalPages ? 'bg-gray-800 cursor-not-allowed' : 'bg-gray-700 hover:bg-gray-600 transition'}`;
+            nextButton.className = `w-10 h-10 flex items-center justify-center rounded-lg neu-btn ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`;
             nextButton.innerHTML = '<i class="ri-arrow-left-s-line"></i>';
             nextButton.disabled = currentPage === totalPages;
-            nextButton.onclick = () => fetchFeedback(currentPage + 1);
+            nextButton.onclick = () => {
+                fetchFeedback(currentPage + 1);
+                window.scrollTo({ top: reviewsContainer.offsetTop - 100, behavior: 'smooth' });
+            };
             paginationButtons.appendChild(nextButton);
         }
 
-        document.addEventListener('DOMContentLoaded', () => fetchFeedback(currentPage));
+        // Sort Change Event
+        document.getElementById('sort-feedback').addEventListener('change', (e) => {
+            fetchFeedback(1);
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchFeedback(currentPage);
+            
+            // Add intersection observer for animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-fade-up');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.review-item').forEach(item => {
+                observer.observe(item);
+            });
+        });
     </script>
 </body>
 </html>

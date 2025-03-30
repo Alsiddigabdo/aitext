@@ -315,7 +315,7 @@
                 try {
                     const response = await fetch('/smart-translation/translate', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                         body: JSON.stringify({
                             text,
                             sourceLang: sourceLang.value,
@@ -331,7 +331,13 @@
                         })
                     });
 
-                    if (!response.ok) throw new Error('فشل في الترجمة');
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        if (response.status === 429) {
+                            throw new Error('تم تجاوز حد الطلبات. يرجى المحاولة مجدداً بعد 20 ثانية.');
+                        }
+                        throw new Error(errorData.error || `فشل في الترجمة: ${response.status}`);
+                    }
 
                     const data = await response.json();
                     translatedText.textContent = data.translatedText;
@@ -344,13 +350,104 @@
 
                     // Add to history
                     addToHistory(text, data.translatedText, sourceLang.value, targetLang.value, data.quality);
+
+                    // إضافة المؤقت بعد النجاح
+                    let timeLeft = 20;
+                    translateBtn.innerHTML = `الرجاء الانتظار (${timeLeft} ث)`;
+                    translateBtn.classList.add('disabled:bg-gray-600');
+
+                    const countdown = setInterval(() => {
+                        timeLeft--;
+                        translateBtn.innerHTML = `الرجاء الانتظار (${timeLeft} ث)`;
+                        if (timeLeft <= 0) {
+                            clearInterval(countdown);
+                            translateBtn.disabled = false;
+                            translateBtn.innerHTML = '<i class="ri-translate-2 ml-2"></i> ترجمة النص';
+                            translateBtn.classList.remove('disabled:bg-gray-600');
+                        }
+                    }, 1000);
                 } catch (error) {
+                    console.error('Error in translateText:', error);
                     translatedText.textContent = `خطأ: ${error.message}`;
                     translatedText.style.color = '#f87171';
                     translatedText.style.opacity = '1';
-                } finally {
                     translateBtn.disabled = false;
                     translateBtn.innerHTML = '<i class="ri-translate-2 ml-2"></i> ترجمة النص';
+                }
+            }
+
+            // Improve function
+            async function improveTranslation() {
+                const currentText = translatedText.textContent.trim();
+                if (!currentText || currentText === 'سيظهر النص المترجم هنا') {
+                    alert('لا يوجد نص مترجم لتحسينه');
+                    return;
+                }
+
+                improveBtn.disabled = true;
+                improveBtn.innerHTML = '<i class="ri-loader-4-line animate-spin ml-2"></i> جاري التحسين...';
+                translatedText.style.opacity = '0.5';
+
+                try {
+                    const response = await fetch('/smart-translation/improve', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        body: JSON.stringify({
+                            text: sourceText.value,
+                            translatedText: currentText,
+                            targetLang: targetLang.value,
+                            options: {
+                                preserveStyle: options.preserveStyle.checked,
+                                formalTone: options.formalTone.checked,
+                                academicMode: options.academicMode.checked,
+                                marketingMode: options.marketingMode.checked,
+                                culturalAdapt: options.culturalAdapt.checked,
+                                idiomsDetection: options.idiomsDetection.checked
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        if (response.status === 429) {
+                            throw new Error('تم تجاوز حد الطلبات. يرجى المحاولة مجدداً بعد 20 ثانية.');
+                        }
+                        throw new Error(errorData.error || `فشل في تحسين الترجمة: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    translatedText.textContent = data.translatedText;
+                    translatedText.style.opacity = '1';
+                    translatedText.style.color = '#f3f4f6';
+                    updateQualityAnalysis(data.quality);
+                    feedbackText.textContent = data.feedback || 'تم تحسين الترجمة بنجاح';
+                    qualityScore.textContent = `${Math.round((data.quality.accuracy + data.quality.style + data.quality.cultural + data.quality.fluency) / 4)}%`;
+
+                    // Update history with improved translation
+                    addToHistory(sourceText.value, data.translatedText, sourceLang.value, targetLang.value, data.quality);
+
+                    // إضافة المؤقت بعد النجاح
+                    let timeLeft = 20;
+                    improveBtn.innerHTML = `الرجاء الانتظار (${timeLeft} ث)`;
+                    improveBtn.classList.add('disabled:bg-gray-600');
+
+                    const countdown = setInterval(() => {
+                        timeLeft--;
+                        improveBtn.innerHTML = `الرجاء الانتظار (${timeLeft} ث)`;
+                        if (timeLeft <= 0) {
+                            clearInterval(countdown);
+                            improveBtn.disabled = false;
+                            improveBtn.innerHTML = '<i class="ri-ai-generate ml-2"></i> تحسين الترجمة';
+                            improveBtn.classList.remove('disabled:bg-gray-600');
+                        }
+                    }, 1000);
+                } catch (error) {
+                    console.error('Error in improveTranslation:', error);
+                    translatedText.textContent = `خطأ: ${error.message}`;
+                    translatedText.style.color = '#f87171';
+                    translatedText.style.opacity = '1';
+                    improveBtn.disabled = false;
+                    improveBtn.innerHTML = '<i class="ri-ai-generate ml-2"></i> تحسين الترجمة';
                 }
             }
 
@@ -383,59 +480,6 @@
                 styleScore.textContent = '--%';
                 culturalScore.textContent = '--%';
                 fluencyScore.textContent = '--%';
-            }
-
-            // Improve function
-            async function improveTranslation() {
-                const currentText = translatedText.textContent.trim();
-                if (!currentText || currentText === 'سيظهر النص المترجم هنا') {
-                    alert('لا يوجد نص مترجم لتحسينه');
-                    return;
-                }
-
-                improveBtn.disabled = true;
-                improveBtn.innerHTML = '<i class="ri-loader-4-line animate-spin ml-2"></i> جاري التحسين...';
-                translatedText.style.opacity = '0.5';
-
-                try {
-                    const response = await fetch('/smart-translation/improve', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            text: sourceText.value,
-                            translatedText: currentText,
-                            targetLang: targetLang.value,
-                            options: {
-                                preserveStyle: options.preserveStyle.checked,
-                                formalTone: options.formalTone.checked,
-                                academicMode: options.academicMode.checked,
-                                marketingMode: options.marketingMode.checked,
-                                culturalAdapt: options.culturalAdapt.checked,
-                                idiomsDetection: options.idiomsDetection.checked
-                            }
-                        })
-                    });
-
-                    if (!response.ok) throw new Error('فشل في تحسين الترجمة');
-
-                    const data = await response.json();
-                    translatedText.textContent = data.translatedText;
-                    translatedText.style.opacity = '1';
-                    translatedText.style.color = '#f3f4f6';
-                    updateQualityAnalysis(data.quality);
-                    feedbackText.textContent = data.feedback || 'تم تحسين الترجمة بنجاح';
-                    qualityScore.textContent = `${Math.round((data.quality.accuracy + data.quality.style + data.quality.cultural + data.quality.fluency) / 4)}%`;
-
-                    // Update history with improved translation
-                    addToHistory(sourceText.value, data.translatedText, sourceLang.value, targetLang.value, data.quality);
-                } catch (error) {
-                    translatedText.textContent = `خطأ: ${error.message}`;
-                    translatedText.style.color = '#f87171';
-                    translatedText.style.opacity = '1';
-                } finally {
-                    improveBtn.disabled = false;
-                    improveBtn.innerHTML = '<i class="ri-ai-generate ml-2"></i> تحسين الترجمة';
-                }
             }
 
             // Add to history function

@@ -24,6 +24,9 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
+<nav style="width:100%; margin-bottom:8vh;">
+    <%- include('partials/navbar') %>
+</nav>
 <body class="min-h-screen flex items-center justify-center bg-gray-900">
     <div class="glass-card p-8 rounded-lg shadow-lg w-full max-w-md animate-fade-in">
         <div class="text-center mb-8">
@@ -54,5 +57,10 @@
             </form>
         </div>
     </div>
+    <footer style="width:100%; margin-top:8vh;">
+        <%- include('partials/footer') %>
+    
+    </footer>
+
 </body>
 </html>

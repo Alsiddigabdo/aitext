@@ -1,129 +1,151 @@
 const db = require('../config/db');
 const axios = require('axios');
+const pdfParse = require('pdf-parse');
 
-class SuggestTitlesModel {
+class TextAnalyzerModel {
   static API_KEY = process.env.API_KEY;
 
-  // أنواع العناوين المتاحة
-  static TITLE_TYPES = {
-    LISTS: 'lists',
-    QUESTIONS: 'questions',
-    HOW_TO: 'how-to',
-    REASONS: 'reasons'
+  static ANALYSIS_TYPES = {
+    DEFAULT: 'default',
+    GRAMMAR: 'grammar',
+    LANGUAGE: 'language',
+    SENTIMENT: 'sentiment',
+    SEO: 'seo',
+    STYLE: 'style',
+    CLASSIFICATION: 'classification',
+    PLAGIARISM: 'plagiarism'
   };
 
-  // النبرات المتاحة
-  static TONES = {
-    PROFESSIONAL: 'professional',
-    FRIENDLY: 'friendly',
-    PROVOCATIVE: 'provocative',
-    HUMOROUS: 'humorous',
-    EMOTIONAL: 'emotional'
-  };
-
-  /**
-   * توليد عناوين جذابة بناءً على الوصف، النبرة، وأنواع العناوين المحددة.
-   */
-  static async generateTitles(content, tone, types) {
+  static async getUserApiKey(userId) {
     try {
-      const response = await axios.post(
-        'https://api.openai.com/v1/chat/completions',
-        {
-          model: "gpt-4o-mini",
-          messages: [
-            { role: "system", content: this.getSystemPrompt(tone, types) },
-            { role: "user", content: content }
-          ],
-          temperature: 0.7,
-          max_tokens: 500
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.API_KEY}`
-          }
-        }
-      );
-
-      const titles = this.processResponse(response.data);
-      await this.saveSuggestion({ content, tone, types, titles });
-      return titles;
+      const [rows] = await db.query('SELECT api_key FROM api_keys WHERE user_id = ?', [userId]);
+      console.log('API key query result:', rows);
+      if (Array.isArray(rows) && rows.length > 0) {
+        return rows[0].api_key;
+      }
+      console.log('No user-specific API key found, using default:', this.API_KEY);
+      return this.API_KEY;
     } catch (error) {
-      console.error('❌ خطأ في generateTitles:', error.message || error);
-      throw new Error('فشل في اقتراح العناوين.');
+      console.error('Error in getUserApiKey:', error.message || error);
+      console.log('Falling back to default API key:', this.API_KEY);
+      return this.API_KEY;
     }
   }
 
-  /**
-   * إرجاع تعليمات النظام بناءً على النبرة وأنواع العناوين.
-   */
-  static getSystemPrompt(tone, types) {
-    const baseInstruction = `
-      أنت أداة لاقتراح عناوين تسويقية جذابة باللغة العربية. بناءً على وصف المحتوى، النبرة، وأنواع العناوين المطلوبة، أنشئ 5 عناوين دقيقة ومبتكرة.
-      أرجع النتائج كمصفوفة JSON نقية (مثال: ["عنوان 1", "عنوان 2", "عنوان 3", "عنوان 4", "عنوان 5"]) بدون أي نصوص إضافية أو تنسيق إضافي أو تعليقات.
-    `;
+  static async analyzeText(input, analysisType = null, userId) {
+    try {
+      let text = input;
 
-    const tonePrompts = {
-      [this.TONES.PROFESSIONAL]: 'استخدم نبرة احترافية وموضوعية تناسب السياقات الرسمية.',
-      [this.TONES.FRIENDLY]: 'استخدم نبرة ودودة ومرحة تجذب القارئ بلطف.',
-      [this.TONES.PROVOCATIVE]: 'استخدم نبرة استفزازية تثير الفضول أو التحدي.',
-      [this.TONES.HUMOROUS]: 'استخدم نبرة فكاهية تضيف لمسة من المرح.',
-      [this.TONES.EMOTIONAL]: 'استخدم نبرة عاطفية تلامس مشاعر القارئ.'
+      // استخراج النص من PDF إذا كان Buffer
+      if (Buffer.isBuffer(input)) {
+        const pdfData = await pdfParse(input);
+        text = pdfData.text;
+      }
+
+      // تحديد نوع التحليل تلقائيًا إذا لم يُحدد
+      const detectedAnalysisType = analysisType || await this.detectAnalysisType(text, userId);
+      const apiKey = await this.getUserApiKey(userId);
+
+      console.log('Sending analysis request to API:', { text: text.substring(0, 50) + '...', analysisType: detectedAnalysisType, apiKey: apiKey.substring(0, 5) + '...' });
+      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+        model: "gpt-4o-mini",
+        store: true,
+        messages: [
+          { role: "system", content: this.getSystemPrompt(detectedAnalysisType) },
+          { role: "user", content: text }
+        ],
+        temperature: 0.7,
+        max_tokens: 1000
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        }
+      }).catch(error => {
+        console.error('API request failed:', error.response ? error.response.data : error.message);
+        throw error;
+      });
+
+      let resultText = response.data.choices[0].message.content;
+      console.log('Raw API response:', resultText);
+
+      // تنظيف الاستجابة من علامات Markdown
+      resultText = resultText.replace(/```json\n|```/g, '').trim();
+      console.log('Cleaned API response:', resultText);
+
+      const result = this.processResponse({ resultText, analysisType: detectedAnalysisType });
+      await this.saveAnalysis({ text, analysisType: detectedAnalysisType, result, userId });
+      return result;
+    } catch (error) {
+      console.error('❌ خطأ في analyzeText:', error.message || error);
+      throw new Error('فشل في تحليل النص: ' + (error.message || 'خطأ غير معروف'));
+    }
+  }
+
+  static async detectAnalysisType(text, userId) {
+    try {
+      const apiKey = await this.getUserApiKey(userId);
+      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+        model: "gpt-4o-mini",
+        store: true,
+        messages: [
+          { role: "system", content: "قم بتحليل النص التالي وتحديد نوعه الأنسب من بين: (grammar, language, sentiment, seo, style, classification, plagiarism). لا تقم بأي تحليل آخر، فقط أعد اسم النوع." },
+          { role: "user", content: text }
+        ],
+        temperature: 0.3,
+        max_tokens: 10
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        }
+      }).catch(error => {
+        console.error('API request failed in detectAnalysisType:', error.response ? error.response.data : error.message);
+        throw error;
+      });
+
+      const detectedType = response.data?.choices?.[0]?.message?.content?.trim().toLowerCase();
+      return Object.values(this.ANALYSIS_TYPES).includes(detectedType) ? detectedType : this.ANALYSIS_TYPES.DEFAULT;
+    } catch (error) {
+      console.error('❌ خطأ في detectAnalysisType:', error.message || error);
+      return this.ANALYSIS_TYPES.DEFAULT;
+    }
+  }
+
+  static getSystemPrompt(analysisType) {
+    const baseInstruction = "يجب أن تلتزم فقط بتحليل النص بناءً على النوع المطلوب دون إضافة أي معلومات غير مطلوبة.";
+    
+    const prompts = {
+      [this.ANALYSIS_TYPES.DEFAULT]: `${baseInstruction} قم بتحليل النص بشكل عام وفقًا لمحتواه.`,
+      [this.ANALYSIS_TYPES.GRAMMAR]: `${baseInstruction} قم بتحليل الأخطاء النحوية والإملائية وعلامات الترقيم فقط.`,
+      [this.ANALYSIS_TYPES.LANGUAGE]: `${baseInstruction} حدد نوع اللغة واللهجة ومستوى التعقيد.`,
+      [this.ANALYSIS_TYPES.SENTIMENT]: `${baseInstruction} حدد نبرة المشاعر (إيجابية، سلبية، محايدة) مع درجة القوة.`,
+      [this.ANALYSIS_TYPES.SEO]: `${baseInstruction} حدد الكلمات المفتاحية وكثافتها واقتراح تحسينات.`,
+      [this.ANALYSIS_TYPES.STYLE]: `${baseInstruction} حدد نقاط القوة والضعف في الأسلوب مع اقتراحات.`,
+      [this.ANALYSIS_TYPES.CLASSIFICATION]: `${baseInstruction} صنف النص إلى نوع معين مع نسبة الاحتمالية.`,
+      [this.ANALYSIS_TYPES.PLAGIARISM]: `${baseInstruction} قم بتقييم نسبة الانتحال مع تحديد الأجزاء المتطابقة.`
     };
 
-    const typesPrompt = types.map(type => {
-      switch (type) {
-        case this.TITLE_TYPES.LISTS:
-          return 'أنشئ عناوين على شكل قوائم (مثال: "5 طرق ل...").';
-        case this.TITLE_TYPES.QUESTIONS:
-          return 'أنشئ عناوين على شكل أسئلة (مثال: "هل تعرف...؟").';
-        case this.TITLE_TYPES.HOW_TO:
-          return 'أنشئ عناوين تعليمية (مثال: "كيف تفعل...").';
-        case this.TITLE_TYPES.REASONS:
-          return 'أنشئ عناوين تعتمد على الأسباب (مثال: "لماذا تحتاج...").';
-        default:
-          return '';
-      }
-    }).join(' ');
-
-    return `${baseInstruction}\nالنبرة: ${tonePrompts[tone] || tonePrompts[this.TONES.PROFESSIONAL]}\nأنواع العناوين: ${typesPrompt}`;
+    return prompts[analysisType] || prompts[this.ANALYSIS_TYPES.DEFAULT];
   }
 
-  /**
-   * معالجة الاستجابة وإرجاع العناوين.
-   */
-  static processResponse(data) {
-    let rawContent = data?.choices?.[0]?.message?.content?.trim() || '[]';
-    console.log('Raw API Response:', rawContent);
-
-    // إزالة أي تنسيق غير مرغوب فيه
-    rawContent = rawContent.replace(/```json/g, '').replace(/```/g, '').trim();
-
-    try {
-      const titles = JSON.parse(rawContent);
-      if (!Array.isArray(titles)) {
-        throw new Error('الاستجابة ليست مصفوفة JSON صالحة');
-      }
-      return titles;
-    } catch (error) {
-      console.error('❌ خطأ في تحليل JSON:', error.message || error);
-      return ["لم يتم تلقي عناوين صالحة من الاستجابة."];
-    }
+  static processResponse({ resultText, analysisType }) {
+    return {
+      analysisType,
+      result: resultText || "لم يتم تلقي استجابة."
+    };
   }
 
-  /**
-   * حفظ الاقتراح في قاعدة البيانات.
-   */
-  static async saveSuggestion({ content, tone, types, titles }) {
+  static async saveAnalysis({ text, analysisType, result, userId }) {
     try {
-      const sql = 'INSERT INTO title_suggestions (content, tone, types, titles, created_at) VALUES (?, ?, ?, ?, NOW())';
-      await db.query(sql, [content, tone, JSON.stringify(types), JSON.stringify(titles)]);
-      console.log('✅ تم حفظ الاقتراح بنجاح');
+      const sql = 'INSERT INTO analyses (user_id, text, analysis_type, result, created_at) VALUES (?, ?, ?, ?, NOW())';
+      await db.query(sql, [userId, text, analysisType, JSON.stringify(result)]);
+      console.log('✅ تم حفظ التحليل بنجاح');
     } catch (error) {
-      console.error('❌ خطأ في حفظ الاقتراح:', error.message || error);
-      throw new Error('فشل في حفظ الاقتراح.');
+      console.error('❌ خطأ في حفظ التحليل:', error.message || error);
+      throw new Error('فشل في حفظ التحليل.');
     }
   }
 }
 
-module.exports = SuggestTitlesModel;
+module.exports = TextAnalyzerModel;
