@@ -47,4 +47,4 @@ class TranslationController {
     }
   }
 }
-module.exports = SmartTranslationController;
+module.exports = TranslationController;
