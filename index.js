@@ -3,9 +3,6 @@ const path = require('path');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const createError = require('http-errors');
-const session = require('express-session');
-const Redis = require('redis'); // تغيير إلى استيراد مباشر
-const RedisStore = require('connect-redis').default; // تهيئة حديثة لـ connect-redis
 
 const indexRouter = require('./routes/index');
 const authRoutes = require('./routes/authRouter');
@@ -26,30 +23,6 @@ const app = express();
 // إعداد محرك العرض
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-
-// إعداد عميل Redis
-const redisClient = Redis.createClient({
-    url: process.env.SCALINGO_REDIS_URL || 'redis://localhost:6379'
-});
-
-// الاتصال بـ Redis مع معالجة الأخطاء
-redisClient.connect()
-    .then(() => console.log('Connected to Redis successfully'))
-    .catch(err => console.error('Redis connection error:', err));
-
-// إعداد الجلسات مع Redis
-app.use(session({
-    store: new RedisStore({ client: redisClient }), // استخدام Redis كمخزن
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { 
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: 'lax'
-    }
-}));
 
 // الوسيطات (Middleware)
 app.use(morgan('dev'));
