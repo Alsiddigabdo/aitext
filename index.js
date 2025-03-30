@@ -4,8 +4,8 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const createError = require('http-errors');
 const session = require('express-session');
-const RedisStore = require('connect-redis')(session); // إضافة connect-redis
-const redis = require('redis'); // إضافة redis
+const RedisStore = require('connect-redis')(session);
+const redis = require('redis');
 
 const indexRouter = require('./routes/index');
 const authRoutes = require('./routes/authRouter');
@@ -29,8 +29,8 @@ app.set('view engine', 'ejs');
 
 // إعداد عميل Redis
 const redisClient = redis.createClient({
-    url: process.env.SCALINGO_REDIS_URL || 'redis://localhost:6379', // استخدام URL من Scalingo
-    legacyMode: true // للتوافق مع connect-redis
+    url: process.env.SCALINGO_REDIS_URL || 'redis://localhost:6379',
+    legacyMode: true
 });
 redisClient.connect().catch(err => {
     console.error('Redis connection error:', err);
@@ -38,20 +38,20 @@ redisClient.connect().catch(err => {
 
 // إعداد الجلسات مع Redis
 app.use(session({
-    store: new RedisStore({ client: redisClient }), // استخدام Redis كمخزن للجلسات
-    secret: process.env.SESSION_SECRET || 'your-secret-key', // يُفضل تعيينه في Scalingo
+    store: new RedisStore({ client: redisClient }),
+    secret: process.env.SESSION_SECRET || 'your-secret-key',
     resave: false,
     saveUninitialized: false,
-    cookie: { 
-        secure: process.env.NODE_ENV === 'production', // آمن في الإنتاج (HTTPS)
-        maxAge: 24 * 60 * 60 * 1000, // 24 ساعة
-        httpOnly: true, // يمنع الوصول إلى الكوكيز عبر JavaScript
-        sameSite: 'lax' // حماية ضد CSRF
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: 'lax'
     }
 }));
 
 // الوسيطات (Middleware)
-app.use(morgan('dev')); // يمكنك تغييره إلى 'combined' للإنتاج
+app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cookieParser());
@@ -74,9 +74,9 @@ app.use('/personality-analysis', personalityAnalysisRouter);
 
 // معالجة الخطأ 404 مع تقديم صفحة EJS
 app.use((req, res, next) => {
-    res.status(404).render('error', { 
-        message: 'الصفحة غير موجودة', 
-        status: 404 
+    res.status(404).render('error', {
+        message: 'الصفحة غير موجودة',
+        status: 404
     });
 });
 
@@ -84,17 +84,17 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
     const status = err.status || 500;
     const message = err.message || 'حدث خطأ في الخادم';
-    console.error(Error ${status}: ${message}, err.stack); // تسجيل الخطأ للتصحيح
-    res.status(status).render('error', { 
-        message: message, 
-        status: status 
+    console.error(`Error ${status}: ${message}`, err.stack);
+    res.status(status).render('error', {
+        message: message,
+        status: status
     });
 });
 
 // بدء الخادم
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-    console.log(Server running on http://localhost:${PORT});
+    console.log(`Server running on http://localhost:${PORT}`);
 });
 
-module.exports = app
+module.exports = app;
