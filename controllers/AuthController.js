@@ -2,6 +2,22 @@ const AuthModel = require('../models/AuthModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+// Middleware للتحقق من التوكن داخل الملف
+function authenticateToken(req, res, next) {
+  const token = req.headers['authorization']?.split(' ')[1]; // توقع "Bearer TOKEN"
+  if (!token) {
+    return res.status(401).json({ error: 'التوكن غير متوفر، يرجى تسجيل الدخول' });
+  }
+
+  jwt.verify(token, 'your-secret-key', (err, user) => {
+    if (err) {
+      return res.status(403).json({ error: 'التوكن غير صالح أو منتهي الصلاحية' });
+    }
+    req.user = user; // تعيين بيانات المستخدم في req
+    next();
+  });
+}
+
 class AuthController {
   static async renderRegister(req, res) {
     res.render('Register');
@@ -60,7 +76,6 @@ class AuthController {
         return res.status(401).json({ success: false, message: 'كلمة المرور غير صحيحة' });
       }
 
-      // إنشاء JWT بدلاً من استخدام الجلسة
       const token = jwt.sign(
         { id: user.id, email: user.email, name: user.name },
         'your-secret-key', // استبدلها بمفتاح سري قوي
@@ -93,7 +108,6 @@ class AuthController {
 
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
       await AuthModel.saveOTP(email, otp);
-      // تخزين البريد في الكوكيز بدلاً من الجلسة
       res.cookie('resetEmail', email, { httpOnly: true, maxAge: 15 * 60 * 1000 }); // 15 دقيقة
       console.log(`OTP generated for ${email}: ${otp}`);
       res.json({ success: true, message: 'تم إرسال رمز OTP إلى بريدك الإلكتروني' });
@@ -129,7 +143,7 @@ class AuthController {
   }
 
   static async resendOTP(req, res) {
-    const email = req.cookies.resetEmail; // استرجاع البريد من الكوكيز
+    const email = req.cookies.resetEmail;
     console.log('Resend OTP attempt for:', email);
 
     if (!email) {
@@ -148,4 +162,5 @@ class AuthController {
   }
 }
 
-module.exports = AuthController;
+// تصدير الكلاس والميدل وير معًا
+module.exports = { AuthController, authenticateToken };
