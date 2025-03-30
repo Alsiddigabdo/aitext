@@ -1,5 +1,6 @@
 const AuthModel = require('../models/AuthModel');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 class AuthController {
   static async renderRegister(req, res) {
@@ -59,10 +60,13 @@ class AuthController {
         return res.status(401).json({ success: false, message: 'كلمة المرور غير صحيحة' });
       }
 
-      req.session.user = { id: user.id, email: user.email, name: user.name };
-      console.log('Session set:', req.session.user);
-      // الانتقال إلى الصفحة الرئيسية بدلاً من إرجاع JSON
-      res.redirect('/');
+      // إنشاء JWT بدلاً من استخدام الجلسة
+      const token = jwt.sign(
+        { id: user.id, email: user.email, name: user.name },
+        'your-secret-key', // استبدلها بمفتاح سري قوي
+        { expiresIn: '1h' }
+      );
+      res.json({ success: true, token, message: 'تم تسجيل الدخول بنجاح' });
     } catch (error) {
       console.error('Login error:', error);
       res.status(500).json({ success: false, message: 'حدث خطأ أثناء تسجيل الدخول: ' + error.message });
@@ -89,7 +93,8 @@ class AuthController {
 
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
       await AuthModel.saveOTP(email, otp);
-      req.session.email = email;
+      // تخزين البريد في الكوكيز بدلاً من الجلسة
+      res.cookie('resetEmail', email, { httpOnly: true, maxAge: 15 * 60 * 1000 }); // 15 دقيقة
       console.log(`OTP generated for ${email}: ${otp}`);
       res.json({ success: true, message: 'تم إرسال رمز OTP إلى بريدك الإلكتروني' });
     } catch (error) {
@@ -124,11 +129,11 @@ class AuthController {
   }
 
   static async resendOTP(req, res) {
-    const email = req.session.email;
+    const email = req.cookies.resetEmail; // استرجاع البريد من الكوكيز
     console.log('Resend OTP attempt for:', email);
 
     if (!email) {
-      return res.status(400).json({ success: false, message: 'البريد الإلكتروني غير متوفر في الجلسة' });
+      return res.status(400).json({ success: false, message: 'البريد الإلكتروني غير متوفر' });
     }
 
     try {
