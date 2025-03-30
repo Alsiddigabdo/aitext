@@ -312,10 +312,16 @@
                 translateBtn.innerHTML = '<i class="ri-loader-4-line animate-spin ml-2"></i> جاري الترجمة...';
                 translatedText.style.opacity = '0.5';
 
+                const token = localStorage.getItem('token'); // استرجاع التوكن من localStorage
+
                 try {
                     const response = await fetch('/smart-translation/translate', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json', 
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${token}` // إضافة التوكن إلى الرأس
+                        },
                         body: JSON.stringify({
                             text,
                             sourceLang: sourceLang.value,
@@ -333,6 +339,9 @@
 
                     if (!response.ok) {
                         const errorData = await response.json();
+                        if (response.status === 401) {
+                            throw new Error('يجب تسجيل الدخول لاستخدام هذه الخدمة');
+                        }
                         if (response.status === 429) {
                             throw new Error('تم تجاوز حد الطلبات. يرجى المحاولة مجدداً بعد 20 ثانية.');
                         }
@@ -373,6 +382,10 @@
                     translatedText.style.opacity = '1';
                     translateBtn.disabled = false;
                     translateBtn.innerHTML = '<i class="ri-translate-2 ml-2"></i> ترجمة النص';
+                    if (error.message.includes('تسجيل الدخول')) {
+                        alert('يرجى تسجيل الدخول أولاً');
+                        window.location.href = '/auth/login';
+                    }
                 }
             }
 
@@ -388,10 +401,16 @@
                 improveBtn.innerHTML = '<i class="ri-loader-4-line animate-spin ml-2"></i> جاري التحسين...';
                 translatedText.style.opacity = '0.5';
 
+                const token = localStorage.getItem('token'); // استرجاع التوكن من localStorage
+
                 try {
                     const response = await fetch('/smart-translation/improve', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json', 
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${token}` // إضافة التوكن إلى الرأس
+                        },
                         body: JSON.stringify({
                             text: sourceText.value,
                             translatedText: currentText,
@@ -409,6 +428,9 @@
 
                     if (!response.ok) {
                         const errorData = await response.json();
+                        if (response.status === 401) {
+                            throw new Error('يجب تسجيل الدخول لاستخدام هذه الخدمة');
+                        }
                         if (response.status === 429) {
                             throw new Error('تم تجاوز حد الطلبات. يرجى المحاولة مجدداً بعد 20 ثانية.');
                         }
@@ -448,6 +470,10 @@
                     translatedText.style.opacity = '1';
                     improveBtn.disabled = false;
                     improveBtn.innerHTML = '<i class="ri-ai-generate ml-2"></i> تحسين الترجمة';
+                    if (error.message.includes('تسجيل الدخول')) {
+                        alert('يرجى تسجيل الدخول أولاً');
+                        window.location.href = '/auth/login';
+                    }
                 }
             }
 
