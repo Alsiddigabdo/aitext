@@ -2,18 +2,18 @@ const AuthModel = require('../models/AuthModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// Middleware للتحقق من التوكن داخل الملف
+// Middleware للتحقق من التوكن
 function authenticateToken(req, res, next) {
   const token = req.headers['authorization']?.split(' ')[1]; // توقع "Bearer TOKEN"
   if (!token) {
-    return res.status(401).json({ error: 'التوكن غير متوفر، يرجى تسجيل الدخول' });
+    return res.status(401).json({ success: false, message: 'التوكن غير متوفر، يرجى تسجيل الدخول' });
   }
 
-  jwt.verify(token, 'your-secret-key', (err, user) => {
+  jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key', (err, user) => {
     if (err) {
-      return res.status(403).json({ error: 'التوكن غير صالح أو منتهي الصلاحية' });
+      return res.status(403).json({ success: false, message: 'التوكن غير صالح أو منتهي الصلاحية' });
     }
-    req.user = user; // تعيين بيانات المستخدم في req
+    req.user = user;
     next();
   });
 }
@@ -78,7 +78,7 @@ class AuthController {
 
       const token = jwt.sign(
         { id: user.id, email: user.email, name: user.name },
-        'your-secret-key', // استبدلها بمفتاح سري قوي
+        process.env.JWT_SECRET || 'your-secret-key',
         { expiresIn: '1h' }
       );
       res.json({ success: true, token, message: 'تم تسجيل الدخول بنجاح' });
@@ -108,9 +108,8 @@ class AuthController {
 
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
       await AuthModel.saveOTP(email, otp);
-      res.cookie('resetEmail', email, { httpOnly: true, maxAge: 15 * 60 * 1000 }); // 15 دقيقة
       console.log(`OTP generated for ${email}: ${otp}`);
-      res.json({ success: true, message: 'تم إرسال رمز OTP إلى بريدك الإلكتروني' });
+      res.json({ success: true, email, message: 'تم إرسال رمز OTP إلى بريدك الإلكتروني' });
     } catch (error) {
       console.error('Forgot password error:', error);
       res.status(500).json({ success: false, message: error.message });
@@ -143,7 +142,7 @@ class AuthController {
   }
 
   static async resendOTP(req, res) {
-    const email = req.cookies.resetEmail;
+    const { email } = req.body;
     console.log('Resend OTP attempt for:', email);
 
     if (!email) {
@@ -162,5 +161,4 @@ class AuthController {
   }
 }
 
-// تصدير الكلاس والميدل وير معًا
 module.exports = { AuthController, authenticateToken };
