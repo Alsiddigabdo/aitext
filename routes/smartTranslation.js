@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const SmartTranslationController = require('../controllers/SmartTranslationController');
+const TranslationController = require('../controllers/TranslationController');
 const { authenticateToken } = require('../controllers/AuthController');
 
-router.get('/', SmartTranslationController.renderTranslationPage); // صفحة عامة
-router.post('/translate', authenticateToken, SmartTranslationController.translateText); // محمية
-router.post('/improve', authenticateToken, SmartTranslationController.improveTranslation); // محمية
+router.post('/translate', authenticateToken, TranslationController.translate);
+router.post('/improve', authenticateToken, TranslationController.improve);
 
 module.exports = router;
