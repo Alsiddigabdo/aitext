@@ -76,7 +76,7 @@
                 <p class="text-gray-400 mt-2">أدخل بياناتك للوصول إلى حسابك</p>
             </div>
 
-            <form id="login-form" method="POST" action="/auth/login" class="space-y-6">
+            <form id="login-form" class="space-y-6">
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-300 mb-2">البريد الإلكتروني</label>
                     <div class="relative">
@@ -111,8 +111,8 @@
                 </button>
             </form>
 
-            <div id="error-message" class="text-center text-red-500 mt-4 <%= typeof message !== 'undefined' ? '' : 'hidden' %>">
-                <%= typeof message !== 'undefined' ? message : '' %>
+            <div id="error-message" class="text-center text-red-500 mt-4 hidden">
+                <!-- سيتم ملؤه ديناميكيًا -->
             </div>
             
             <div class="text-center mt-6">
@@ -126,13 +126,45 @@
     </footer>
 
     <script>
-        document.getElementById('login-form').addEventListener('submit', function(e) {
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
             const btn = document.getElementById('login-btn');
             const spinner = document.getElementById('loading-spinner');
+            const errorMessage = document.getElementById('error-message');
             
             btn.disabled = true;
             spinner.classList.remove('hidden');
-            btn.innerHTML = '<i class="ri-login-box-line ml-2"></i> جاري تسجيل الدخول';
+            btn.innerHTML = '<i class="ri-login-box-line ml-2"></i> جاري تسجيل الدخول <span class="ml-2"><i class="ri-loader-4-line animate-spin"></i></span>';
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    localStorage.setItem('token', data.token); // تخزين التوكن في localStorage
+                    window.location.href = '/'; // إعادة التوجيه إلى الصفحة الرئيسية
+                } else {
+                    errorMessage.textContent = data.message;
+                    errorMessage.classList.remove('hidden');
+                    btn.disabled = false;
+                    spinner.classList.add('hidden');
+                    btn.innerHTML = '<i class="ri-login-box-line ml-2"></i> تسجيل الدخول';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorMessage.textContent = 'حدث خطأ أثناء تسجيل الدخول';
+                errorMessage.classList.remove('hidden');
+                btn.disabled = false;
+                spinner.classList.add('hidden');
+                btn.innerHTML = '<i class="ri-login-box-line ml-2"></i> تسجيل الدخول';
+            }
         });
     </script>
 </body>
