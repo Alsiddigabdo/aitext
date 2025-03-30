@@ -1,5 +1,5 @@
 const TextAnalyzerModel = require('../models/TextAnalyzerModel');
-const authenticateToken = require('../middleware/auth');
+const { authenticateToken } = require('./AuthController');
 
 class TextAnalyzerController {
   static async renderPage(req, res) {
@@ -13,7 +13,7 @@ class TextAnalyzerController {
 
   static async analyzeText(req, res) {
     const { text, analysisType } = req.body;
-    const userId = req.user?.id; // من JWT
+    const userId = req.user?.id;
 
     if (!userId) {
       return res.status(401).json({ error: 'يجب تسجيل الدخول لاستخدام هذه الخدمة' });
