@@ -1,50 +1,68 @@
 const SmartTranslationModel = require('../models/SmartTranslationModel');
-const { authenticateToken } = require('./AuthController');
-class TranslationController {
-  static async translate(req, res) {
+
+class SmartTranslationController {
+  static async renderTranslationPage(req, res) {
+    if (!req.session.user) {
+      return res.redirect('/auth/login');
+    }
+    res.render('SmartTranslation');
+  }
+
+  static async translateText(req, res) {
     const { text, sourceLang, targetLang, options } = req.body;
-    const userId = req.user.id;
+    const userId = req.session.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'يجب تسجيل الدخول لاستخدام هذه الخدمة' });
+    }
 
     if (!text || !sourceLang || !targetLang) {
-      return res.status(400).json({ success: false, error: 'يرجى إدخال النص ولغات الترجمة' });
+      return res.status(400).json({ 
+        error: 'النص واللغات المصدر والهدف مطلوبة',
+        details: { text: !!text, sourceLang: !!sourceLang, targetLang: !!targetLang }
+      });
     }
 
     try {
-      const translatedText = await TranslationModel.translateText(userId, text, sourceLang, targetLang, options);
-      const quality = TranslationModel.evaluateQuality(translatedText, text, options); // دالة تقييم وهمية
-      res.status(200).json({
-        success: true,
-        translatedText,
-        quality,
-        feedback: 'ترجمة ناجحة باستخدام مفتاح OpenAI الخاص بك',
-      });
+      const result = await SmartTranslationModel.translateText({ text, sourceLang, targetLang, options, userId });
+      res.json(result);
     } catch (error) {
-      console.error('Translation error:', error);
-      res.status(500).json({ success: false, error: error.message });
+      if (error.message.includes('429')) {
+        return res.status(429).json({ 
+          error: 'تم تجاوز حد الطلبات. يرجى المحاولة مجدداً بعد 20 ثانية أو ترقية حسابك في OpenAI.' 
+        });
+      }
+      res.status(500).json({ error: error.message });
     }
   }
 
-  static async improve(req, res) {
+  static async improveTranslation(req, res) {
     const { text, translatedText, targetLang, options } = req.body;
-    const userId = req.user.id;
+    const userId = req.session.user?.id;
 
-    if (!translatedText || !targetLang) {
-      return res.status(400).json({ success: false, error: 'يرجى إدخال النص المترجم ولغة الهدف' });
+    if (!userId) {
+      return res.status(401).json({ error: 'يجب تسجيل الدخول لاستخدام هذه الخدمة' });
+    }
+
+    if (!text || !translatedText || !targetLang) {
+      return res.status(400).json({ 
+        error: 'النص الأصلي والترجمة الحالية واللغة الهدف مطلوبة',
+        details: { text: !!text, translatedText: !!translatedText, targetLang: !!targetLang }
+      });
     }
 
     try {
-      const improvedText = await TranslationModel.improveText(userId, text, translatedText, targetLang, options);
-      const quality = TranslationModel.evaluateQuality(improvedText, text, options); // دالة تقييم وهمية
-      res.status(200).json({
-        success: true,
-        translatedText: improvedText,
-        quality,
-        feedback: 'تم تحسين الترجمة بنجاح باستخدام مفتاح OpenAI الخاص بك',
-      });
+      const result = await SmartTranslationModel.improveTranslation({ text, translatedText, targetLang, options, userId });
+      res.json(result);
     } catch (error) {
-      console.error('Improve error:', error);
-      res.status(500).json({ success: false, error: error.message });
+      if (error.message.includes('429')) {
+        return res.status(429).json({ 
+          error: 'تم تجاوز حد الطلبات. يرجى المحاولة مجدداً بعد 20 ثانية أو ترقية حسابك في OpenAI.' 
+        });
+      }
+      res.status(500).json({ error: error.message });
     }
   }
 }
-module.exports = TranslationController;
+
+module.exports = SmartTranslationController;
