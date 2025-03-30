@@ -16,7 +16,7 @@ const feedbackRoutes = require('./routes/feedback');
 const analysisHistoryRouter = require('./routes/analysisHistory');
 const promptGeneratorRouter = require('./routes/promptGenerator');
 const personalityAnalysisRouter = require('./routes/personalityAnalysis');
-const openaiRoutes = require('./routes/openai');
+//const openaiRoutes = require('./routes/openai');
 
 const app = express();
 
@@ -44,7 +44,7 @@ app.use('/feedback', feedbackRoutes);
 app.use('/analysis-history', analysisHistoryRouter);
 app.use('/prompt-generator', promptGeneratorRouter);
 app.use('/personality-analysis', personalityAnalysisRouter);
-app.use('/api', openaiRoutes);
+//app.use('/api', openaiRoutes);
 // معالجة الخطأ 404
 app.use((req, res, next) => {
     res.status(404).render('error', { 
