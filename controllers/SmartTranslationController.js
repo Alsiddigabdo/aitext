@@ -3,12 +3,7 @@ const createError = require('http-errors');
 
 class SmartTranslationController {
   static async renderTranslationPage(req, res, next) {
-    if (!req.session.user) {
-      console.log('📝 إعادة توجيه إلى تسجيل الدخول: المستخدم غير مسجل');
-      req.session.redirectMessage = 'يرجى تسجيل الدخول للوصول إلى الترجمة الذكية';
-      return res.redirect('/auth/login');
-    }
-    console.log('📝 عرض صفحة الترجمة الذكية للمستخدم:', req.session.user.id);
+    console.log('📝 عرض صفحة الترجمة الذكية', req.session.user ? 'للمستخدم: ' + req.session.user.id : 'لزائر غير مسجل');
     res.render('SmartTranslation');
   }
 
