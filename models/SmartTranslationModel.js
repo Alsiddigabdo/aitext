@@ -9,9 +9,9 @@ class SmartTranslationModel {
       if (Array.isArray(rows) && rows.length > 0) {
         return rows[0].api_key;
       }
-      throw new Error('يرجى إدخال مفتاح API في إعدادات حسابك.');
+      throw new Error('يرجى إدخال مفتاح API في صفحة تفعيل OpenAI.');
     } catch (error) {
-      console.error('Error in getUserApiKey:', error.message || error);
+      console.error('❌ خطأ في getUserApiKey:', error.message || error);
       throw error;
     }
   }
@@ -56,8 +56,8 @@ class SmartTranslationModel {
           'Authorization': `Bearer ${apiKey}`
         }
       }).catch(error => {
-        console.error('API request failed:', error.response ? error.response.data : error.message);
-        throw error;
+        console.error('❌ فشل طلب API:', error.response ? error.response.data : error.message);
+        throw new Error('فشل في الاتصال بخدمة OpenAI: ' + (error.response?.data?.error?.message || error.message));
       });
 
       let resultText = response.data.choices[0].message.content;
@@ -70,7 +70,7 @@ class SmartTranslationModel {
       try {
         result = JSON.parse(resultText);
       } catch (e) {
-        console.error('Failed to parse API response:', e);
+        console.error('❌ فشل في تحليل استجابة API:', e);
         throw new Error('استجابة API غير صالحة');
       }
 
@@ -128,8 +128,8 @@ class SmartTranslationModel {
           'Authorization': `Bearer ${apiKey}`
         }
       }).catch(error => {
-        console.error('API request failed:', error.response ? error.response.data : error.message);
-        throw error;
+        console.error('❌ فشل طلب API:', error.response ? error.response.data : error.message);
+        throw new Error('فشل في الاتصال بخدمة OpenAI: ' + (error.response?.data?.error?.message || error.message));
       });
 
       let resultText = response.data.choices[0].message.content;
@@ -142,7 +142,7 @@ class SmartTranslationModel {
       try {
         result = JSON.parse(resultText);
       } catch (e) {
-        console.error('Failed to parse API response:', e);
+        console.error('❌ فشل في تحليل استجابة API:', e);
         throw new Error('استجابة API غير صالحة');
       }
 
@@ -160,7 +160,12 @@ class SmartTranslationModel {
 
   static async saveTranslation({ text, sourceLang, targetLang, options, result, userId, improved = false }) {
     try {
-      const sql = 'INSERT INTO translations (user_id, source_text, source_lang, target_lang, options, translated_text, quality, feedback, improved, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())';
+      const sql = `
+        INSERT INTO translations (
+          user_id, source_text, source_lang, target_lang, options, 
+          translated_text, quality, feedback, improved, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+      `;
       await db.query(sql, [
         userId,
         text,
@@ -175,7 +180,7 @@ class SmartTranslationModel {
       console.log('✅ تم حفظ الترجمة بنجاح');
     } catch (error) {
       console.error('❌ خطأ في حفظ الترجمة:', error.message || error);
-      throw new Error('فشل في حفظ الترجمة.');
+      throw new Error('فشل في حفظ الترجمة: ' + (error.message || 'خطأ غير معروف'));
     }
   }
 }
