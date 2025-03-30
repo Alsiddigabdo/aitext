@@ -4,6 +4,8 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const createError = require('http-errors');
 const session = require('express-session');
+const RedisStore = require('connect-redis')(session); // إضافة connect-redis
+const redis = require('redis'); // إضافة redis
 
 const indexRouter = require('./routes/index');
 const authRoutes = require('./routes/authRouter');
@@ -25,18 +27,31 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// إعداد الجلسات
+// إعداد عميل Redis
+const redisClient = redis.createClient({
+    url: process.env.SCALINGO_REDIS_URL || 'redis://localhost:6379', // استخدام URL من Scalingo
+    legacyMode: true // للتوافق مع connect-redis
+});
+redisClient.connect().catch(err => {
+    console.error('Redis connection error:', err);
+});
+
+// إعداد الجلسات مع Redis
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    store: new RedisStore({ client: redisClient }), // استخدام Redis كمخزن للجلسات
+    secret: process.env.SESSION_SECRET || 'your-secret-key', // يُفضل تعيينه في Scalingo
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000
+        secure: process.env.NODE_ENV === 'production', // آمن في الإنتاج (HTTPS)
+        maxAge: 24 * 60 * 60 * 1000, // 24 ساعة
+        httpOnly: true, // يمنع الوصول إلى الكوكيز عبر JavaScript
+        sameSite: 'lax' // حماية ضد CSRF
     }
 }));
 
-app.use(morgan('dev'));
+// الوسيطات (Middleware)
+app.use(morgan('dev')); // يمكنك تغييره إلى 'combined' للإنتاج
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cookieParser());
@@ -69,6 +84,7 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
     const status = err.status || 500;
     const message = err.message || 'حدث خطأ في الخادم';
+    console.error(`Error ${status}: ${message}`, err.stack); // تسجيل الخطأ للتصحيح
     res.status(status).render('error', { 
         message: message, 
         status: status 
