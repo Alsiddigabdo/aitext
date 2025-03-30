@@ -2,7 +2,9 @@ const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
-const createError = require('http-errors');
+const session = require('express-session');
+const RedisStore = require('connect-redis')(session);
+const redis = require('redis');
 
 const indexRouter = require('./routes/index');
 const authRoutes = require('./routes/authRouter');
@@ -24,8 +26,32 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+// إعداد عميل Redis
+const redisClient = redis.createClient({
+    url: process.env.SCALINGO_REDIS_URL || 'redis://localhost:6379',
+    legacyMode: true
+});
+
+redisClient.connect().catch(err => {
+    console.error('Redis connection error:', err);
+});
+
+// إعداد الجلسات مع Redis
+app.use(session({
+    store: new RedisStore({ client: redisClient }),
+    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: 'lax'
+    }
+}));
+
 // الوسيطات (Middleware)
-app.use(morgan('dev')); // يمكنك تغييره إلى 'combined' للإنتاج
+app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cookieParser());
@@ -46,23 +72,16 @@ app.use('/api', apiKeyRoutes);
 app.use('/prompt-generator', promptGeneratorRouter);
 app.use('/personality-analysis', personalityAnalysisRouter);
 
-// معالجة الخطأ 404 مع تقديم صفحة EJS
+// معالجة الخطأ 404
 app.use((req, res, next) => {
-    res.status(404).render('error', { 
-        message: 'الصفحة غير موجودة', 
-        status: 404 
-    });
+    res.status(404).render('error', { message: 'الصفحة غير موجودة', status: 404 });
 });
 
-// معالجة الأخطاء العامة مع تقديم صفحة EJS
+// معالجة الأخطاء العامة
 app.use((err, req, res, next) => {
     const status = err.status || 500;
-    const message = err.message || 'حدث خطأ في الخادم';
-    console.error(`Error ${status}: ${message}`, err.stack); // تسجيل الخطأ للتصحيح
-    res.status(status).render('error', { 
-        message: message, 
-        status: status 
-    });
+    console.error(`Error ${status}: ${err.message}`, err.stack);
+    res.status(status).render('error', { message: err.message, status: status });
 });
 
 // بدء الخادم
