@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const createError = require('http-errors');
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 const redis = require('redis');
@@ -26,7 +27,7 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// إعداد عميل Redis
+// إعداد Redis
 const redisClient = redis.createClient({
     url: process.env.SCALINGO_REDIS_URL || 'redis://localhost:6379',
     legacyMode: true
@@ -34,6 +35,13 @@ const redisClient = redis.createClient({
 
 redisClient.connect().catch(err => {
     console.error('Redis connection error:', err);
+});
+
+redisClient.on('connect', () => {
+    console.log('✅ Connected to Redis successfully');
+});
+redisClient.on('error', err => {
+    console.error('❌ Redis Error:', err);
 });
 
 // إعداد الجلسات مع Redis
@@ -50,7 +58,7 @@ app.use(session({
     }
 }));
 
-// الوسيطات (Middleware)
+// Middleware
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
@@ -74,20 +82,25 @@ app.use('/personality-analysis', personalityAnalysisRouter);
 
 // معالجة الخطأ 404
 app.use((req, res, next) => {
-    res.status(404).render('error', { message: 'الصفحة غير موجودة', status: 404 });
+    res.status(404).render('error', {
+        message: 'الصفحة غير موجودة',
+        status: 404
+    });
 });
 
 // معالجة الأخطاء العامة
 app.use((err, req, res, next) => {
-    const status = err.status || 500;
-    console.error(`Error ${status}: ${err.message}`, err.stack);
-    res.status(status).render('error', { message: err.message, status: status });
+    console.error(`Error ${err.status || 500}:`, err.message);
+    res.status(err.status || 500).render('error', {
+        message: err.message || 'حدث خطأ في الخادم',
+        status: err.status || 500
+    });
 });
 
 // بدء الخادم
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
 
 module.exports = app;
