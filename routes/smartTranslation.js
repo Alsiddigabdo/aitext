@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const TranslationController = require('../controllers/SmartTranslationController');
-const { authenticateToken } = require('../controllers/AuthController');
+const SmartTranslationController = require('../controllers/SmartTranslationController');
 
-router.post('/translate', authenticateToken, TranslationController.translate);
-router.post('/improve', authenticateToken, TranslationController.improve);
+router.get('/', SmartTranslationController.renderTranslationPage);
+router.post('/translate', SmartTranslationController.translateText);
+router.post('/improve', SmartTranslationController.improveTranslation);
 
 module.exports = router;
