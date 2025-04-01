@@ -1,13 +1,13 @@
 const AnalysisHistoryModel = require('../models/AnalysisHistoryModel');
+const { authenticateToken } = require('./AuthController');
 
 class AnalysisHistoryController {
-  // عرض صفحة سجل التحليلات مع الفلاتر
   static async renderAnalysisHistory(req, res) {
-    if (!req.session.user) {
+    if (!req.user) {
       return res.redirect('/auth/login');
     }
 
-    const userId = req.session.user.id;
+    const userId = req.user.id;
     const filters = {
       search: req.query.search || '',
       dateFilter: req.query.dateFilter || 'all',
@@ -16,11 +16,8 @@ class AnalysisHistoryController {
       analysisTypes: req.query.analysisTypes ? (Array.isArray(req.query.analysisTypes) ? req.query.analysisTypes : [req.query.analysisTypes]) : []
     };
 
-    // التحقق من صحة التواريخ إذا كانت موجودة
-    if (filters.startDate && filters.endDate) {
-      if (new Date(filters.startDate) > new Date(filters.endDate)) {
-        return res.status(400).json({ error: 'تاريخ البداية يجب أن يكون قبل تاريخ النهاية' });
-      }
+    if (filters.startDate && filters.endDate && new Date(filters.startDate) > new Date(filters.endDate)) {
+      return res.status(400).json({ error: 'تاريخ البداية يجب أن يكون قبل تاريخ النهاية' });
     }
 
     try {
@@ -32,35 +29,29 @@ class AnalysisHistoryController {
     }
   }
 
-  // حذف تحليل معين
   static async deleteAnalysis(req, res) {
-    if (!req.session.user) {
+    if (!req.user) {
       return res.status(401).json({ error: 'يجب تسجيل الدخول لاستخدام هذه الخدمة' });
     }
 
-    const userId = req.session.user.id;
+    const userId = req.user.id;
     const analysisId = req.params.id;
 
     try {
       const success = await AnalysisHistoryModel.deleteAnalysis(userId, analysisId);
-      if (success) {
-        res.json({ success: true, message: 'تم حذف التحليل بنجاح' });
-      } else {
-        res.status(404).json({ error: 'التحليل غير موجود' });
-      }
+      res.json(success ? { success: true, message: 'تم الحذف بنجاح' } : { error: 'التحليل غير موجود' });
     } catch (error) {
       console.error('Error deleting analysis:', error);
       res.status(500).json({ error: 'حدث خطأ أثناء الحذف' });
     }
   }
 
-  // تنزيل تحليل كملف JSON
   static async downloadAnalysis(req, res) {
-    if (!req.session.user) {
+    if (!req.user) {
       return res.status(401).json({ error: 'يجب تسجيل الدخول لاستخدام هذه الخدمة' });
     }
 
-    const userId = req.session.user.id;
+    const userId = req.user.id;
     const analysisId = req.params.id;
 
     try {
