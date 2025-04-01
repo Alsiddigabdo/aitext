@@ -41,8 +41,11 @@ app.use((req, res, next) => {
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
             if (!err) {
                 req.user = decoded;
+                res.locals.user = decoded; // جعل user متاحًا في جميع القوالب
             }
         });
+    } else {
+        res.locals.user = null;
     }
     next();
 });
@@ -73,7 +76,7 @@ app.use((err, req, res, next) => {
         return res.render('error', {
             status: err.status || 500,
             message: err.message,
-            user: req.user || null
+            user: res.locals.user
         });
     }
     res.json({
