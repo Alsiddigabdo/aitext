@@ -22,6 +22,12 @@ function authenticateToken(req, res, next) {
     });
 }
 
+// Middleware لإضافة user إلى جميع الردود
+function attachUser(req, res, next) {
+    res.locals.user = req.user || null;
+    next();
+}
+
 class AuthController {
     static async renderRegister(req, res) {
         res.render('Register', { user: req.user });
@@ -64,29 +70,6 @@ class AuthController {
     static async renderOTP(req, res) {
         res.render('OTP', { user: req.user });
     }
-
-    static async updateOpenAIKey(req, res) {
-        const { openaiKey } = req.query;
-        console.log('Received openaiKey:', openaiKey);
-
-        if (!openaiKey) {
-            return res.status(400).json({ success: false, message: 'مفتاح OpenAI مطلوب' });
-        }
-
-        try {
-            const user = req.user;
-            if (!user) {
-                return res.status(401).json({ success: false, message: 'المستخدم غير مصدق عليه' });
-            }
-
-            await AuthModel.updateOpenAIKey(user.id, openaiKey);
-            console.log(`OpenAI Key updated for user ${user.id}: ${openaiKey}`);
-            res.redirect('/');
-        } catch (error) {
-            console.error('Error updating OpenAI Key:', error);
-            res.status(500).json({ success: false, message: 'حدث خطأ أثناء تحديث مفتاح OpenAI: ' + error.message });
-        }
-    }
 }
 
-module.exports = { AuthController, authenticateToken };
+module.exports = { AuthController, authenticateToken, attachUser };
