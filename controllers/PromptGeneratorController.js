@@ -2,24 +2,20 @@ const PromptGeneratorModel = require('../models/PromptGeneratorModel');
 const createError = require('http-errors');
 
 class PromptGeneratorController {
-  /**
-   * عرض صفحة منشئ البرومبتات
-   */
+  // عرض صفحة منشئ البرومبتات
   static async renderPromptGeneratorPage(req, res, next) {
-    if (!req.session.user) {
+    if (!req.user) {
       console.log('📝 إعادة توجيه إلى تسجيل الدخول: المستخدم غير مسجل');
       return res.redirect('/auth/login');
     }
-    console.log('📝 عرض صفحة منشئ البرومبتات للمستخدم:', req.session.user.id);
-    res.render('PromptGenerator', { user: req.session.user });
+    console.log('📝 عرض صفحة منشئ البرومبتات للمستخدم:', req.user.id);
+    res.render('PromptGenerator', { user: req.user });
   }
 
-  /**
-   * إنشاء برومبت بناءً على الإدخال
-   */
+  // إنشاء برومبت بناءً على الإدخال
   static async generatePrompt(req, res, next) {
     const { type, input, settings } = req.body;
-    const userId = req.session.user?.id;
+    const userId = req.user?.id;
 
     if (!userId) {
       console.warn('⚠️ محاولة إنشاء برومبت بدون تسجيل دخول');
@@ -37,20 +33,21 @@ class PromptGeneratorController {
       console.log('✅ تم إنشاء البرومبت بنجاح');
       res.json(result);
     } catch (error) {
-      console.error('❌ خطأ في generatePrompt:', error.stack || error.message);
+      console.error('❌ خطأ في generatePrompt:', error.message);
       if (error.message.includes('429')) {
         return next(createError(429, 'تم تجاوز حد الطلبات. حاول مجددًا بعد 20 ثانية أو قم بترقية حسابك في OpenAI.'));
       }
-      next(createError(500, error.message));
+      if (error.message.includes('خطأ في الطلب')) {
+        return next(createError(400, error.message));
+      }
+      next(createError(500, error.message || 'حدث خطأ أثناء إنشاء البرومبت'));
     }
   }
 
-  /**
-   * حفظ البرومبت في قاعدة البيانات
-   */
+  // حفظ البرومبت في قاعدة البيانات
   static async savePrompt(req, res, next) {
     const { type, input, settings, result } = req.body;
-    const userId = req.session.user?.id;
+    const userId = req.user?.id;
 
     if (!userId) {
       console.warn('⚠️ محاولة حفظ برومبت بدون تسجيل دخول');
@@ -68,16 +65,14 @@ class PromptGeneratorController {
       console.log('✅ تم حفظ البرومبت بنجاح، ID:', saveResult.promptId);
       res.json({ success: true, message: 'تم حفظ البرومبت بنجاح', promptId: saveResult.promptId });
     } catch (error) {
-      console.error('❌ خطأ في savePrompt:', error.stack || error.message);
-      next(createError(500, error.message));
+      console.error('❌ خطأ في savePrompt:', error.message);
+      next(createError(500, error.message || 'حدث خطأ أثناء حفظ البرومبت'));
     }
   }
 
-  /**
-   * استرجاع البرومبتات المحفوظة للمستخدم
-   */
+  // استرجاع البرومبتات المحفوظة للمستخدم
   static async getSavedPrompts(req, res, next) {
-    const userId = req.session.user?.id;
+    const userId = req.user?.id;
     const { limit = 10, offset = 0, type } = req.query;
 
     if (!userId) {
@@ -91,17 +86,15 @@ class PromptGeneratorController {
       console.log('✅ تم جلب البرومبتات بنجاح:', prompts.length, 'عنصر');
       res.json({ success: true, prompts });
     } catch (error) {
-      console.error('❌ خطأ في getSavedPrompts:', error.stack || error.message);
-      next(createError(500, error.message));
+      console.error('❌ خطأ في getSavedPrompts:', error.message);
+      next(createError(500, error.message || 'حدث خطأ أثناء استرجاع البرومبتات'));
     }
   }
 
-  /**
-   * حذف برومبت معين
-   */
+  // حذف برومبت معين
   static async deletePrompt(req, res, next) {
     const { promptId } = req.body;
-    const userId = req.session.user?.id;
+    const userId = req.user?.id;
 
     if (!userId) {
       console.warn('⚠️ محاولة حذف برومبت بدون تسجيل دخول');
@@ -119,8 +112,8 @@ class PromptGeneratorController {
       console.log('✅ تم حذف البرومبت بنجاح');
       res.json({ success: true, message: 'تم حذف البرومبت بنجاح' });
     } catch (error) {
-      console.error('❌ خطأ في deletePrompt:', error.stack || error.message);
-      next(createError(500, error.message));
+      console.error('❌ خطأ في deletePrompt:', error.message);
+      next(createError(500, error.message || 'حدث خطأ أثناء حذف البرومبت'));
     }
   }
 }
