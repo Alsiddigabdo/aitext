@@ -1,28 +1,21 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
+// إعدادات الاتصال بقاعدة البيانات
 const dbConfig = {
   host: 'sql.freedb.tech',
-  user:'freedb_textai',
-  password:'j?SB9P9gytSk3*V',
-  database:'freedb_textai',
+  user: 'freedb_textai',
+  password: 'j?SB9P9gytSk3*V',
+  database: 'freedb_textai',
   port: process.env.DB_PORT || 3306,
   connectTimeout: 10000,
   waitForConnections: true,
-  connectionLimit: 8,
-  queueLimit: 50,
+  connectionLimit: 5,
+  queueLimit: 20, 
   enableKeepAlive: true,
-  keepAliveInitialDelay: 10000,
+  keepAliveInitialDelay: 15000, 
   multipleStatements: false,
-  connectTimeout: 10000,
-  waitForConnections: true,
-  connectionLimit: 8,
-  queueLimit: 50,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 10000,
-  multipleStatements: false
 };
-
 
 let pool;
 let isReconnecting = false;
@@ -30,12 +23,9 @@ let isReconnecting = false;
 async function initializePool() {
   try {
     pool = mysql.createPool(dbConfig);
-    
-    // اختبار الاتصال
     const testConn = await pool.getConnection();
     await testConn.ping();
     testConn.release();
-    
     console.log('✅ تم الاتصال بقاعدة البيانات بنجاح');
     return true;
   } catch (err) {
@@ -44,27 +34,21 @@ async function initializePool() {
   }
 }
 
-// استراتيجية إعادة الاتصال مع زيادة التأخير تدريجياً
+// إعادة الاتصال مع تأخير متزايد
 async function reconnectWithBackoff(attempt = 1) {
   const maxAttempts = 5;
-  const baseDelay = 2000; // 2 ثانية
-  const maxDelay = 30000; // 30 ثانية كحد أقصى
-  const jitter = 500; // تغير عشوائي
+  const baseDelay = 3000; // 3 ثواني
+  const maxDelay = 60000; // دقيقة كحد أقصى
   
   if (isReconnecting) return;
   isReconnecting = true;
   
   try {
-    const delay = Math.min(
-      baseDelay * Math.pow(2, attempt - 1) + Math.random() * jitter,
-      maxDelay
-    );
-    
-    console.log(`🔄 محاولة إعادة الاتصال (${attempt}/${maxAttempts}) بعد ${Math.round(delay/1000)} ثوانٍ...`);
+    const delay = Math.min(baseDelay * Math.pow(2, attempt - 1), maxDelay);
+    console.log(`🔄 إعادة الاتصال بعد ${Math.round(delay / 1000)} ثانية...`);
     await new Promise(resolve => setTimeout(resolve, delay));
     
-    const success = await initializePool();
-    if (success) {
+    if (await initializePool()) {
       setupPoolListeners();
       return;
     }
@@ -76,26 +60,12 @@ async function reconnectWithBackoff(attempt = 1) {
     }
   } catch (err) {
     console.error('❌ خطأ في عملية إعادة الاتصال:', err);
-    throw err;
   } finally {
     isReconnecting = false;
   }
 }
 
-// إعداد مستمعي الأحداث لمجمع الاتصالات
 function setupPoolListeners() {
-  pool.on('acquire', (connection) => {
-    console.log('🔹 تم الحصول على اتصال من المجمع');
-  });
-  
-  pool.on('release', (connection) => {
-    console.log('🔸 تم إعادة الاتصال إلى المجمع');
-  });
-  
-  pool.on('enqueue', () => {
-    console.log('⏳ طلب اتصال في قائمة الانتظار');
-  });
-  
   pool.on('error', async (err) => {
     console.error('❌ خطأ في مجمع الاتصالات:', err);
     if (shouldReconnect(err)) {
@@ -104,35 +74,10 @@ function setupPoolListeners() {
   });
 }
 
-// تحديد ما إذا كان يجب إعادة الاتصال بناءً على نوع الخطأ
 function shouldReconnect(err) {
-  const reconnectErrors = [
-    'PROTOCOL_CONNECTION_LOST',
-    'ECONNRESET',
-    'ETIMEDOUT',
-    'ER_USER_LIMIT_REACHED',
-    'ER_CON_COUNT_ERROR'
-  ];
-  
-  return reconnectErrors.includes(err.code);
+  return ['PROTOCOL_CONNECTION_LOST', 'ECONNRESET', 'ETIMEDOUT', 'ER_USER_LIMIT_REACHED', 'ER_CON_COUNT_ERROR'].includes(err.code);
 }
 
-// تهيئة الاتصال الأولي
-async function initializeDatabase() {
-  try {
-    const initialized = await initializePool();
-    if (!initialized) {
-      await reconnectWithBackoff();
-    } else {
-      setupPoolListeners();
-    }
-  } catch (err) {
-    console.error('❌ فشل في تهيئة قاعدة البيانات:', err);
-    process.exit(1); // إنهاء العملية إذا فشل الاتصال تماماً
-  }
-}
-
-// دالة مساعدة لتنفيذ الاستعلامات مع إدارة الاتصال
 async function executeQuery(sql, params) {
   let connection;
   try {
@@ -140,57 +85,38 @@ async function executeQuery(sql, params) {
     const [rows] = await connection.query(sql, params);
     return rows;
   } catch (err) {
-    console.error('❌ خطأ في تنفيذ الاستعلام:', {
-      sql: sql,
-      params: params,
-      error: err.message
-    });
-    
+    console.error('❌ خطأ في تنفيذ الاستعلام:', err.message);
     if (shouldReconnect(err)) {
       await reconnectWithBackoff();
-      return executeQuery(sql, params); // إعادة المحاولة بعد إعادة الاتصال
+      return executeQuery(sql, params);
     }
-    
     throw err;
   } finally {
     if (connection) connection.release();
   }
 }
 
-// بدء تهيئة قاعدة البيانات
+async function initializeDatabase() {
+  try {
+    if (!(await initializePool())) {
+      await reconnectWithBackoff();
+    } else {
+      setupPoolListeners();
+    }
+  } catch (err) {
+    console.error('❌ فشل في تهيئة قاعدة البيانات:', err);
+    process.exit(1);
+  }
+}
+
 initializeDatabase();
 
 module.exports = {
   query: executeQuery,
-  getConnection: async () => {
-    try {
-      return await pool.getConnection();
-    } catch (err) {
-      if (shouldReconnect(err)) {
-        await reconnectWithBackoff();
-        return pool.getConnection();
-      }
-      throw err;
-    }
-  },
-  
-  // دالة للتحقق من صحة الاتصال
-  checkConnection: async () => {
-    try {
-      const conn = await pool.getConnection();
-      await conn.ping();
-      conn.release();
-      return true;
-    } catch (err) {
-      return false;
-    }
-  },
-  
-  // إغلاق جميع الاتصالات (للاستخدام عند إيقاف التطبيق)
   close: async () => {
     if (pool) {
       await pool.end();
-      console.log('🛑 تم إغلاق جميع اتصالات قاعدة البيانات');
+      console.log('🛑 تم إغلاق جميع الاتصالات');
     }
   }
 };
