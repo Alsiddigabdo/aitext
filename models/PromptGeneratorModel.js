@@ -17,7 +17,7 @@ class PromptGeneratorModel {
       const rows = await db.query('SELECT api_key FROM api_keys WHERE user_id = ?', [userId]);
       return Array.isArray(rows) && rows.length > 0 && rows[0].api_key ? rows[0].api_key : this.API_KEY;
     } catch (error) {
-      console.error('❌ خطأ في getUserApiKey:', error.message);
+      console.error(' خطأ في getUserApiKey:', error.message);
       return this.API_KEY;
     }
   }
