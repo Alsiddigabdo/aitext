@@ -3,10 +3,10 @@ require('dotenv').config();
 
 // تحسين إعدادات اتصال قاعدة البيانات
 const dbConfig = {
-  host: process.env.DB_HOST || 'sql.freedb.tech',
-  user: process.env.DB_USER || 'freedb_textt',
-  password: process.env.DB_PASSWORD || 'vuF73aX8nKw5Q!&',
-  database: process.env.DB_NAME || 'freedb_text1234',
+  host: 'sql.freedb.tech',
+  user:'freedb_textai',
+  password:'j?SB9P9gytSk3*V',
+  database:'freedb_textai',
   port: process.env.DB_PORT || 3306,
   connectTimeout: 10000,
   waitForConnections: true,
@@ -14,8 +14,16 @@ const dbConfig = {
   queueLimit: 50, // تحديد حد للطابور
   enableKeepAlive: true, // تفعيل اتصال مستمر
   keepAliveInitialDelay: 10000, // إرسال حزمة keepalive كل 10 ثواني
-  multipleStatements: false // تعطيل لتحسين الأمان
+  multipleStatements: false, // تعطيل لتحسين الأمان     // المنفذ الافتراضي لـ MySQL
+  connectTimeout: 10000,
+  waitForConnections: true,
+  connectionLimit: 8,
+  queueLimit: 50,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 10000,
+  multipleStatements: false
 };
+
 
 let pool;
 let isReconnecting = false;
