@@ -2,15 +2,15 @@ const TextComparisonModel = require('../models/TextComparisonModel');
 
 class TextComparisonController {
   static async renderComparePage(req, res) {
-    if (!req.session.user) {
+    if (!req.user) {
       return res.redirect('/auth/login');
     }
-    res.render('compare-texts');
+    res.render('compare-texts', { user: req.user });
   }
 
   static async compareTexts(req, res) {
     const { originalText, newText } = req.body;
-    const userId = req.session.user?.id;
+    const userId = req.user?.id;
 
     if (!userId) {
       return res.status(401).json({ error: 'يجب تسجيل الدخول لاستخدام هذه الخدمة' });
@@ -27,12 +27,16 @@ class TextComparisonController {
       const result = await TextComparisonModel.compareTexts({ originalText, newText, userId });
       res.json(result);
     } catch (error) {
+      console.error('Error in compareTexts:', error.message);
       if (error.message.includes('429')) {
         return res.status(429).json({ 
-          error: 'تم تجاوز حد الطلبات. يرجى المحاولة مجدداً بعد 20 ثانية أو ترقية حسابك في OpenAI.' 
+          error: 'تم تجاوز حد الطلبات. يرجى المحاولة مجددًا بعد 20 ثانية أو ترقية حسابك في OpenAI.' 
         });
       }
-      res.status(500).json({ error: error.message });
+      if (error.message.includes('خطأ في الطلب')) {
+        return res.status(400).json({ error: error.message });
+      }
+      res.status(500).json({ error: error.message || 'حدث خطأ أثناء المقارنة' });
     }
   }
 }
