@@ -4,7 +4,7 @@ const { authenticateToken } = require('./AuthController');
 class TextAnalyzerController {
   static async renderPage(req, res) {
     try {
-      res.render('AdvancedTextAnalyzer', { title: 'التحليل المتقدم للنصوص' });
+      res.render('AdvancedTextAnalyzer',{ user: req.user });
     } catch (error) {
       console.error('Error rendering page:', error);
       res.status(500).send('خطأ في عرض الصفحة');
@@ -33,8 +33,11 @@ class TextAnalyzerController {
       console.error('Error in analyzeText:', error.message);
       if (error.message.includes('429')) {
         return res.status(429).json({ 
-          error: 'تم تجاوز حد الطلبات. يرجى المحاولة مجدداً بعد 20 ثانية أو ترقية حسابك في OpenAI.' 
+          error: 'تم تجاوز حد الطلبات. يرجى المحاولة مجددًا بعد 20 ثانية أو ترقية حسابك في OpenAI.' 
         });
+      }
+      if (error.message.includes('خطأ في الطلب')) {
+        return res.status(400).json({ error: error.message });
       }
       res.status(500).json({ error: error.message || 'حدث خطأ أثناء التحليل' });
     }
