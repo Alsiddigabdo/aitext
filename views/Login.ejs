@@ -64,6 +64,9 @@
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
+    <nav style="width:100%; margin-bottom:8vh;">
+        <%- include('partials/navbar', {user: typeof user !== 'undefined' ? user : null}) %>
+    </nav>
     
     <main class="flex-grow flex items-center justify-center pb-16">
         <div class="glass-card p-8 rounded-card shadow-modern w-full max-w-md animate-fade-in">
@@ -117,7 +120,6 @@
             </div>
         </div>
     </main>
-
 
     <script>
         document.getElementById('login-form').addEventListener('submit', async function(e) {
