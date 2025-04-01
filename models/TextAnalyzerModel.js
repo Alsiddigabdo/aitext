@@ -23,11 +23,11 @@ class TextAnalyzerModel {
       if (Array.isArray(rows) && rows.length > 0) {
         return rows[0].api_key;
       }
-      console.log('No user-specific API key found, using default:', this.API_KEY);
+      console.log('No user-specific API key found, using default:', this.API_KEY?.substring(0, 10) + '...');
       return this.API_KEY;
     } catch (error) {
       console.error('Error in getUserApiKey:', error.message || error);
-      console.log('Falling back to default API key:', this.API_KEY);
+      console.log('Falling back to default API key:', this.API_KEY?.substring(0, 10) + '...');
       return this.API_KEY;
     }
   }
@@ -46,7 +46,14 @@ class TextAnalyzerModel {
       const detectedAnalysisType = analysisType || await this.detectAnalysisType(text, userId);
       const apiKey = await this.getUserApiKey(userId);
 
-      console.log('Sending analysis request to API:', { text: text.substring(0, 50) + '...', analysisType: detectedAnalysisType, apiKey: apiKey.substring(0, 5) + '...' });
+      if (!apiKey) throw new Error('مفتاح API غير صالح');
+
+      console.log('Sending analysis request to API:', { 
+        text: text.substring(0, 50) + '...', 
+        analysisType: detectedAnalysisType, 
+        apiKey: apiKey.substring(0, 10) + '...' 
+      });
+
       const response = await axios.post('https://api.openai.com/v1/chat/completions', {
         model: "gpt-4o-mini",
         store: true,
@@ -55,56 +62,67 @@ class TextAnalyzerModel {
           { role: "user", content: text }
         ],
         temperature: 0.7,
-        max_tokens: 1000
+        max_tokens: 1000,
+        response_format: { type: "json_object" } // إضافة تنسيق JSON
       }, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`
-        }
+        },
+        timeout: 20000
       }).catch(error => {
         console.error('API request failed:', error.response ? error.response.data : error.message);
         throw error;
       });
 
-      let resultText = response.data.choices[0].message.content;
+      const resultText = response.data.choices[0].message.content;
       console.log('Raw API response:', resultText);
-
-      // تنظيف الاستجابة من علامات Markdown
-      resultText = resultText.replace(/```json\n|```/g, '').trim();
-      console.log('Cleaned API response:', resultText);
 
       const result = this.processResponse({ resultText, analysisType: detectedAnalysisType });
       await this.saveAnalysis({ text, analysisType: detectedAnalysisType, result, userId });
       return result;
     } catch (error) {
       console.error('❌ خطأ في analyzeText:', error.message || error);
-      throw new Error('فشل في تحليل النص: ' + (error.message || 'خطأ غير معروف'));
+      throw this.handleError(error);
     }
   }
 
   static async detectAnalysisType(text, userId) {
     try {
       const apiKey = await this.getUserApiKey(userId);
+      if (!apiKey) throw new Error('مفتاح API غير صالح');
+
       const response = await axios.post('https://api.openai.com/v1/chat/completions', {
         model: "gpt-4o-mini",
         store: true,
         messages: [
-          { role: "system", content: "قم بتحليل النص التالي وتحديد نوعه الأنسب من بين: (grammar, language, sentiment, seo, style, classification, plagiarism). لا تقم بأي تحليل آخر، فقط أعد اسم النوع." },
+          { 
+            role: "system", 
+            content: `قم بتحليل النص التالي وتحديد نوعه الأنسب من بين: (grammar, language, sentiment, seo, style, classification, plagiarism). 
+            أرجع النتيجة بتنسيق JSON كالتالي: 
+            {
+              "analysisType": "اسم النوع"
+            }` 
+          },
           { role: "user", content: text }
         ],
         temperature: 0.3,
-        max_tokens: 10
+        max_tokens: 50,
+        response_format: { type: "json_object" } // إضافة تنسيق JSON
       }, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`
-        }
+        },
+        timeout: 20000
       }).catch(error => {
         console.error('API request failed in detectAnalysisType:', error.response ? error.response.data : error.message);
         throw error;
       });
 
-      const detectedType = response.data?.choices?.[0]?.message?.content?.trim().toLowerCase();
+      const resultText = response.data.choices[0].message.content;
+      const parsed = JSON.parse(resultText);
+      const detectedType = parsed.analysisType?.trim().toLowerCase();
       return Object.values(this.ANALYSIS_TYPES).includes(detectedType) ? detectedType : this.ANALYSIS_TYPES.DEFAULT;
     } catch (error) {
       console.error('❌ خطأ في detectAnalysisType:', error.message || error);
@@ -113,7 +131,7 @@ class TextAnalyzerModel {
   }
 
   static getSystemPrompt(analysisType) {
-    const baseInstruction = "يجب أن تلتزم فقط بتحليل النص بناءً على النوع المطلوب دون إضافة أي معلومات غير مطلوبة.";
+    const baseInstruction = "يجب أن تلتزم فقط بتحليل النص بناءً على النوع المطلوب دون إضافة أي معلومات غير مطلوبة. أرجع النتيجة بتنسيق JSON كالتالي: { \"result\": \"النتيجة هنا\" }";
     
     const prompts = {
       [this.ANALYSIS_TYPES.DEFAULT]: `${baseInstruction} قم بتحليل النص بشكل عام وفقًا لمحتواه.`,
@@ -130,10 +148,20 @@ class TextAnalyzerModel {
   }
 
   static processResponse({ resultText, analysisType }) {
-    return {
-      analysisType,
-      result: resultText || "لم يتم تلقي استجابة."
-    };
+    try {
+      const parsed = JSON.parse(resultText);
+      if (!parsed.result) throw new Error('تنسيق الاستجابة غير صالح');
+      return {
+        analysisType,
+        result: parsed.result
+      };
+    } catch (e) {
+      console.error('Error processing response:', e);
+      return {
+        analysisType,
+        result: resultText || "لم يتم تلقي استجابة صحيحة."
+      };
+    }
   }
 
   static async saveAnalysis({ text, analysisType, result, userId }) {
@@ -145,6 +173,25 @@ class TextAnalyzerModel {
       console.error('❌ خطأ في حفظ التحليل:', error.message || error);
       throw new Error('فشل في حفظ التحليل.');
     }
+  }
+
+  static handleError(error) {
+    if (error.response?.status === 429) {
+      return new Error('لقد تجاوزت الحد المسموح من الطلبات. يرجى الانتظار ثم المحاولة مرة أخرى.');
+    }
+    if (error.code === 'ECONNABORTED') {
+      return new Error('انتهت مهلة الاتصال. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.');
+    }
+    if (error.response?.data?.error?.code === 'insufficient_quota') {
+      return new Error('تم تجاوز حصتك في OpenAI. يرجى التحقق من خطتك وتفاصيل الفوترة في https://platform.openai.com/account.');
+    }
+    if (error.response?.data?.error?.code === 'model_not_found') {
+      return new Error('النموذج غير متاح. يرجى التحقق من إعدادات النموذج أو مفتاح API.');
+    }
+    if (error.response?.data?.error?.type === 'invalid_request_error') {
+      return new Error('خطأ في الطلب: ' + error.response.data.error.message);
+    }
+    return new Error(error.message || 'حدث خطأ أثناء المعالجة');
   }
 }
 
