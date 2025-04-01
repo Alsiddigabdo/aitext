@@ -10,7 +10,7 @@ class FeedbackController {
       console.log('✅ تم جلب التقييمات بنجاح:', feedbackData.items.length, 'عنصر');
       res.render('Feedback', { feedback: feedbackData.items, pagination: feedbackData, user: req.user });
     } catch (error) {
-      console.error('❌ خطأ في renderFeedbackPage:', error.stack || error.message);
+      console.error(' خطأ في renderFeedbackPage:', error.stack || error.message);
       res.status(500).send(`خطأ في تحميل صفحة التقييمات: ${error.message}`);
     }
   }
