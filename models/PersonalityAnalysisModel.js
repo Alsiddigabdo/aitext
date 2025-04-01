@@ -1,6 +1,6 @@
 const db = require('../config/db');
 const axios = require('axios');
-
+console.log('hi');
 class PersonalityAnalysisModel {
   static API_KEY = process.env.API_KEY;
 
