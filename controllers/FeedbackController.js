@@ -1,5 +1,5 @@
 const FeedbackModel = require('../models/FeedbackModel');
-const authenticateToken = require('../middleware/authenticateToken');
+const authenticateToken = require('./authenticateToken');
 
 class FeedbackController {
   static async renderFeedbackPage(req, res) {
