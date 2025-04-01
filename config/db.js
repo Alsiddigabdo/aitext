@@ -1,7 +1,6 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
-// تحسين إعدادات اتصال قاعدة البيانات
 const dbConfig = {
   host: 'sql.freedb.tech',
   user:'freedb_textai',
