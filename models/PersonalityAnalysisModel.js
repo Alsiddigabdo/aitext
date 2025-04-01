@@ -1,6 +1,6 @@
 const db = require('../config/db');
 const axios = require('axios');
-console.log('hi');
+
 class PersonalityAnalysisModel {
   static API_KEY = process.env.API_KEY;
 
@@ -15,7 +15,7 @@ class PersonalityAnalysisModel {
       return this.API_KEY;
     } catch (error) {
       console.error('Error in getUserApiKey:', error.message || error);
-      console.log('Falling back to default API key:', this.API_KEY);
+      console.log('Falling back  default API key:', this.API_KEY);
       return this.API_KEY;
     }
   }
