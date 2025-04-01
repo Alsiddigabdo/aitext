@@ -10,11 +10,11 @@ const dbConfig = {
   port: process.env.DB_PORT || 3306,
   connectTimeout: 10000,
   waitForConnections: true,
-  connectionLimit: 8, // تقليل عدد الاتصالات المتزامنة لتجنب تجاوز الحد
-  queueLimit: 50, // تحديد حد للطابور
-  enableKeepAlive: true, // تفعيل اتصال مستمر
-  keepAliveInitialDelay: 10000, // إرسال حزمة keepalive كل 10 ثواني
-  multipleStatements: false, // تعطيل لتحسين الأمان     // المنفذ الافتراضي لـ MySQL
+  connectionLimit: 8,
+  queueLimit: 50,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 10000,
+  multipleStatements: false,
   connectTimeout: 10000,
   waitForConnections: true,
   connectionLimit: 8,
