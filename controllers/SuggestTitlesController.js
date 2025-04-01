@@ -1,16 +1,17 @@
 const SuggestTitlesModel = require('../models/SuggestTitlesModel');
+const { authenticateToken } = require('./AuthController');
 
 class SuggestTitlesController {
   static async renderSuggestPage(req, res) {
-    if (!req.session.user) {
+    if (!req.user) {
       return res.redirect('/auth/login');
     }
-    res.render('suggest-titles');
+    res.render('suggest-titles', { user: req.user });
   }
 
   static async suggestTitles(req, res) {
     const { content, tone, types } = req.body;
-    const userId = req.session.user?.id;
+    const userId = req.user?.id;
 
     if (!userId) {
       return res.status(401).json({ error: 'يجب تسجيل الدخول لاستخدام هذه الخدمة' });
@@ -29,7 +30,7 @@ class SuggestTitlesController {
     } catch (error) {
       if (error.message.includes('429')) {
         return res.status(429).json({ 
-          error: 'تم تجاوز حد الطلبات. يرجى المحاولة مجدداً بعد 20 ثانية أو ترقية حسابك في OpenAI.' 
+          error: 'تم تجاوز حد الطلبات. يرجى المحاولة مجددًا بعد 20 ثانية أو ترقية حسابك في OpenAI.' 
         });
       }
       res.status(500).json({ error: error.message });
@@ -38,7 +39,7 @@ class SuggestTitlesController {
 
   static async improveTitles(req, res) {
     const { content, currentTitles, tone, types } = req.body;
-    const userId = req.session.user?.id;
+    const userId = req.user?.id;
 
     if (!userId) {
       return res.status(401).json({ error: 'يجب تسجيل الدخول لاستخدام هذه الخدمة' });
@@ -57,7 +58,7 @@ class SuggestTitlesController {
     } catch (error) {
       if (error.message.includes('429')) {
         return res.status(429).json({ 
-          error: 'تم تجاوز حد الطلبات. يرجى المحاولة مجدداً بعد 20 ثانية أو ترقية حسابك في OpenAI.' 
+          error: 'تم تجاوز حد الطلبات. يرجى المحاولة مجددًا بعد 20 ثانية أو ترقية حسابك في OpenAI.' 
         });
       }
       res.status(500).json({ error: error.message });
