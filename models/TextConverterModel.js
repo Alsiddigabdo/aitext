@@ -11,6 +11,7 @@ class TextConverterModel {
     SUMMARY: 'summary'
   };
 
+  // جلب مفتاح API الخاص بالمستخدم من قاعدة البيانات
   static async getUserApiKey(userId) {
     try {
       const [rows] = await db.query('SELECT api_key FROM api_keys WHERE user_id = ?', [userId]);
@@ -18,90 +19,101 @@ class TextConverterModel {
       if (Array.isArray(rows) && rows.length > 0) {
         return rows[0].api_key;
       }
-      console.log('No user-specific API key found, using default:', this.API_KEY);
+      console.log('No user-specific API key found, using default:', this.API_KEY?.substring(0, 10) + '...');
       return this.API_KEY;
     } catch (error) {
       console.error('Error in getUserApiKey:', error.message || error);
-      console.log('Falling back to default API key:', this.API_KEY);
+      console.log('Falling back to default API key:', this.API_KEY?.substring(0, 10) + '...');
       return this.API_KEY;
     }
   }
 
-  /**
-   * تحويل النص بناءً على نوع التحويل والتنسيقات المحددة.
-   * @param {Object} data - بيانات التحويل
-   */
+  // تحويل النص بناءً على نوع التحويل والتنسيقات المحددة
   static async convertText({ text, conversionType, addBreaks, fixSpelling, improveSentences, userId }) {
     try {
       console.log('Converting text with:', { text, conversionType, addBreaks, fixSpelling, improveSentences, userId });
       const apiKey = await this.getUserApiKey(userId);
+      if (!apiKey) throw new Error('مفتاح API غير صالح');
 
-      const prompt = `
-        أنت أداة ذكية لتحويل النصوص باللغة العربية. قم بتحويل النص التالي بناءً على الخيارات التالية:
-        - نوع التحويل: "${
-          conversionType === this.CONVERSION_TYPES.PLAIN_TO_ACADEMIC ? 'من نص عادي إلى نص أكاديمي' :
-          conversionType === this.CONVERSION_TYPES.MARKETING_TO_FORMAL ? 'من نص تسويقي إلى صيغة رسمية' :
-          conversionType === this.CONVERSION_TYPES.COLLOQUIAL_TO_STANDARD ? 'من لغة عامية إلى لغة فصحى' :
-          'تلخيص النص'
-        }"
-        - إضافة فواصل تلقائية: "${addBreaks ? 'نعم' : 'لا'}"
-        - تصحيح الأخطاء الإملائية: "${fixSpelling ? 'نعم' : 'لا'}"
-        - تحسين تراكيب الجمل: "${improveSentences ? 'نعم' : 'لا'}"
-        أعد النتيجة في صيغة JSON تحتوي على:
-        - convertedText: النص المحوّل (كسلسلة نصية)
-        لا تضف أي معلومات إضافية خارج هذا الهيكل.
-      `;
+      const messages = [
+        {
+          role: "system",
+          content: `
+            أنت أداة ذكية لتحويل النصوص باللغة العربية. قم بتحويل النص التالي بناءً على الخيارات التالية:
+            - نوع التحويل: "${
+              conversionType === this.CONVERSION_TYPES.PLAIN_TO_ACADEMIC ? 'من نص عادي إلى نص أكاديمي' :
+              conversionType === this.CONVERSION_TYPES.MARKETING_TO_FORMAL ? 'من نص تسويقي إلى صيغة رسمية' :
+              conversionType === this.CONVERSION_TYPES.COLLOQUIAL_TO_STANDARD ? 'من لغة عامية إلى لغة فصحى' :
+              'تلخيص النص'
+            }"
+            - إضافة فواصل تلقائية: "${addBreaks ? 'نعم' : 'لا'}"
+            - تصحيح الأخطاء الإملائية: "${fixSpelling ? 'نعم' : 'لا'}"
+            - تحسين تراكيب الجمل: "${improveSentences ? 'نعم' : 'لا'}"
+            أعد النتيجة في صيغة JSON كالتالي:
+            {
+              "convertedText": "النص المحوّل (كسلسلة نصية)"
+            }
+            لا تضف أي معلومات إضافية خارج هذا الهيكل.
+          `
+        },
+        {
+          role: "user",
+          content: text || "لا يوجد نص"
+        }
+      ];
 
-      console.log('Sending request to API with:', { text, conversionType, userId, apiKey: apiKey.substring(0, 5) + '...' });
+      console.log('Sending request to API with:', { 
+        text: text.substring(0, 50) + '...', 
+        conversionType, 
+        userId, 
+        apiKey: apiKey.substring(0, 10) + '...' 
+      });
+
       const response = await axios.post('https://api.openai.com/v1/chat/completions', {
         model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: prompt },
-          { role: "user", content: text || "لا يوجد نص" }
-        ],
+        messages,
         temperature: 0.7,
-        max_tokens: 1000
+        max_tokens: 1000,
+        response_format: { type: "json_object" } // إضافة تنسيق JSON
       }, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`
-        }
+        },
+        timeout: 20000
       }).catch(error => {
         console.error('API request failed:', error.response ? error.response.data : error.message);
         throw error;
       });
 
-      let resultText = response.data.choices[0].message.content;
-      console.log('Raw API response:', resultText);
-
-      // تنظيف الاستجابة من علامات Markdown
-      resultText = resultText.replace(/```json\n|```/g, '').trim();
-      console.log('Cleaned API response:', resultText);
-
-      let result;
-      try {
-        result = JSON.parse(resultText);
-      } catch (e) {
-        console.error('Failed to parse API response:', e);
-        throw new Error('استجابة API غير صالحة');
-      }
-
-      if (!result.convertedText || typeof result.convertedText !== 'string') {
-        throw new Error('لم يتم إرجاع نص محوّل صالح من API');
-      }
-
+      const result = this.processApiResponse(response);
       await this.saveConversion({ text, conversionType, addBreaks, fixSpelling, improveSentences, result, userId });
       return { convertedText: result.convertedText };
     } catch (error) {
       console.error('❌ خطأ في convertText:', error.message || error);
-      throw new Error('فشل في تحويل النص: ' + (error.message || 'خطأ غير معروف'));
+      throw this.handleError(error);
     }
   }
 
-  /**
-   * حفظ التحويل في قاعدة البيانات.
-   * @param {Object} data - بيانات التحويل
-   */
+  // معالجة استجابة API
+  static processApiResponse(response) {
+    try {
+      const content = response.data.choices[0]?.message?.content;
+      if (!content) throw new Error('لا توجد استجابة من API');
+
+      const parsed = JSON.parse(content);
+      if (!parsed.convertedText || typeof parsed.convertedText !== 'string') {
+        throw new Error('تنسيق الاستجابة غير صالح');
+      }
+
+      return parsed;
+    } catch (e) {
+      console.error('Response processing error:', e);
+      throw new Error('فشل في معالجة استجابة API');
+    }
+  }
+
+  // حفظ التحويل في قاعدة البيانات
   static async saveConversion({ text, conversionType, addBreaks, fixSpelling, improveSentences, result, userId }) {
     try {
       const sql = `
@@ -122,6 +134,26 @@ class TextConverterModel {
       console.error('❌ خطأ في حفظ التحويل:', error.message || error);
       throw new Error('فشل في حفظ التحويل.');
     }
+  }
+
+  // معالجة الأخطاء بشكل موحد
+  static handleError(error) {
+    if (error.response?.status === 429) {
+      return new Error('لقد تجاوزت الحد المسموح من الطلبات. يرجى الانتظار ثم المحاولة مرة أخرى.');
+    }
+    if (error.code === 'ECONNABORTED') {
+      return new Error('انتهت مهلة الاتصال. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.');
+    }
+    if (error.response?.data?.error?.code === 'insufficient_quota') {
+      return new Error('تم تجاوز حصتك في OpenAI. يرجى التحقق من خطتك وتفاصيل الفوترة في https://platform.openai.com/account.');
+    }
+    if (error.response?.data?.error?.code === 'model_not_found') {
+      return new Error('النموذج غير متاح. يرجى التحقق من إعدادات النموذج أو مفتاح API.');
+    }
+    if (error.response?.data?.error?.type === 'invalid_request_error') {
+      return new Error('خطأ في الطلب: ' + error.response.data.error.message);
+    }
+    return new Error(error.message || 'حدث خطأ أثناء المعالجة');
   }
 }
 
