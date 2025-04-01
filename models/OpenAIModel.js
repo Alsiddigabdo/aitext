@@ -1,39 +1,46 @@
-const { pool, handleDisconnect } = require('../config/db');
+const db = require('../config/db');
 
 class OpenAIModel {
-    static async saveApiKey(userId, apiKey) {
-        let connection;
+    static async saveApiKey(userId, openaiKey) {
         try {
-            await handleDisconnect();
-            connection = await pool.getConnection();
-            
-            const cleanedKey = apiKey.replace(/[^a-zA-Z0-9\-_]/g, '');
-            
-            const sql = `
-                INSERT INTO api_keys (user_id, api_key, created_at, updated_at) 
-                VALUES (?, ?, NOW(), NOW()) 
-                ON DUPLICATE KEY UPDATE 
-                    api_key = VALUES(api_key),
-                    updated_at = NOW()
-            `;
-            
-            await connection.query(sql, [userId, cleanedKey]);
-            
-            console.log(`✅ تم حفظ مفتاح API للمستخدم ${userId}`);
+            console.log('Executing saveApiKey with:', { userId, openaiKey: openaiKey.substring(0, 10) + '...' });
+            const sql = 'UPDATE users SET openai_key = ? WHERE id = ?';
+            const result = await db.query(sql, [openaiKey, userId]);
+            console.log('Full SQL query result:', result);
+
+            if (result.affectedRows === 0) {
+                console.log(`No user found with ID: ${userId}`);
+                return { success: false, message: 'لم يتم العثور على المستخدم' };
+            }
+            console.log(`Successfully updated openai_key for user ${userId}, affected rows: ${result.affectedRows}`);
             return { success: true, message: 'تم حفظ مفتاح OpenAI بنجاح' };
         } catch (error) {
-            console.error('❌ خطأ في حفظ مفتاح API:', error);
-            
-            if (error.code === 'ER_USER_LIMIT_REACHED') {
-                return { 
-                    success: false, 
-                    message: 'تم تجاوز الحد المسموح من الاتصالات، يرجى المحاولة لاحقًا' 
-                };
+            console.error('Error saving OpenAI key:', error);
+            throw error;
+        }
+    }
+
+    static async getApiKey(userId) {
+        try {
+            console.log('Executing getApiKey for user:', userId);
+            const sql = 'SELECT openai_key FROM users WHERE id = ?';
+            const result = await db.query(sql, [userId]); // إزالة التفكيك لأننا نتعامل مع الكائن مباشرة
+            console.log('Raw SQL query result:', result);
+
+            // التحقق مما إذا كانت النتيجة مصفوفة أو كائن
+            const row = Array.isArray(result) ? result[0] : result;
+            const openaiKey = row?.openai_key || null;
+
+            if (!openaiKey) {
+                console.log(`❌ No API key found for user ID: ${userId}`);
+                return null;
             }
-            
-            throw new Error('فشل في حفظ مفتاح API');
-        } finally {
-            if (connection) connection.release();
+
+            console.log(`✅ Successfully retrieved API key for user ${userId}:`, openaiKey.substring(0, 10) + '...');
+            return openaiKey;
+        } catch (error) {
+            console.error('❌ Error retrieving OpenAI key:', error);
+            throw error;
         }
     }
 }
