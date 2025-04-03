@@ -3,40 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحليل الشخصية المتكامل | SmartTextAI</title>
+    <meta name="description" content="Smart Text Analyzer – منصة تحليل وتحسين النصوص الذكية باستخدام الذكاء الاصطناعي. ساعد الكُتاب، المسوقين، والطلاب على تحسين جودة المحتوى بسرعة واحترافية.">
+    <meta name="keywords" content="تحليل النصوص, تحسين النصوص, ذكاء اصطناعي, تصحيح إملائي, إعادة صياغة, تحليل المشاعر, كشف الانتحال, تحسين SEO">
+    <meta name="author" content="Smart Text Analyzer Team">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="محلل النصوص الذكي | تحليل وتحسين النصوص بالذكاء الاصطناعي">
+    <meta property="og:description" content="منصة ذكية لتحليل النصوص وتحسينها باستخدام الذكاء الاصطناعي، مثالية للكُتاب والمسوقين والطلاب.">
+    <meta property="og:image" content="https://public.readdy.ai/ai/img_res/651332a7eaf632695ce1c8870fb81309.jpg">
+    <meta property="og:url" content="https://yourwebsite.com">
+    <meta property="og:type" content="website">
+    <title>محلل النصوص الذكي | تحليل وتحسين النصوص بالذكاء الاصطناعي</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#F5F3FF',
+                            100: '#EDE9FE',
+                            200: '#DDD6FE',
+                            300: '#C4B5FD',
+                            400: '#A78BFA',
+                            500: '#8B5CF6',
+                            600: '#7C3AED',
+                            700: '#6D28D9',
+                            800: '#5B21B6',
+                            900: '#4C1D95'
+                        },
+                        accent: {
+                            50: '#FFFBEB',
+                            100: '#FEF3C7',
+                            200: '#FDE68A',
+                            300: '#FCD34D',
+                            400: '#FBBF24',
+                            500: '#F59E0B',
+                            600: '#D97706',
+                            700: '#B45309',
+                            800: '#92400E',
+                            900: '#78350F'
+                        },
+                        dark: {
+                            50: '#F8FAFC',
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            300: '#CBD5E1',
+                            400: '#94A3B8',
+                            500: '#64748B',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1E293B',
+                            900: '#0F172A'
+                        }
+                    },
+                    borderRadius: {
+                        '4xl': '2rem',
+                        '5xl': '3rem'
+                    },
+                    boxShadow: {
+                        '3d': '0 15px 30px -5px rgba(0, 0, 0, 0.3)',
+                        'neumorphic': '8px 8px 16px #0d1321, -8px -8px 16px #131d31',
+                        'neumorphic-inset': 'inset 5px 5px 10px #0d1321, inset -5px -5px 10px #131d31',
+                        'glow': '0 0 15px rgba(139, 92, 246, 0.5)',
+                        'glow-accent': '0 0 15px rgba(245, 158, 11, 0.5)'
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 6s infinite',
+                        'wave': 'wave 2.5s infinite'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' }
+                        },
+                        wave: {
+                            '0%': { transform: 'rotate(0deg)' },
+                            '10%': { transform: 'rotate(14deg)' },
+                            '20%': { transform: 'rotate(-8deg)' },
+                            '30%': { transform: 'rotate(14deg)' },
+                            '40%': { transform: 'rotate(-4deg)' },
+                            '50%': { transform: 'rotate(10deg)' },
+                            '60%': { transform: 'rotate(0deg)' },
+                            '100%': { transform: 'rotate(0deg)' }
+                        }
+                    }
+                },
+                fontFamily: {
+                    'cairo': ['Cairo', 'sans-serif'],
+                    'tajawal': ['Tajawal', 'sans-serif']
+                }
+            }
+        }
+    </script>
     <style>
         :root {
             --primary: #7C3AED;
-            --primary-light: #A78BFA;
+            --primary-light: #8B5CF6;
             --accent: #F59E0B;
             --dark: #0F172A;
             --darker: #0A1120;
         }
         
         body {
-            font-family: 'Cairo', sans-serif;
+            font-family: 'Cairo', 'Tajawal', sans-serif;
             background: linear-gradient(135deg, var(--darker), var(--dark));
             color: #E2E8F0;
+            scroll-behavior: smooth;
         }
         
-        .glass-card {
-            background: rgba(26, 36, 61, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-        }
-        
+        /* تصميم النيو مورفيك الحديث */
         .neu-card {
-            background: linear-gradient(145deg, #101829, #0e1424);
+            background: linear-gradient(145deg, #0e1424, #101829);
+            border-radius: 20px;
             box-shadow: 8px 8px 16px #0a0f1a, -8px -8px 16px #121f3a;
-            border-radius: 16px;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .neu-card:hover {
@@ -44,242 +132,257 @@
             box-shadow: 12px 12px 24px #0a0f1a, -12px -12px 24px #121f3a;
         }
         
+        .neu-btn {
+            background: linear-gradient(145deg, #101829, #0e1424);
+            box-shadow: 5px 5px 10px #0a0f1a, -5px -5px 10px #121f3a;
+            transition: all 0.3s ease;
+        }
+        
+        .neu-btn:hover {
+            box-shadow: 2px 2px 5px #0a0f1a, -2px -2px 5px #121f3a;
+        }
+        
+        .neu-btn:active {
+            box-shadow: inset 5px 5px 10px #0a0f1a, inset -5px -5px 10px #121f3a;
+        }
+        
+        /* تأثيرات متقدمة */
         .gradient-text {
-            background: linear-gradient(90deg, var(--primary), var(--accent));
+            background: linear-gradient(90deg, var(--primary-light), var(--accent));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
         
-        .option-card {
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
         }
         
-        .option-card:hover {
-            transform: translateY(-2px);
-            background-color: rgba(124, 58, 237, 0.1);
-            border-color: var(--primary);
-        }
-        
-        .option-card.selected {
-            background-color: rgba(124, 58, 237, 0.2);
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px var(--primary);
-        }
-        
-        .progress-container {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 9999px;
-        }
-        
-        .progress-bar {
-            height: 6px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            transition: width 0.5s ease;
-            border-radius: 9999px;
-        }
-        
-        .trait-card {
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(145deg, #101829, #0e1424);
+            box-shadow: 5px 5px 10px #0a0f1a, -5px -5px 10px #121f3a;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--primary-light);
+            margin-bottom: 1.5rem;
             transition: all 0.3s ease;
         }
         
-        .trait-card:hover {
-            transform: translateY(-5px);
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
         }
         
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .floating {
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        .blob {
-            position: absolute;
-            filter: blur(60px);
-            opacity: 0.2;
-            z-index: -1;
-        }
-        
-        .personality-tabs .active {
-            background: rgba(124, 58, 237, 0.2);
-            color: white;
-            border-bottom: 2px solid var(--primary);
-        }
-        
-        .tooltip {
-            position: relative;
-        }
-        
-        .tooltip-text {
-            visibility: hidden;
-            width: 200px;
-            background-color: var(--dark);
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 8px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
+        /* تأثيرات دخول الصفحة */
+        [data-aos="custom-fade"] {
             opacity: 0;
-            transition: opacity 0.3s;
+            transition-property: opacity, transform;
         }
         
-        .tooltip:hover .tooltip-text {
-            visibility: visible;
+        [data-aos="custom-fade"].aos-animate {
             opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .aos-delay-100 { transition-delay: 100ms; }
+        .aos-delay-200 { transition-delay: 200ms; }
+        .aos-delay-300 { transition-delay: 300ms; }
+        .aos-delay-400 { transition-delay: 400ms; }
+        .aos-delay-500 { transition-delay: 500ms; }
+        
+        /* تأثيرات التفاعل */
+        .hover-grow {
+            transition: transform 0.3s ease;
+        }
+        
+        .hover-grow:hover {
+            transform: scale(1.03);
+        }
+        
+        /* تأثيرات النص */
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .text-shadow-lg {
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* تأثيرات الشريط المتحرك */
+        .marquee {
+            animation: marquee 20s linear infinite;
+        }
+        
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        /* تأثيرات الشكل */
+        .blob {
+            border-radius: 50% 70% 40% 60%/60% 40% 70% 50%;
+            animation: morph 8s ease-in-out infinite;
+        }
+        
+        @keyframes morph {
+            0%, 100% { border-radius: 50% 70% 40% 60%/60% 40% 70% 50%; }
+            50% { border-radius: 70% 40% 60% 50%/50% 60% 40% 70%; }
+        }
+        
+        /* تأثيرات التحميل */
+        .loading-dots::after {
+            content: '.';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+        
+        /* تأثيرات خاصة بالوضع الداكن */
+        .dark-mode-toggle {
+            background: linear-gradient(145deg, #101829, #0e1424);
+            box-shadow: 5px 5px 10px #0a0f1a, -5px -5px 10px #121f3a;
+        }
+        
+        /* تأثيرات النوافذ المنبثقة */
+        .modal-overlay {
+            backdrop-filter: blur(5px);
+            background: rgba(10, 17, 32, 0.8);
+        }
+        
+        /* تأثيرات النصوص المضيئة */
+        .glow-text {
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.7);
+        }
+        
+        /* تأثيرات الأزرار */
+        .btn-hover-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-hover-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 45%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 55%
+            );
+            transform: rotate(30deg);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-hover-effect:hover::after {
+            left: 100%;
+            top: 100%;
+        }
+        
+        /* تأثيرات الشرائح */
+        .slide-fade-enter-active, .slide-fade-leave-active {
+            transition: all 0.5s ease;
+        }
+        
+        .slide-fade-enter, .slide-fade-leave-to {
+            transform: translateX(20px);
+            opacity: 0;
+        }
+        
+        /* تأثيرات المخططات */
+        .chart-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .chart-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo-text {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
-    <!-- Floating Blobs Background -->
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-
-    <!-- Header -->
+    <!-- شريط التنقل المحدث -->
     <header class="fixed w-full z-50 bg-dark/90 backdrop-blur-md border-b border-dark-700 shadow-lg">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <!-- Logo -->
-                <a href="/" class="flex items-center space-x-2 space-x-reverse">
-                    <div class="p-2 rounded-lg bg-primary/10 transition">
-                        <i class="ri-ai-generate text-2xl text-primary"></i>
-                    </div>
-                    <span class="text-2xl font-bold gradient-text">SmartTextAI</span>
-                </a>
+                <!-- الشعار -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="/" class="flex items-center space-x-2 space-x-reverse">
+                        <div class="p-2 rounded-lg bg-primary/10 transition">
+                            <i class="ri-ai-generate text-2xl text-primary"></i>
+                        </div>
+                        <span class="text-2xl font-bold logo-text">SmartTextAI</span>
+                    </a>
+                </div>
                 
-                <!-- Navigation -->
+                <!-- روابط سطح المكتب -->
                 <div class="hidden md:flex items-center space-x-1 space-x-reverse">
-                    <a href="/" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition">الرئيسية</a>
-                    <a href="/personality-analysis" class="px-4 py-2 rounded-lg text-white bg-primary/20">تحليل الشخصية</a>
-                    <a href="/tools" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition">الأدوات</a>
-                    <% if (typeof user !== 'undefined' && user) { %>
-                        <a href="/auth/logout" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition">تسجيل الخروج</a>
+                    <a href="#الرئيسية" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">الرئيسية</a>
+                    <a href="#features" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">المميزات</a>
+                    <a href="#tools" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">الأدوات</a>
+                    <a href="#openai-key" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">تفعيل OpenAI</a>
+                    <a href="#testimonials" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">آراء العملاء</a>
+                </div>
+                
+                <!-- أزرار الدخول -->
+                <div class="hidden md:flex items-center space-x-3 space-x-reverse">
+                    <% if (user) { %>
+                        <span class="text-gray-300">مرحبًا، <%= user.name %></span>
+                        <a href="/auth/logout" class="px-4 py-2 rounded-lg text-white bg-primary hover:bg-primary-600 transition duration-300 shadow-glow hover:shadow-glow-accent">تسجيل الخروج</a>
                     <% } else { %>
-                        <a href="/auth/login" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition">تسجيل الدخول</a>
+                        <a href="/auth/login" class="px-4 py-2 rounded-lg text-white bg-primary hover:bg-primary-600 transition duration-300 shadow-glow hover:shadow-glow-accent">تسجيل الدخول</a>
+                        <a href="/auth/register" class="px-4 py-2 rounded-lg text-primary border border-primary hover:bg-primary/10 transition duration-300">إنشاء حساب</a>
                     <% } %>
+                </div>
+                
+                <!-- زر القائمة المتنقلة -->
+                <div class="md:hidden">
+                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-dark-700 focus:outline-none transition duration-300" aria-controls="mobile-menu" aria-expanded="false" id="mobile-menu-button">
+                        <span class="sr-only">فتح القائمة الرئيسية</span>
+                        <i class="ri-menu-line text-2xl" id="menu-icon"></i>
+                        <i class="ri-close-line text-2xl hidden" id="close-icon"></i>
+                    </button>
                 </div>
             </div>
         </nav>
+        
+        <!-- القائمة المتنقلة -->
+        <div class="hidden md:hidden bg-darker/95 backdrop-blur-sm" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#الرئيسية" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">الرئيسية</a>
+                <a href="#features" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">المميزات</a>
+                <a href="#tools" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">الأدوات</a>
+                <a href="#openai-key" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">تفعيل OpenAI</a>
+                <a href="#testimonials" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">آراء العملاء</a>
+                <div class="pt-4 border-t border-dark-700">
+                    <% if (user) { %>
+                        <span class="block px-3 py-2 text-gray-300">مرحبًا، <%= user.name %></span>
+                        <a href="/auth/logout" class="block w-full px-4 py-2 rounded-md text-base font-medium text-white bg-primary hover:bg-primary-600 transition duration-300 text-center shadow-glow">تسجيل الخروج</a>
+                    <% } else { %>
+                        <a href="/auth/login" class="block w-full px-4 py-2 rounded-md text-base font-medium text-white bg-primary hover:bg-primary-600 transition duration-300 text-center shadow-glow">تسجيل الدخول</a>
+                        <a href="/auth/register" class="block w-full mt-2 px-4 py-2 rounded-md text-base font-medium text-primary border border-primary hover:bg-primary/10 transition duration-300 text-center">إنشاء حساب</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
     </header>
-
-    <!-- رسائل التنبيه المحدثة -->
-    <% if (typeof messages !== 'undefined' && messages.success) { %>
-        <div class="fixed top-20 right-4 z-50">
-            <div class="alert bg-green-500/90 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate__animated animate__fadeInDown">
-                <i class="ri-checkbox-circle-line"></i>
-                <span><%= messages.success %></span>
-            </div>
-        </div>
-    <% } %>
-
-    <!-- Main Content -->
-    <main class="mt-20 flex-grow">
-        <section class="py-12 md:py-16">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <!-- Hero Section -->
-                <div class="text-center mb-12 animate__animated animate__fadeIn">
-                    <h1 class="text-4xl md:text-5xl font-bold mb-4 gradient-text">تحليل الشخصية المتكامل</h1>
-                    <p class="text-lg text-gray-300 max-w-2xl mx-auto">اكتشف أسرار شخصيتك، أنماط تفكيرك، وأسلوبك في اتخاذ القرارات باستخدام الذكاء الاصطناعي</p>
-                    <div class="mt-6 flex justify-center space-x-4 space-x-reverse">
-                        <a href="#personality-test" class="px-6 py-2 rounded-full bg-primary text-white hover:bg-primary/90 transition">ابدأ الآن</a>
-                        <a href="#how-it-works" class="px-6 py-2 rounded-full border border-primary text-primary hover:bg-primary/10 transition">كيف يعمل؟</a>
-                    </div>
-                </div>
-
-                <!-- باقي محتوى الصفحة الأصلي ... -->
-
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-dark/90 backdrop-blur-md border-t border-dark-700 py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <a href="/" class="flex items-center space-x-2 space-x-reverse">
-                        <div class="p-1 rounded-lg bg-primary/10">
-                            <i class="ri-ai-generate text-xl text-primary"></i>
-                        </div>
-                        <span class="text-xl font-bold gradient-text">SmartTextAI</span>
-                    </a>
-                </div>
-                <div class="flex space-x-6 space-x-reverse">
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <i class="ri-facebook-fill text-xl"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <i class="ri-twitter-fill text-xl"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <i class="ri-linkedin-fill text-xl"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="mt-6 text-center text-gray-400 text-sm">
-                © 2025 SmartTextAI. جميع الحقوق محفوظة.
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        // إخفاء رسالة التنبيه بعد 5 ثواني
-        document.addEventListener('DOMContentLoaded', () => {
-            const alert = document.querySelector('.alert');
-            if (alert) {
-                setTimeout(() => {
-                    alert.classList.add('animate__fadeOutUp');
-                    setTimeout(() => alert.remove(), 500);
-                }, 5000);
-            }
-            
-            // باقي كود الجافاسكريبت الأصلي ...
-            // Questions Data
-            const personalityQuestions = [
-                // ... الأسئلة الأصلية ...
-            ];
-
-            // Global Variables
-            let currentTab = 'personality';
-            let currentQuestion = 0;
-            let responses = { personality: [], decision: [], thinking: [] };
-            let decisionChart;
-
-            // Initialize the page
-            // Tab Switching
-            const tabButtons = document.querySelectorAll('.tab-btn');
-            tabButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    tabButtons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-                    document.getElementById(`${btn.dataset.tab}-tab`).classList.add('active');
-                    currentTab = btn.dataset.tab;
-                });
-            });
-
-            // Start Test Buttons
-            document.getElementById('start-personality')?.addEventListener('click', () => startTest('personality'));
-            document.getElementById('start-decision')?.addEventListener('click', () => startTest('decision'));
-            document.getElementById('start-thinking')?.addEventListener('click', () => startTest('thinking'));
-
-            // Save Results Button
-            document.getElementById('save-results')?.addEventListener('click', saveResults);
-
-            // Share Results Button
-            document.getElementById('share-results')?.addEventListener('click', shareResults);
-
-            // ... بقية الدوال الأصلية ...
-        });
-    </script>
-</body>
-</html>
