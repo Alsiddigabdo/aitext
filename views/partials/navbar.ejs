@@ -3,110 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Smart Text Analyzer – منصة تحليل وتحسين النصوص الذكية باستخدام الذكاء الاصطناعي. ساعد الكُتاب، المسوقين، والطلاب على تحسين جودة المحتوى بسرعة واحترافية.">
-    <meta name="keywords" content="تحليل النصوص, تحسين النصوص, ذكاء اصطناعي, تصحيح إملائي, إعادة صياغة, تحليل المشاعر, كشف الانتحال, تحسين SEO">
-    <meta name="author" content="Smart Text Analyzer Team">
-    <meta name="robots" content="index, follow">
-    <meta property="og:title" content="محلل النصوص الذكي | تحليل وتحسين النصوص بالذكاء الاصطناعي">
-    <meta property="og:description" content="منصة ذكية لتحليل النصوص وتحسينها باستخدام الذكاء الاصطناعي، مثالية للكُتاب والمسوقين والطلاب.">
-    <meta property="og:image" content="https://public.readdy.ai/ai/img_res/651332a7eaf632695ce1c8870fb81309.jpg">
-    <meta property="og:url" content="https://yourwebsite.com">
-    <meta property="og:type" content="website">
-    <title>محلل النصوص الذكي | تحليل وتحسين النصوص بالذكاء الاصطناعي</title>
+    <title>SmartTextAI - منصة تحليل النصوص بالذكاء الاصطناعي</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link rel="stylesheet" href="/css/style.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#F5F3FF',
-                            100: '#EDE9FE',
-                            200: '#DDD6FE',
-                            300: '#C4B5FD',
-                            400: '#A78BFA',
-                            500: '#8B5CF6',
-                            600: '#7C3AED',
-                            700: '#6D28D9',
-                            800: '#5B21B6',
-                            900: '#4C1D95'
-                        },
-                        accent: {
-                            50: '#FFFBEB',
-                            100: '#FEF3C7',
-                            200: '#FDE68A',
-                            300: '#FCD34D',
-                            400: '#FBBF24',
-                            500: '#F59E0B',
-                            600: '#D97706',
-                            700: '#B45309',
-                            800: '#92400E',
-                            900: '#78350F'
-                        },
-                        dark: {
-                            50: '#F8FAFC',
-                            100: '#F1F5F9',
-                            200: '#E2E8F0',
-                            300: '#CBD5E1',
-                            400: '#94A3B8',
-                            500: '#64748B',
-                            600: '#475569',
-                            700: '#334155',
-                            800: '#1E293B',
-                            900: '#0F172A'
-                        }
-                    },
-                    borderRadius: {
-                        '4xl': '2rem',
-                        '5xl': '3rem'
-                    },
-                    boxShadow: {
-                        '3d': '0 15px 30px -5px rgba(0, 0, 0, 0.3)',
-                        'neumorphic': '8px 8px 16px #0d1321, -8px -8px 16px #131d31',
-                        'neumorphic-inset': 'inset 5px 5px 10px #0d1321, inset -5px -5px 10px #131d31',
-                        'glow': '0 0 15px rgba(139, 92, 246, 0.5)',
-                        'glow-accent': '0 0 15px rgba(245, 158, 11, 0.5)'
-                    },
-                    animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                        'pulse-slow': 'pulse 6s infinite',
-                        'wave': 'wave 2.5s infinite',
-                        'nav-fade-in': 'navFadeIn 0.5s ease-out forwards'
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-15px)' }
-                        },
-                        wave: {
-                            '0%': { transform: 'rotate(0deg)' },
-                            '10%': { transform: 'rotate(14deg)' },
-                            '20%': { transform: 'rotate(-8deg)' },
-                            '30%': { transform: 'rotate(14deg)' },
-                            '40%': { transform: 'rotate(-4deg)' },
-                            '50%': { transform: 'rotate(10deg)' },
-                            '60%': { transform: 'rotate(0deg)' },
-                            '100%': { transform: 'rotate(0deg)' }
-                        },
-                        navFadeIn: {
-                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' }
-                        }
-                    }
-                },
-                fontFamily: {
-                    'cairo': ['Cairo', 'sans-serif'],
-                    'tajawal': ['Tajawal', 'sans-serif']
-                }
-            }
-        }
-    </script>
     <style>
         :root {
             --primary: #7C3AED;
@@ -117,428 +16,201 @@
         }
         
         body {
-            font-family: 'Cairo', 'Tajawal', sans-serif;
+            font-family: 'Tajawal', sans-serif;
             background: linear-gradient(135deg, var(--darker), var(--dark));
             color: #E2E8F0;
-            scroll-behavior: smooth;
         }
         
-        /* تصميم النيو مورفيك الحديث */
-        .neu-card {
-            background: linear-gradient(145deg, #0e1424, #101829);
-            border-radius: 20px;
-            box-shadow: 8px 8px 16px #0a0f1a, -8px -8px 16px #121f3a;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        .neu-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 12px 12px 24px #0a0f1a, -12px -12px 24px #121f3a;
-        }
-        
-        .neu-btn {
-            background: linear-gradient(145deg, #101829, #0e1424);
-            box-shadow: 5px 5px 10px #0a0f1a, -5px -5px 10px #121f3a;
-            transition: all 0.3s ease;
-        }
-        
-        .neu-btn:hover {
-            box-shadow: 2px 2px 5px #0a0f1a, -2px -2px 5px #121f3a;
-        }
-        
-        .neu-btn:active {
-            box-shadow: inset 5px 5px 10px #0a0f1a, inset -5px -5px 10px #121f3a;
-        }
-        
-        /* تأثيرات متقدمة */
-        .gradient-text {
-            background: linear-gradient(90deg, var(--primary-light), var(--accent));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-        }
-        
-        .feature-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(145deg, #101829, #0e1424);
-            box-shadow: 5px 5px 10px #0a0f1a, -5px -5px 10px #121f3a;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            color: var(--primary-light);
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-        }
-        
-        .feature-card:hover .feature-icon {
-            transform: scale(1.1);
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-        }
-        
-        /* تأثيرات دخول الصفحة */
-        [data-aos="custom-fade"] {
-            opacity: 0;
-            transition-property: opacity, transform;
-        }
-        
-        [data-aos="custom-fade"].aos-animate {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .aos-delay-100 { transition-delay: 100ms; }
-        .aos-delay-200 { transition-delay: 200ms; }
-        .aos-delay-300 { transition-delay: 300ms; }
-        .aos-delay-400 { transition-delay: 400ms; }
-        .aos-delay-500 { transition-delay: 500ms; }
-        
-        /* تأثيرات التفاعل */
-        .hover-grow {
-            transition: transform 0.3s ease;
-        }
-        
-        .hover-grow:hover {
-            transform: scale(1.03);
-        }
-        
-        /* تأثيرات النص */
-        .text-shadow {
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        
-        .text-shadow-lg {
-            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-        
-        /* تأثيرات الشريط المتحرك */
-        .marquee {
-            animation: marquee 20s linear infinite;
-        }
-        
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        
-        /* تأثيرات الشكل */
-        .blob {
-            border-radius: 50% 70% 40% 60%/60% 40% 70% 50%;
-            animation: morph 8s ease-in-out infinite;
-        }
-        
-        @keyframes morph {
-            0%, 100% { border-radius: 50% 70% 40% 60%/60% 40% 70% 50%; }
-            50% { border-radius: 70% 40% 60% 50%/50% 60% 40% 70%; }
-        }
-        
-        /* تأثيرات التحميل */
-        .loading-dots::after {
-            content: '.';
-            animation: dots 1.5s steps(5, end) infinite;
-        }
-        
-        @keyframes dots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60% { content: '...'; }
-            80%, 100% { content: ''; }
-        }
-        
-        /* تأثيرات خاصة بالوضع الداكن */
-        .dark-mode-toggle {
-            background: linear-gradient(145deg, #101829, #0e1424);
-            box-shadow: 5px 5px 10px #0a0f1a, -5px -5px 10px #121f3a;
-        }
-        
-        /* تأثيرات النوافذ المنبثقة */
-        .modal-overlay {
-            backdrop-filter: blur(5px);
-            background: rgba(10, 17, 32, 0.8);
-        }
-        
-        /* تأثيرات النصوص المضيئة */
-        .glow-text {
-            text-shadow: 0 0 10px rgba(139, 92, 246, 0.7);
+        /* تصميم الشريط العلوي */
+        .navbar {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         /* تأثيرات الأزرار */
-        .btn-hover-effect {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn-hover-effect::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                to bottom right,
-                rgba(255, 255, 255, 0) 45%,
-                rgba(255, 255, 255, 0.1) 50%,
-                rgba(255, 255, 255, 0) 55%
-            );
-            transform: rotate(30deg);
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             transition: all 0.3s ease;
         }
         
-        .btn-hover-effect:hover::after {
-            left: 100%;
-            top: 100%;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
         }
         
-        /* تأثيرات الشرائح */
-        .slide-fade-enter-active, .slide-fade-leave-active {
-            transition: all 0.5s ease;
-        }
-        
-        .slide-fade-enter, .slide-fade-leave-to {
-            transform: translateX(20px);
-            opacity: 0;
-        }
-        
-        /* تأثيرات المخططات */
-        .chart-hover {
+        .btn-outline {
+            border: 1px solid var(--primary);
             transition: all 0.3s ease;
         }
         
-        .chart-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        .btn-outline:hover {
+            background: rgba(139, 92, 246, 0.1);
         }
         
-        .logo-text {
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+        /* رسائل التنبيه */
+        .alert {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1000;
+            animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 3s;
         }
-
-        /* تأثيرات التنقل الجديدة */
-        .nav-link-active {
-            color: white;
-            position: relative;
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
-
-        .nav-link-active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 10%;
-            width: 80%;
-            height: 2px;
-            background: var(--primary);
-            border-radius: 2px;
-        }
-
-        /* تأثيرات القائمة المتنقلة المحسنة */
-        .mobile-menu-item {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: right center;
-        }
-
-        .mobile-menu-item:hover {
-            transform: translateX(-8px);
-        }
-
-        /* تأثيرات الظل للقائمة المتنقلة */
-        .mobile-menu-shadow {
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
-        }
-
-        /* تأثيرات الاهتزاز عند النقر */
-        @keyframes gentleShake {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-3px); }
-            40% { transform: translateX(3px); }
-            60% { transform: translateX(-2px); }
-            80% { transform: translateX(2px); }
-        }
-
-        .click-shake:active {
-            animation: gentleShake 0.4s ease;
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
-    <!-- شريط التنقل المحدث والمحسن -->
-    <header class="fixed w-full z-50 bg-dark/90 backdrop-blur-md border-b border-dark-700/30 shadow-lg transition-all duration-300 ease-out">
+<body>
+    <!-- شريط التنقل المحدث -->
+    <header class="navbar fixed w-full z-50 shadow-lg">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <!-- الشعار مع تأثيرات محسنة -->
+                <!-- الشعار -->
                 <div class="flex-shrink-0 flex items-center">
-                    <a href="/" class="flex items-center space-x-2 space-x-reverse group click-shake">
-                        <div class="p-2 rounded-lg bg-primary/10 transition-all duration-300 group-hover:bg-primary/20 group-hover:rotate-12">
-                            <i class="ri-ai-generate text-2xl text-primary transition-all duration-300 group-hover:text-primary-300"></i>
+                    <a href="/" class="flex items-center gap-2">
+                        <div class="p-2 rounded-lg bg-primary/10">
+                            <i class="ri-ai-generate text-2xl text-primary"></i>
                         </div>
-                        <span class="text-2xl font-bold logo-text transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-primary-300 group-hover:to-accent-400">SmartTextAI</span>
+                        <span class="text-2xl font-bold text-white">SmartTextAI</span>
                     </a>
                 </div>
                 
-                <!-- روابط سطح المكتب مع تأثيرات متطورة -->
-                <div class="hidden md:flex items-center space-x-1 space-x-reverse">
-                    <a href="#الرئيسية" class="relative px-4 py-2 rounded-lg text-gray-300 hover:text-white transition-all duration-300 group nav-link-active">
-                        <span>الرئيسية</span>
-                        <span class="absolute bottom-0 right-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-4/5 group-hover:right-[10%]"></span>
-                    </a>
-                    <a href="#features" class="relative px-4 py-2 rounded-lg text-gray-300 hover:text-white transition-all duration-300 group">
-                        <span>المميزات</span>
-                        <span class="absolute bottom-0 right-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-4/5 group-hover:right-[10%]"></span>
-                    </a>
-                    <a href="#tools" class="relative px-4 py-2 rounded-lg text-gray-300 hover:text-white transition-all duration-300 group">
-                        <span>الأدوات</span>
-                        <span class="absolute bottom-0 right-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-4/5 group-hover:right-[10%]"></span>
-                    </a>
-                    <a href="#openai-key" class="relative px-4 py-2 rounded-lg text-gray-300 hover:text-white transition-all duration-300 group">
-                        <span>تفعيل OpenAI</span>
-                        <span class="absolute bottom-0 right-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-4/5 group-hover:right-[10%]"></span>
-                    </a>
-                    <a href="#testimonials" class="relative px-4 py-2 rounded-lg text-gray-300 hover:text-white transition-all duration-300 group">
-                        <span>آراء العملاء</span>
-                        <span class="absolute bottom-0 right-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-4/5 group-hover:right-[10%]"></span>
-                    </a>
+                <!-- روابط سطح المكتب -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="#الرئيسية" class="text-gray-300 hover:text-white transition">الرئيسية</a>
+                    <a href="#features" class="text-gray-300 hover:text-white transition">المميزات</a>
+                    <a href="#tools" class="text-gray-300 hover:text-white transition">الأدوات</a>
+                    <a href="#openai-key" class="text-gray-300 hover:text-white transition">تفعيل OpenAI</a>
+                    <a href="#testimonials" class="text-gray-300 hover:text-white transition">آراء العملاء</a>
                 </div>
                 
-                <!-- أزرار الدخول مع تأثيرات محسنة -->
-                <div class="hidden md:flex items-center space-x-3 space-x-reverse">
+                <!-- أزرار المستخدم -->
+                <div class="flex items-center gap-3">
                     <% if (user) { %>
                         <div class="relative group">
-                            <span class="px-3 py-1.5 rounded-lg text-gray-300 group-hover:bg-dark-700/50 transition-all duration-300 flex items-center click-shake">
-                                <span class="mr-2">مرحبًا، <%= user.name %></span>
-                                <i class="ri-user-3-line text-primary"></i>
-                            </span>
-                            <div class="absolute hidden group-hover:block right-0 mt-2 w-48 rounded-md shadow-lg bg-darker border border-dark-700 z-50 transition-all duration-200 origin-top-right animate-nav-fade-in">
-                                <a href="/profile" class="block px-4 py-2 text-gray-300 hover:bg-dark-700 hover:text-white transition-all duration-200 flex items-center mobile-menu-item">
-                                    <i class="ri-user-settings-line mr-2"></i> الحساب
-                                </a>
-                                <a href="/settings" class="block px-4 py-2 text-gray-300 hover:bg-dark-700 hover:text-white transition-all duration-200 flex items-center mobile-menu-item">
-                                    <i class="ri-settings-3-line mr-2"></i> الإعدادات
-                                </a>
-                                <a href="/auth/logout" class="block px-4 py-2 text-gray-300 hover:bg-dark-700 hover:text-white transition-all duration-200 flex items-center border-t border-dark-700 mobile-menu-item">
-                                    <i class="ri-logout-box-line mr-2"></i> تسجيل الخروج
-                                </a>
+                            <button class="flex items-center gap-2 focus:outline-none">
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                    <i class="ri-user-line text-primary"></i>
+                                </div>
+                                <span class="text-gray-300 hidden md:inline"><%= user.name %></span>
+                                <i class="ri-arrow-down-s-line text-gray-400"></i>
+                            </button>
+                            
+                            <div class="absolute right-0 mt-2 w-48 bg-darker rounded-md shadow-lg py-1 hidden group-hover:block">
+                                <a href="/profile" class="block px-4 py-2 text-gray-300 hover:bg-dark-700 hover:text-white">الحساب الشخصي</a>
+                                <a href="/settings" class="block px-4 py-2 text-gray-300 hover:bg-dark-700 hover:text-white">الإعدادات</a>
+                                <a href="/auth/logout" class="block px-4 py-2 text-gray-300 hover:bg-dark-700 hover:text-white">تسجيل الخروج</a>
                             </div>
                         </div>
                     <% } else { %>
-                        <a href="/auth/login" class="px-4 py-2 rounded-lg text-white bg-primary hover:bg-primary-600 transition-all duration-300 shadow-glow hover:shadow-glow-accent transform hover:-translate-y-0.5 flex items-center click-shake">
-                            <i class="ri-login-box-line mr-2"></i> تسجيل الدخول
+                        <a href="/auth/login" class="btn-primary px-4 py-2 rounded-lg text-sm flex items-center gap-1">
+                            <i class="ri-login-box-line"></i>
+                            <span>تسجيل الدخول</span>
                         </a>
-                        <a href="/auth/register" class="px-4 py-2 rounded-lg text-primary border border-primary hover:bg-primary/10 hover:text-primary-300 transition-all duration-300 flex items-center click-shake">
-                            <i class="ri-user-add-line mr-2"></i> إنشاء حساب
+                        <a href="/auth/register" class="btn-outline px-4 py-2 rounded-lg text-sm text-primary flex items-center gap-1">
+                            <i class="ri-user-add-line"></i>
+                            <span>حساب جديد</span>
                         </a>
                     <% } %>
                 </div>
                 
-                <!-- زر القائمة المتنقلة مع تأثيرات محسنة -->
+                <!-- زر القائمة المتنقلة -->
                 <div class="md:hidden">
-                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-dark-700/50 focus:outline-none transition-all duration-300 transform hover:rotate-90 click-shake" aria-controls="mobile-menu" aria-expanded="false" id="mobile-menu-button">
-                        <span class="sr-only">فتح القائمة الرئيسية</span>
-                        <i class="ri-menu-4-line text-2xl transition-all duration-300" id="menu-icon"></i>
-                        <i class="ri-close-line text-2xl hidden transition-all duration-300" id="close-icon"></i>
+                    <button type="button" class="p-2 rounded-md text-gray-400 hover:text-white focus:outline-none" id="mobile-menu-button">
+                        <i class="ri-menu-line text-2xl" id="menu-icon"></i>
                     </button>
                 </div>
             </div>
         </nav>
         
-        <!-- القائمة المتنقلة مع تأثيرات متطورة -->
-        <div class="hidden md:hidden bg-darker/95 backdrop-blur-lg shadow-xl mobile-menu-shadow transition-all duration-300 ease-in-out transform origin-top" id="mobile-menu">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#الرئيسية" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700/50 transition-all duration-300 flex items-center mobile-menu-item">
-                    <i class="ri-home-4-line mr-2 text-primary"></i> الرئيسية
-                </a>
-                <a href="#features" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700/50 transition-all duration-300 flex items-center mobile-menu-item">
-                    <i class="ri-star-line mr-2 text-primary"></i> المميزات
-                </a>
-                <a href="#tools" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700/50 transition-all duration-300 flex items-center mobile-menu-item">
-                    <i class="ri-tools-line mr-2 text-primary"></i> الأدوات
-                </a>
-                <a href="#openai-key" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700/50 transition-all duration-300 flex items-center mobile-menu-item">
-                    <i class="ri-key-2-line mr-2 text-primary"></i> تفعيل OpenAI
-                </a>
-                <a href="#testimonials" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700/50 transition-all duration-300 flex items-center mobile-menu-item">
-                    <i class="ri-chat-quote-line mr-2 text-primary"></i> آراء العملاء
-                </a>
-                <div class="pt-2 border-t border-dark-700/50 space-y-2">
+        <!-- القائمة المتنقلة -->
+        <div class="hidden md:hidden bg-darker/95 backdrop-blur-sm" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-2">
+                <a href="#الرئيسية" class="block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-dark-700">الرئيسية</a>
+                <a href="#features" class="block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-dark-700">المميزات</a>
+                <a href="#tools" class="block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-dark-700">الأدوات</a>
+                <a href="#openai-key" class="block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-dark-700">تفعيل OpenAI</a>
+                <a href="#testimonials" class="block px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-dark-700">آراء العملاء</a>
+                
+                <div class="pt-4 border-t border-dark-700">
                     <% if (user) { %>
-                        <div class="px-3 py-2 text-gray-300 flex items-center">
-                            <i class="ri-user-3-line mr-2 text-primary"></i> مرحبًا، <%= user.name %>
+                        <div class="px-4 py-3">
+                            <p class="text-sm text-gray-400">مرحبًا</p>
+                            <p class="text-white font-medium"><%= user.name %></p>
                         </div>
-                        <a href="/profile" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700/50 transition-all duration-300 flex items-center mobile-menu-item">
-                            <i class="ri-user-settings-line mr-2 text-primary"></i> الحساب
-                        </a>
-                        <a href="/auth/logout" class="block w-full px-4 py-3 rounded-md text-base font-medium text-white bg-primary hover:bg-primary-600 transition-all duration-300 text-center shadow-glow flex items-center justify-center click-shake">
-                            <i class="ri-logout-box-line mr-2"></i> تسجيل الخروج
-                        </a>
+                        <a href="/profile" class="block px-4 py-2 text-gray-300 hover:text-white">الحساب الشخصي</a>
+                        <a href="/settings" class="block px-4 py-2 text-gray-300 hover:text-white">الإعدادات</a>
+                        <a href="/auth/logout" class="block px-4 py-2 text-white bg-primary rounded-md mt-2">تسجيل الخروج</a>
                     <% } else { %>
-                        <a href="/auth/login" class="block w-full px-4 py-3 rounded-md text-base font-medium text-white bg-primary hover:bg-primary-600 transition-all duration-300 text-center shadow-glow flex items-center justify-center click-shake">
-                            <i class="ri-login-box-line mr-2"></i> تسجيل الدخول
-                        </a>
-                        <a href="/auth/register" class="block w-full px-4 py-3 rounded-md text-base font-medium text-primary border border-primary hover:bg-primary/10 hover:text-primary-300 transition-all duration-300 text-center flex items-center justify-center click-shake">
-                            <i class="ri-user-add-line mr-2"></i> إنشاء حساب
-                        </a>
+                        <a href="/auth/login" class="block px-4 py-2 text-white bg-primary rounded-md">تسجيل الدخول</a>
+                        <a href="/auth/register" class="block px-4 py-2 mt-2 text-primary border border-primary rounded-md">إنشاء حساب</a>
                     <% } %>
                 </div>
             </div>
         </div>
     </header>
 
+    <!-- رسائل التنبيه -->
+    <% if (messages.success) { %>
+        <div class="alert bg-green-500/90 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+            <i class="ri-checkbox-circle-line"></i>
+            <span><%= messages.success %></span>
+        </div>
+    <% } %>
+    
+    <% if (messages.error) { %>
+        <div class="alert bg-red-500/90 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+            <i class="ri-error-warning-line"></i>
+            <span><%= messages.error %></span>
+        </div>
+    <% } %>
+    
+    <% if (messages.info) { %>
+        <div class="alert bg-blue-500/90 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+            <i class="ri-information-line"></i>
+            <span><%= messages.info %></span>
+        </div>
+    <% } %>
+
     <script>
         // تفعيل القائمة المتنقلة
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const menu = document.getElementById('mobile-menu');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+            mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+            mobileMenu.classList.toggle('hidden');
+            
+            // تبديل الأيقونات
             const menuIcon = document.getElementById('menu-icon');
             const closeIcon = document.getElementById('close-icon');
             
-            if (menu.classList.contains('hidden')) {
-                menu.classList.remove('hidden');
-                menuIcon.classList.add('hidden');
-                closeIcon.classList.remove('hidden');
-                menu.classList.add('animate__animated', 'animate__fadeInDown');
-            } else {
-                menu.classList.add('hidden');
+            if (isExpanded) {
                 menuIcon.classList.remove('hidden');
                 closeIcon.classList.add('hidden');
+            } else {
+                menuIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
             }
         });
-
-        // إضافة تأثير التمرير النشط للروابط
-        const navLinks = document.querySelectorAll('nav a[href^="#"]');
         
-        window.addEventListener('scroll', () => {
-            let fromTop = window.scrollY + 100;
-            
-            navLinks.forEach(link => {
-                let section = document.querySelector(link.getAttribute('href'));
-                
-                if (
-                    section &&
-                    section.offsetTop <= fromTop &&
-                    section.offsetTop + section.offsetHeight > fromTop
-                ) {
-                    link.classList.add('nav-link-active');
-                } else {
-                    link.classList.remove('nav-link-active');
-                }
-            });
-        });
-
-        // إغلاق القائمة المتنقلة عند النقر على رابط
-        document.querySelectorAll('#mobile-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                document.getElementById('mobile-menu').classList.add('hidden');
+        // إغلاق القائمة عند النقر خارجها
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.contains(e.target) && e.target !== mobileMenuButton) {
+                mobileMenu.classList.add('hidden');
+                mobileMenuButton.setAttribute('aria-expanded', 'false');
                 document.getElementById('menu-icon').classList.remove('hidden');
                 document.getElementById('close-icon').classList.add('hidden');
-            });
+            }
         });
     </script>
 </body>
