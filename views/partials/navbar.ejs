@@ -130,6 +130,15 @@
                 </div>
             </div>
         </nav>
+ <!-- رسائل التنبيه -->
+    <% if (typeof messages !== 'undefined' && messages.success) { %>
+        <div class="fixed top-20 right-4 z-50">
+            <div class="alert bg-green-500/90 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate__animated animate__fadeInDown">
+                <i class="ri-checkbox-circle-line"></i>
+                <span><%= messages.success %></span>
+            </div>
+        </div>
+    <% } %>
         
         <!-- القائمة المتنقلة -->
         <div class="hidden md:hidden bg-darker/95 backdrop-blur-sm" id="mobile-menu">
