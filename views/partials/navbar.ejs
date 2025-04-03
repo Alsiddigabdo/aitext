@@ -322,67 +322,123 @@
 </head>
 <body class="min-h-screen flex flex-col">
     <!-- شريط التنقل المحدث -->
-    <header class="fixed w-full z-50 bg-dark/90 backdrop-blur-md border-b border-dark-700 shadow-lg">
-        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- الشعار -->
-                <div class="flex-shrink-0 flex items-center">
-                    <a href="/" class="flex items-center space-x-2 space-x-reverse">
-                        <div class="p-2 rounded-lg bg-primary/10 transition">
-                            <i class="ri-ai-generate text-2xl text-primary"></i>
-                        </div>
-                        <span class="text-2xl font-bold logo-text">SmartTextAI</span>
-                    </a>
-                </div>
-                
-                <!-- روابط سطح المكتب -->
-                <div class="hidden md:flex items-center space-x-1 space-x-reverse">
-                    <a href="#الرئيسية" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">الرئيسية</a>
-                    <a href="#features" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">المميزات</a>
-                    <a href="#tools" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">الأدوات</a>
-                    <a href="#openai-key" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">تفعيل OpenAI</a>
-                    <a href="#testimonials" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">آراء العملاء</a>
-                </div>
-                
-                <!-- أزرار الدخول -->
-                <div class="hidden md:flex items-center space-x-3 space-x-reverse">
-                    <% if (user) { %>
-                        <span class="text-gray-300">مرحبًا، <%= user.name %></span>
-                        <a href="/auth/logout" class="px-4 py-2 rounded-lg text-white bg-primary hover:bg-primary-600 transition duration-300 shadow-glow hover:shadow-glow-accent">تسجيل الخروج</a>
-                    <% } else { %>
-                        <a href="/auth/login" class="px-4 py-2 rounded-lg text-white bg-primary hover:bg-primary-600 transition duration-300 shadow-glow hover:shadow-glow-accent">تسجيل الدخول</a>
-                        <a href="/auth/register" class="px-4 py-2 rounded-lg text-primary border border-primary hover:bg-primary/10 transition duration-300">إنشاء حساب</a>
-                    <% } %>
-                </div>
-                
-                <!-- زر القائمة المتنقلة -->
-                <div class="md:hidden">
-                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-dark-700 focus:outline-none transition duration-300" aria-controls="mobile-menu" aria-expanded="false" id="mobile-menu-button">
-                        <span class="sr-only">فتح القائمة الرئيسية</span>
-                        <i class="ri-menu-line text-2xl" id="menu-icon"></i>
-                        <i class="ri-close-line text-2xl hidden" id="close-icon"></i>
-                    </button>
-                </div>
+  <!-- شريط التنقل المحدث والمحسن -->
+<header class="fixed w-full z-50 bg-dark/90 backdrop-blur-md border-b border-dark-700/30 shadow-lg transition-all duration-300 ease-out">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <!-- الشعار مع تأثيرات محسنة -->
+            <div class="flex-shrink-0 flex items-center">
+                <a href="/" class="flex items-center space-x-2 space-x-reverse group">
+                    <div class="p-2 rounded-lg bg-primary/10 transition-all duration-300 group-hover:bg-primary/20 group-hover:rotate-12">
+                        <i class="ri-ai-generate text-2xl text-primary transition-all duration-300 group-hover:text-primary-300"></i>
+                    </div>
+                    <span class="text-2xl font-bold logo-text transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-primary-300 group-hover:to-accent-400">SmartTextAI</span>
+                </a>
             </div>
-        </nav>
-        
-        <!-- القائمة المتنقلة -->
-        <div class="hidden md:hidden bg-darker/95 backdrop-blur-sm" id="mobile-menu">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#الرئيسية" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">الرئيسية</a>
-                <a href="#features" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">المميزات</a>
-                <a href="#tools" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">الأدوات</a>
-                <a href="#openai-key" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">تفعيل OpenAI</a>
-                <a href="#testimonials" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700 transition duration-300">آراء العملاء</a>
-                <div class="pt-4 border-t border-dark-700">
-                    <% if (user) { %>
-                        <span class="block px-3 py-2 text-gray-300">مرحبًا، <%= user.name %></span>
-                        <a href="/auth/logout" class="block w-full px-4 py-2 rounded-md text-base font-medium text-white bg-primary hover:bg-primary-600 transition duration-300 text-center shadow-glow">تسجيل الخروج</a>
-                    <% } else { %>
-                        <a href="/auth/login" class="block w-full px-4 py-2 rounded-md text-base font-medium text-white bg-primary hover:bg-primary-600 transition duration-300 text-center shadow-glow">تسجيل الدخول</a>
-                        <a href="/auth/register" class="block w-full mt-2 px-4 py-2 rounded-md text-base font-medium text-primary border border-primary hover:bg-primary/10 transition duration-300 text-center">إنشاء حساب</a>
-                    <% } %>
-                </div>
+            
+            <!-- روابط سطح المكتب مع تأثيرات متطورة -->
+            <div class="hidden md:flex items-center space-x-1 space-x-reverse">
+                <a href="#الرئيسية" class="relative px-4 py-2 rounded-lg text-gray-300 hover:text-white transition-all duration-300 group">
+                    <span>الرئيسية</span>
+                    <span class="absolute bottom-0 right-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-4/5 group-hover:right-[10%]"></span>
+                </a>
+                <a href="#features" class="relative px-4 py-2 rounded-lg text-gray-300 hover:text-white transition-all duration-300 group">
+                    <span>المميزات</span>
+                    <span class="absolute bottom-0 right-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-4/5 group-hover:right-[10%]"></span>
+                </a>
+                <a href="#tools" class="relative px-4 py-2 rounded-lg text-gray-300 hover:text-white transition-all duration-300 group">
+                    <span>الأدوات</span>
+                    <span class="absolute bottom-0 right-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-4/5 group-hover:right-[10%]"></span>
+                </a>
+                <a href="#openai-key" class="relative px-4 py-2 rounded-lg text-gray-300 hover:text-white transition-all duration-300 group">
+                    <span>تفعيل OpenAI</span>
+                    <span class="absolute bottom-0 right-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-4/5 group-hover:right-[10%]"></span>
+                </a>
+                <a href="#testimonials" class="relative px-4 py-2 rounded-lg text-gray-300 hover:text-white transition-all duration-300 group">
+                    <span>آراء العملاء</span>
+                    <span class="absolute bottom-0 right-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-4/5 group-hover:right-[10%]"></span>
+                </a>
+            </div>
+            
+            <!-- أزرار الدخول مع تأثيرات محسنة -->
+            <div class="hidden md:flex items-center space-x-3 space-x-reverse">
+                <% if (user) { %>
+                    <div class="relative group">
+                        <span class="px-3 py-1.5 rounded-lg text-gray-300 group-hover:bg-dark-700/50 transition-all duration-300 flex items-center">
+                            <span class="mr-2">مرحبًا، <%= user.name %></span>
+                            <i class="ri-user-3-line text-primary"></i>
+                        </span>
+                        <div class="absolute hidden group-hover:block right-0 mt-2 w-48 rounded-md shadow-lg bg-darker border border-dark-700 z-50 transition-all duration-200 origin-top-right">
+                            <a href="/profile" class="block px-4 py-2 text-gray-300 hover:bg-dark-700 hover:text-white transition-all duration-200 flex items-center">
+                                <i class="ri-user-settings-line mr-2"></i> الحساب
+                            </a>
+                            <a href="/settings" class="block px-4 py-2 text-gray-300 hover:bg-dark-700 hover:text-white transition-all duration-200 flex items-center">
+                                <i class="ri-settings-3-line mr-2"></i> الإعدادات
+                            </a>
+                            <a href="/auth/logout" class="block px-4 py-2 text-gray-300 hover:bg-dark-700 hover:text-white transition-all duration-200 flex items-center border-t border-dark-700">
+                                <i class="ri-logout-box-line mr-2"></i> تسجيل الخروج
+                            </a>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <a href="/auth/login" class="px-4 py-2 rounded-lg text-white bg-primary hover:bg-primary-600 transition-all duration-300 shadow-glow hover:shadow-glow-accent transform hover:-translate-y-0.5 flex items-center">
+                        <i class="ri-login-box-line mr-2"></i> تسجيل الدخول
+                    </a>
+                    <a href="/auth/register" class="px-4 py-2 rounded-lg text-primary border border-primary hover:bg-primary/10 hover:text-primary-300 transition-all duration-300 flex items-center">
+                        <i class="ri-user-add-line mr-2"></i> إنشاء حساب
+                    </a>
+                <% } %>
+            </div>
+            
+            <!-- زر القائمة المتنقلة مع تأثيرات محسنة -->
+            <div class="md:hidden">
+                <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-dark-700/50 focus:outline-none transition-all duration-300 transform hover:rotate-90" aria-controls="mobile-menu" aria-expanded="false" id="mobile-menu-button">
+                    <span class="sr-only">فتح القائمة الرئيسية</span>
+                    <i class="ri-menu-4-line text-2xl transition-all duration-300" id="menu-icon"></i>
+                    <i class="ri-close-line text-2xl hidden transition-all duration-300" id="close-icon"></i>
+                </button>
             </div>
         </div>
-    </header>
+    </nav>
+    
+    <!-- القائمة المتنقلة مع تأثيرات متطورة -->
+    <div class="hidden md:hidden bg-darker/95 backdrop-blur-lg shadow-xl transition-all duration-300 ease-in-out transform origin-top" id="mobile-menu">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <a href="#الرئيسية" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700/50 transition-all duration-300 flex items-center">
+                <i class="ri-home-4-line mr-2 text-primary"></i> الرئيسية
+            </a>
+            <a href="#features" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700/50 transition-all duration-300 flex items-center">
+                <i class="ri-star-line mr-2 text-primary"></i> المميزات
+            </a>
+            <a href="#tools" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700/50 transition-all duration-300 flex items-center">
+                <i class="ri-tools-line mr-2 text-primary"></i> الأدوات
+            </a>
+            <a href="#openai-key" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700/50 transition-all duration-300 flex items-center">
+                <i class="ri-key-2-line mr-2 text-primary"></i> تفعيل OpenAI
+            </a>
+            <a href="#testimonials" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700/50 transition-all duration-300 flex items-center">
+                <i class="ri-chat-quote-line mr-2 text-primary"></i> آراء العملاء
+            </a>
+            <div class="pt-2 border-t border-dark-700/50 space-y-2">
+                <% if (user) { %>
+                    <div class="px-3 py-2 text-gray-300 flex items-center">
+                        <i class="ri-user-3-line mr-2 text-primary"></i> مرحبًا، <%= user.name %>
+                    </div>
+                    <a href="/profile" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-dark-700/50 transition-all duration-300 flex items-center">
+                        <i class="ri-user-settings-line mr-2 text-primary"></i> الحساب
+                    </a>
+                    <a href="/auth/logout" class="block w-full px-4 py-3 rounded-md text-base font-medium text-white bg-primary hover:bg-primary-600 transition-all duration-300 text-center shadow-glow flex items-center justify-center">
+                        <i class="ri-logout-box-line mr-2"></i> تسجيل الخروج
+                    </a>
+                <% } else { %>
+                    <a href="/auth/login" class="block w-full px-4 py-3 rounded-md text-base font-medium text-white bg-primary hover:bg-primary-600 transition-all duration-300 text-center shadow-glow flex items-center justify-center">
+                        <i class="ri-login-box-line mr-2"></i> تسجيل الدخول
+                    </a>
+                    <a href="/auth/register" class="block w-full px-4 py-3 rounded-md text-base font-medium text-primary border border-primary hover:bg-primary/10 hover:text-primary-300 transition-all duration-300 text-center flex items-center justify-center">
+                        <i class="ri-user-add-line mr-2"></i> إنشاء حساب
+                    </a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</header>
