@@ -6,6 +6,7 @@ router.get('/register', AuthController.renderRegister);
 router.post('/register', AuthController.register);
 router.get('/login', AuthController.renderLogin);
 router.post('/login', AuthController.login);
+router.get('/logout', authenticateToken, AuthController.logout);
 router.get('/forgot-password', AuthController.renderForgotPassword);
 router.post('/forgot-password', AuthController.forgotPassword);
 router.get('/otp', AuthController.renderOTP);
