@@ -56,46 +56,56 @@ class AuthController {
         res.render('Login');
     }
 
-    // ... الكود السابق ...
+    static async login(req, res) {
+        const { email, password } = req.body;
+        console.log('Login attempt:', { email });
 
-static async login(req, res) {
-  const { email, password } = req.body;
-  console.log('Login attempt:', { email });
+        if (!email || !password) {
+            return res.status(400).json({ success: false, message: 'البريد الإلكتروني وكلمة المرور مطلوبان' });
+        }
 
-  if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'البريد الإلكتروني وكلمة المرور مطلوبان' });
-  }
+        try {
+            const user = await AuthModel.findUserByEmail(email);
+            console.log('User retrieved:', user);
 
-  try {
-      const user = await AuthModel.findUserByEmail(email);
-      console.log('User retrieved:', user);
+            if (!user) {
+                return res.status(401).json({ success: false, message: 'البريد الإلكتروني غير مسجل' });
+            }
 
-      if (!user) {
-          return res.status(401).json({ success: false, message: 'البريد الإلكتروني غير مسجل' });
-      }
+            const isMatch = await bcrypt.compare(password, user.password);
+            console.log('Password match:', isMatch);
 
-      const isMatch = await bcrypt.compare(password, user.password);
-      console.log('Password match:', isMatch);
+            if (!isMatch) {
+                return res.status(401).json({ success: false, message: 'كلمة المرور غير صحيحة' });
+            }
 
-      if (!isMatch) {
-          return res.status(401).json({ success: false, message: 'كلمة المرور غير صحيحة' });
-      }
+            const token = jwt.sign(
+                { id: user.id, email: user.email, name: user.name },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' }
+            );
+            console.log('Generated token:', token);
+            res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+            res.json({ success: true, token, message: 'تم تسجيل الدخول بنجاح' });
+        } catch (error) {
+            console.error('Login error:', error);
+            res.status(500).json({ success: false, message: 'حدث خطأ أثناء تسجيل الدخول: ' + error.message });
+        }
+    }
 
-      const token = jwt.sign(
-          { id: user.id, email: user.email, name: user.name },
-          process.env.JWT_SECRET,
-          { expiresIn: '1h' }
-      );
-      console.log('Generated token:', token);
-      res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
-      res.json({ success: true, token, message: 'تم تسجيل الدخول بنجاح' });
-  } catch (error) {
-      console.error('Login error:', error);
-      res.status(500).json({ success: false, message: 'حدث خطأ أثناء تسجيل الدخول: ' + error.message });
-  }
-}
+    static async logout(req, res) {
+        try {
+            // مسح ملف تعريف الارتباط الخاص بالتوكن
+            res.clearCookie('token', { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+            console.log('User logged out, token cleared');
+            // إعادة توجيه إلى الصفحة الرئيسية
+            res.redirect('/');
+        } catch (error) {
+            console.error('Logout error:', error);
+            res.status(500).json({ success: false, message: 'حدث خطأ أثناء تسجيل الخروج: ' + error.message });
+        }
+    }
 
-// ... باقي الكود ...
     static async renderForgotPassword(req, res) {
         res.render('ForgotPassword');
     }
@@ -168,9 +178,8 @@ static async login(req, res) {
         }
     }
 
-    // دالة جديدة لتحديث openai_key
     static async updateOpenAIKey(req, res) {
-        const { openaiKey } = req.query; // الحصول على openaiKey من معلمات URL
+        const { openaiKey } = req.query;
         console.log('Received openaiKey:', openaiKey);
 
         if (!openaiKey) {
@@ -178,14 +187,14 @@ static async login(req, res) {
         }
 
         try {
-            const user = req.user; // المستخدم الحالي من التوكن
+            const user = req.user;
             if (!user) {
                 return res.status(401).json({ success: false, message: 'المستخدم غير مصدق عليه' });
             }
 
             await AuthModel.updateOpenAIKey(user.id, openaiKey);
             console.log(`OpenAI Key updated for user ${user.id}: ${openaiKey}`);
-            res.redirect('/'); // إعادة توجيه إلى الصفحة الرئيسية بعد التحديث
+            res.redirect('/');
         } catch (error) {
             console.error('Error updating OpenAI Key:', error);
             res.status(500).json({ success: false, message: 'حدث خطأ أثناء تحديث مفتاح OpenAI: ' + error.message });
@@ -194,4 +203,3 @@ static async login(req, res) {
 }
 
 module.exports = { AuthController, authenticateToken };
-
